@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
-const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
+const serverModule = require('../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js');
+const stdioModule = require('../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js');
+const { Server } = serverModule;
+const { StdioServerTransport } = stdioModule;
 const ProcessManager = require('./process-manager');
 const LogStore = require('./log-store');
 const DashboardServer = require('./dashboard/server');
