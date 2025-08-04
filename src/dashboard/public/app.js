@@ -1,1 +1,2336 @@
-/**\n * Enhanced Dashboard App with Robust WebSocket Communication\n * Story 19.3 - WebSocket Communication Implementation\n */\n\nclass DashboardApp {\n  constructor() {\n    this.wsManager = null;\n    this.sessions = new Map();\n    this.selectedSessionId = null;\n    this.logBuffer = new Map();\n    this.filteredLogs = new Map();\n    this.autoScroll = true;\n    this.currentFilter = '';\n    this.logTypes = new Set(['stdout', 'stderr', 'info', 'warn', 'error', 'debug']);\n    this.connectionState = 'disconnected';\n    this.performanceMetrics = {\n      messagesReceived: 0,\n      lastMessageTime: null,\n      reconnections: 0,\n      connectionUptime: 0\n    };\n    this.notificationQueue = [];\n    this.maxNotifications = 5;\n    \n    this.initializeApp();\n  }\n  \n  async initializeApp() {\n    this.showLoadingState();\n    \n    try {\n      // Initialize enhanced WebSocket connection\n      await this.initializeWebSocket();\n      \n      // Bind all event listeners\n      this.bindEvents();\n      \n      // Start periodic updates\n      this.startPeriodicUpdates();\n      \n      // Load initial dashboard state\n      await this.loadInitialState();\n      \n      this.hideLoadingState();\n      \n      // Analytics initialization\n      this.trackEvent('dashboard_loaded', { timestamp: Date.now() });\n      \n    } catch (error) {\n      console.error('Failed to initialize dashboard:', error);\n      this.showErrorState('Failed to initialize dashboard: ' + error.message);\n    }\n  }\n  \n  /**\n   * Initialize enhanced WebSocket manager with robust features\n   */\n  async initializeWebSocket() {\n    // Initialize enhanced WebSocket manager\n    this.wsManager = new WebSocketManager({\n      autoReconnect: true,\n      maxReconnectAttempts: 10,\n      reconnectInterval: 1000,\n      maxReconnectInterval: 30000,\n      heartbeatInterval: 30000,\n      connectionTimeout: 10000,\n      messageQueueSize: 100\n    });\n    \n    // Setup event handlers\n    this.setupWebSocketEvents();\n    \n    // Connect to server\n    try {\n      await this.wsManager.connect();\n      console.log('Connected to MCP Debug Host with enhanced WebSocket manager');\n    } catch (error) {\n      console.error('Failed to connect to WebSocket:', error);\n      throw error;\n    }\n  }\n  \n  /**\n   * Setup comprehensive WebSocket event handlers\n   */\n  setupWebSocketEvents() {\n    // Connection events\n    this.wsManager.on('connecting', (data) => {\n      this.connectionState = 'connecting';\n      this.updateConnectionStatus('connecting');\n      console.log('Connecting to WebSocket...', data);\n    });\n    \n    this.wsManager.on('connected', (data) => {\n      this.connectionState = 'connected';\n      this.updateConnectionStatus('connected');\n      this.performanceMetrics.lastMessageTime = Date.now();\n      \n      console.log('WebSocket connected:', data);\n      this.trackEvent('websocket_connected', data);\n      this.showNotification('Connected to MCP Debug Host', 'success');\n      \n      // Send enhanced handshake after connection\n      this.wsManager.send({\n        type: 'handshake',\n        payload: {\n          userAgent: navigator.userAgent,\n          timestamp: Date.now(),\n          version: '2.0.0',\n          capabilities: {\n            compression: true,\n            subscriptions: true,\n            messageQueue: true,\n            analytics: true\n          }\n        }\n      });\n    });\n    \n    this.wsManager.on('close', (data) => {\n      this.connectionState = 'disconnected';\n      this.updateConnectionStatus('disconnected');\n      console.log('WebSocket disconnected:', data);\n      \n      if (!data.wasClean) {\n        this.showNotification('Connection lost - attempting to reconnect...', 'warning');\n      }\n    });\n    \n    this.wsManager.on('reconnecting', (data) => {\n      this.connectionState = 'reconnecting';\n      this.updateConnectionStatus('reconnecting');\n      this.performanceMetrics.reconnections++;\n      \n      console.log(`Reconnecting... attempt ${data.attempt}/${data.maxAttempts}`);\n      this.trackEvent('websocket_reconnecting', data);\n      \n      const progress = Math.round((data.attempt / data.maxAttempts) * 100);\n      this.showNotification(`Reconnecting... (${progress}%) - Attempt ${data.attempt}`, 'info');\n    });\n    \n    this.wsManager.on('max-reconnect-attempts', (data) => {\n      this.showErrorState('Unable to connect to server after multiple attempts. Please refresh the page.');\n      this.showNotification('Connection failed - please refresh the page', 'error');\n      this.trackEvent('websocket_max_reconnect_attempts', data);\n    });\n    \n    this.wsManager.on('error', (error) => {\n      console.error('WebSocket error:', error);\n      this.trackEvent('websocket_error', { error: error.message });\n      this.showNotification(`WebSocket error: ${error.message}`, 'error');\n    });\n    \n    this.wsManager.on('server-unresponsive', () => {\n      console.warn('Server appears unresponsive');\n      this.updateConnectionStatus('reconnecting');\n      this.showNotification('Server unresponsive - reconnecting...', 'warning');\n    });\n    \n    // Message handling events\n    this.wsManager.on('message', (data) => {\n      this.handleMessage(data);\n    });\n    \n    // Specific message type handlers\n    this.wsManager.on('connection-established', (data) => {\n      this.handleConnectionEstablished(data);\n    });\n    \n    this.wsManager.on('initial-state', (data) => {\n      this.loadSessions(data.sessions);\n    });\n    \n    this.wsManager.on('log', (data) => {\n      this.appendLog(data.sessionId, data.log);\n    });\n    \n    this.wsManager.on('server-ready', (data) => {\n      this.updateSession(data.session);\n      this.showNotification(`Server ready: ${data.session.name}`, 'success');\n    });\n    \n    this.wsManager.on('process-exit', (data) => {\n      this.handleProcessExit(data.sessionId, data.code, data.signal);\n    });\n    \n    this.wsManager.on('process-error', (data) => {\n      this.handleProcessError(data.sessionId, data.error);\n    });\n    \n    this.wsManager.on('logs-response', (data) => {\n      this.handleLogsResponse(data.sessionId, data.logs);\n    });\n    \n    this.wsManager.on('logs-cleared', (data) => {\n      this.handleLogsCleared(data.sessionId);\n      this.showNotification('Logs cleared', 'info');\n    });\n    \n    this.wsManager.on('queued-messages-received', (data) => {\n      console.log(`Received ${data.count} queued messages`);\n      this.showNotification(`Received ${data.count} queued messages`, 'info');\n    });\n    \n    this.wsManager.on('server-shutdown', (data) => {\n      this.showNotification('Server is shutting down', 'warning');\n      console.log('Server shutdown notification:', data);\n    });\n    \n    this.wsManager.on('subscription-confirmed', (data) => {\n      console.log('Subscription confirmed:', data);\n      this.showNotification(`Subscribed to ${data.sessionId}`, 'success');\n    });\n  }\n  \n  /**\n   * Handle connection established event with enhanced features\n   */\n  handleConnectionEstablished(data) {\n    console.log('Connection established:', data);\n    \n    // Update UI with connection details\n    const statusElement = document.querySelector('.connection-status');\n    if (statusElement && data.clientId) {\n      statusElement.title = `Client ID: ${data.clientId}\\n` +\n                            `Authenticated: ${data.authenticated}\\n` +\n                            `Server Capabilities: ${JSON.stringify(data.serverCapabilities, null, 2)}`;\n    }\n    \n    // Show capabilities in console\n    if (data.serverCapabilities) {\n      console.log('Server capabilities:', data.serverCapabilities);\n    }\n  }\n  \n  /**\n   * Enhanced message handling with comprehensive error handling\n   */\n  handleMessage(data) {\n    this.performanceMetrics.messagesReceived++;\n    this.performanceMetrics.lastMessageTime = Date.now();\n    \n    // Handle generic message types that don't have specific handlers\n    switch (data.type) {\n      case 'hook-notification':\n        this.handleHookNotification(data.payload || data.data);\n        break;\n        \n      case 'error':\n        console.error('Server error:', data.error);\n        this.showNotification(`Server error: ${data.error}`, 'error');\n        break;\n        \n      case 'authentication-success':\n        console.log('Authentication successful');\n        this.showNotification('Authentication successful', 'success');\n        break;\n        \n      case 'authentication-failed':\n        console.error('Authentication failed:', data.error);\n        this.showNotification(`Authentication failed: ${data.error}`, 'error');\n        break;\n        \n      default:\n        // Let specific event handlers deal with their types\n        break;\n    }\n  }\n  \n  /**\n   * Enhanced session selection with subscription support\n   */\n  async selectSession(sessionId) {\n    if (this.selectedSessionId === sessionId) {\n      return; // Already selected\n    }\n    \n    const session = this.sessions.get(sessionId);\n    if (!session) {\n      console.warn('Attempted to select non-existent session:', sessionId);\n      return;\n    }\n    \n    // Unsubscribe from previous session\n    if (this.selectedSessionId) {\n      try {\n        await this.send({\n          type: 'unsubscribe',\n          payload: {\n            sessionId: this.selectedSessionId,\n            eventTypes: ['log', 'server-ready', 'process-exit', 'process-error']\n          }\n        }, { requireAck: true });\n      } catch (error) {\n        console.warn('Failed to unsubscribe from previous session:', error);\n      }\n    }\n    \n    this.selectedSessionId = sessionId;\n    this.renderSessions();\n    this.updateLogSessionInfo(session);\n    this.renderAllLogs();\n    \n    // Subscribe to new session events\n    try {\n      await this.send({\n        type: 'subscribe',\n        payload: {\n          sessionId,\n          eventTypes: ['log', 'server-ready', 'process-exit', 'process-error']\n        }\n      }, { requireAck: true });\n      \n      console.log('Subscribed to session:', sessionId);\n    } catch (error) {\n      console.error('Failed to subscribe to session:', error);\n      this.showNotification('Failed to subscribe to session updates', 'warning');\n    }\n    \n    // Request fresh logs from server with acknowledgment\n    await this.requestSessionLogs(sessionId);\n    \n    // Track session selection\n    this.trackEvent('session_selected', { \n      sessionId, \n      sessionName: session.name,\n      framework: session.framework \n    });\n  }\n  \n  /**\n   * Send WebSocket message using enhanced manager with robust error handling\n   */\n  async send(data, options = {}) {\n    if (!this.wsManager) {\n      const error = new Error('WebSocket manager not initialized');\n      console.warn('WebSocket manager not initialized, message not sent:', data);\n      return Promise.reject(error);\n    }\n    \n    try {\n      return await this.wsManager.send(data, options);\n    } catch (error) {\n      console.error('Failed to send WebSocket message:', error);\n      this.showNotification('Communication error - message not sent', 'error');\n      throw error;\n    }\n  }\n\n  /**\n   * Request logs for a specific session with enhanced error handling\n   */\n  async requestSessionLogs(sessionId, options = {}) {\n    try {\n      const startTime = Date.now();\n      \n      await this.send({\n        type: 'get-logs',\n        payload: {\n          sessionId,\n          options: { tail: 500, ...options }\n        }\n      }, { requireAck: true, timeout: 10000 });\n      \n      const latency = Date.now() - startTime;\n      console.log(`Logs requested for ${sessionId} (${latency}ms)`);\n      \n    } catch (error) {\n      console.error('Failed to request session logs:', error);\n      this.showNotification('Failed to load session logs', 'error');\n      throw error;\n    }\n  }\n  \n  /**\n   * Enhanced connection status update with detailed metrics\n   */\n  updateConnectionStatus(state) {\n    const statusElement = document.querySelector('.connection-status');\n    const statusDot = document.querySelector('.status-dot');\n    const statusText = document.querySelector('.status-text');\n    \n    if (!statusElement || !statusDot || !statusText) {\n      console.warn('Connection status elements not found');\n      return;\n    }\n    \n    // Remove all status classes\n    statusElement.classList.remove('connected', 'connecting', 'disconnected', 'reconnecting');\n    statusDot.classList.remove('connected');\n    \n    const wsStatus = this.wsManager ? this.wsManager.getStatus() : {};\n    \n    switch (state) {\n      case 'connected':\n        statusElement.classList.add('connected');\n        statusDot.classList.add('connected');\n        statusText.textContent = 'Connected';\n        if (wsStatus.authenticated) {\n          statusText.textContent += ' ✓';\n        }\n        break;\n      case 'connecting':\n        statusElement.classList.add('connecting');\n        statusText.textContent = 'Connecting...';\n        break;\n      case 'reconnecting':\n        statusElement.classList.add('reconnecting');\n        statusText.textContent = `Reconnecting... (${wsStatus.reconnectAttempts || 0})`;\n        break;\n      case 'disconnected':\n        statusElement.classList.add('disconnected');\n        statusText.textContent = 'Disconnected';\n        break;\n      default:\n        statusText.textContent = 'Unknown';\n    }\n    \n    this.connectionState = state;\n    \n    // Update tooltip with comprehensive status information\n    if (this.wsManager) {\n      const status = this.wsManager.getStatus();\n      statusElement.title = `State: ${status.connectionState}\\n` +\n        `Client ID: ${status.clientId || 'N/A'}\\n` +\n        `Authenticated: ${status.authenticated}\\n` +\n        `Reconnect Attempts: ${status.reconnectAttempts}\\n` +\n        `Queued Messages: ${status.queuedMessages}\\n` +\n        `Pending Acks: ${status.pendingAcks}\\n` +\n        `Messages Sent: ${status.metrics.messagesSent}\\n` +\n        `Messages Received: ${status.metrics.messagesReceived}\\n` +\n        `Bytes Sent: ${this.formatBytes(status.metrics.bytesSent)}\\n` +\n        `Bytes Received: ${this.formatBytes(status.metrics.bytesReceived)}\\n` +\n        `Avg Latency: ${Math.round(status.metrics.avgLatency)}ms\\n` +\n        `Last Latency: ${Math.round(status.metrics.lastLatency)}ms\\n` +\n        `Server Responding: ${status.serverResponding}`;\n    }\n  }\n  \n  /**\n   * Enhanced notification system\n   */\n  showNotification(message, type = 'info', duration = 5000) {\n    // Remove old notifications if queue is full\n    while (this.notificationQueue.length >= this.maxNotifications) {\n      const oldNotification = this.notificationQueue.shift();\n      if (oldNotification.element && oldNotification.element.parentNode) {\n        oldNotification.element.remove();\n      }\n    }\n    \n    const notification = document.createElement('div');\n    notification.className = `notification notification-${type}`;\n    notification.innerHTML = `\n      <div class=\"notification-content\">\n        <span class=\"notification-icon\">${this.getNotificationIcon(type)}</span>\n        <span class=\"notification-message\">${this.escapeHtml(message)}</span>\n        <button class=\"notification-close\">×</button>\n      </div>\n    `;\n    \n    // Add to notification container\n    let container = document.getElementById('notificationContainer');\n    if (!container) {\n      container = document.createElement('div');\n      container.id = 'notificationContainer';\n      container.className = 'notification-container';\n      document.body.appendChild(container);\n    }\n    \n    container.appendChild(notification);\n    \n    // Add to queue\n    const notificationObj = { element: notification, type, message };\n    this.notificationQueue.push(notificationObj);\n    \n    // Auto-remove after duration\n    const timeoutId = setTimeout(() => {\n      this.removeNotification(notificationObj);\n    }, duration);\n    \n    // Handle manual close\n    const closeBtn = notification.querySelector('.notification-close');\n    closeBtn.addEventListener('click', () => {\n      clearTimeout(timeoutId);\n      this.removeNotification(notificationObj);\n    });\n    \n    // Animate in\n    requestAnimationFrame(() => {\n      notification.classList.add('notification-show');\n    });\n  }\n  \n  /**\n   * Remove notification from queue and DOM\n   */\n  removeNotification(notificationObj) {\n    const index = this.notificationQueue.indexOf(notificationObj);\n    if (index > -1) {\n      this.notificationQueue.splice(index, 1);\n    }\n    \n    if (notificationObj.element && notificationObj.element.parentNode) {\n      notificationObj.element.classList.add('notification-hide');\n      setTimeout(() => {\n        if (notificationObj.element.parentNode) {\n          notificationObj.element.remove();\n        }\n      }, 300);\n    }\n  }\n  \n  /**\n   * Get notification icon based on type\n   */\n  getNotificationIcon(type) {\n    switch (type) {\n      case 'success': return '✅';\n      case 'error': return '❌';\n      case 'warning': return '⚠️';\n      case 'info': return 'ℹ️';\n      default: return '📢';\n    }\n  }\n  \n  /**\n   * Format bytes for display\n   */\n  formatBytes(bytes) {\n    if (bytes === 0) return '0 B';\n    const k = 1024;\n    const sizes = ['B', 'KB', 'MB', 'GB'];\n    const i = Math.floor(Math.log(bytes) / Math.log(k));\n    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];\n  }\n  \n  /**\n   * Enhanced clear session logs with confirmation and feedback\n   */\n  async clearSessionLogs() {\n    if (!this.selectedSessionId) {\n      this.showNotification('Please select a session first', 'warning');\n      return;\n    }\n\n    if (!confirm('Clear all logs for this session? This action cannot be undone.')) {\n      return;\n    }\n\n    try {\n      await this.send({\n        type: 'clear-logs',\n        payload: { sessionId: this.selectedSessionId }\n      }, { requireAck: true, timeout: 5000 });\n      \n      this.showNotification('Logs cleared successfully', 'success');\n    } catch (error) {\n      console.error('Failed to clear logs:', error);\n      this.showNotification('Failed to clear logs', 'error');\n    }\n  }\n  \n  // Import the rest of the methods from the original app.js\n  // (keeping the core functionality intact while adding WebSocket enhancements)\n  \n  loadSessions(sessions) {\n    this.sessions.clear();\n    sessions.forEach(session => {\n      this.sessions.set(session.id, session);\n    });\n    this.renderSessions();\n    this.updateSessionCount();\n  }\n  \n  updateSession(sessionData) {\n    const session = this.sessions.get(sessionData.id);\n    if (session) {\n      Object.assign(session, sessionData);\n    } else {\n      this.sessions.set(sessionData.id, sessionData);\n    }\n    this.renderSessions();\n    this.updateSessionCount();\n  }\n  \n  appendLog(sessionId, log) {\n    if (!this.logBuffer.has(sessionId)) {\n      this.logBuffer.set(sessionId, []);\n    }\n    \n    const logs = this.logBuffer.get(sessionId);\n    logs.push(log);\n    \n    // Keep only last 2000 logs per session\n    if (logs.length > 2000) {\n      logs.shift();\n    }\n    \n    // Update UI if this session is selected\n    if (sessionId === this.selectedSessionId) {\n      this.renderLog(log);\n      if (this.autoScroll) {\n        this.scrollToBottom();\n      }\n    }\n  }\n  \n  renderSessions() {\n    const grid = document.getElementById('sessionsGrid');\n    const noSessions = document.getElementById('noSessions');\n    \n    if (this.sessions.size === 0) {\n      grid.innerHTML = '';\n      grid.appendChild(noSessions);\n      return;\n    }\n    \n    // Remove no-sessions placeholder\n    if (noSessions.parentNode) {\n      noSessions.remove();\n    }\n    \n    grid.innerHTML = '';\n    \n    this.sessions.forEach(session => {\n      const card = this.createSessionCard(session);\n      grid.appendChild(card);\n    });\n  }\n  \n  createSessionCard(session) {\n    const card = document.createElement('div');\n    card.className = 'session-card';\n    if (session.id === this.selectedSessionId) {\n      card.classList.add('selected');\n    }\n    \n    const uptime = this.formatUptime(session.uptime);\n    \n    card.innerHTML = `\n      <div class=\"session-header\">\n        <div>\n          <div class=\"session-name\">${this.escapeHtml(session.name)}</div>\n          <div class=\"session-command\">${this.escapeHtml(session.command)}</div>\n        </div>\n        <div class=\"session-status ${session.status}\">\n          <span class=\"status-dot\"></span>\n          ${session.status}\n        </div>\n      </div>\n      <div class=\"session-meta\">\n        <span>Framework: ${session.framework || 'unknown'}</span>\n        <span>Port: ${session.port}</span>\n        <span>PID: ${session.pid || 'N/A'}</span>\n        <span>Uptime: ${uptime}</span>\n      </div>\n      <div class=\"session-actions\">\n        <button class=\"btn btn-primary\" onclick=\"app.selectSession('${session.id}')\">\n          📋 View Logs\n        </button>\n        ${session.status === 'running' ? `\n          <a href=\"http://localhost:${session.port}\" target=\"_blank\" class=\"btn btn-success\">\n            🌐 Open App\n          </a>\n          <button class=\"btn btn-secondary\" onclick=\"app.restartSession('${session.id}')\">\n            🔄 Restart\n          </button>\n          <button class=\"btn btn-secondary\" onclick=\"app.configureSession('${session.id}')\">\n            ⚙️ Configure\n          </button>\n          <button class=\"btn btn-secondary\" onclick=\"app.healthCheckSession('${session.id}')\">\n            🏥 Health\n          </button>\n          <button class=\"btn btn-danger\" onclick=\"app.stopSession('${session.id}')\">\n            ⏹️ Stop\n          </button>\n          <button class=\"btn btn-danger\" onclick=\"app.forceStopSession('${session.id}')\">\n            🚫 Force Stop\n          </button>\n        ` : session.status === 'stopped' || session.status === 'error' ? `\n          <button class=\"btn btn-secondary\" onclick=\"app.restartSession('${session.id}')\">\n            🔄 Restart\n          </button>\n          <button class=\"btn btn-secondary\" onclick=\"app.configureSession('${session.id}')\">\n            ⚙️ Configure\n          </button>\n        ` : ''}\n      </div>\n    `;\n    \n    // Add click handler for card selection\n    card.addEventListener('click', (e) => {\n      if (!e.target.closest('.session-actions')) {\n        this.selectSession(session.id);\n      }\n    });\n    \n    return card;\n  }\n  \n  handleProcessExit(sessionId, code, signal) {\n    const session = this.sessions.get(sessionId);\n    if (session) {\n      session.status = 'stopped';\n      session.exitCode = code;\n      session.exitSignal = signal;\n      this.renderSessions();\n      \n      this.showNotification(`Process exited: ${session.name} (code: ${code})`, \n        code === 0 ? 'info' : 'warning');\n    }\n  }\n  \n  handleProcessError(sessionId, error) {\n    const session = this.sessions.get(sessionId);\n    if (session) {\n      session.status = 'error';\n      session.error = error;\n      this.renderSessions();\n      \n      this.showNotification(`Process error: ${session.name} - ${error}`, 'error');\n    }\n  }\n  \n  handleHookNotification(data) {\n    console.log('Hook notification:', data);\n    this.showNotification(`Hook: ${data.type || 'notification'}`, 'info');\n  }\n  \n  handleLogsResponse(sessionId, logs) {\n    this.logBuffer.set(sessionId, logs);\n    if (sessionId === this.selectedSessionId) {\n      this.renderAllLogs();\n    }\n  }\n  \n  handleLogsCleared(sessionId) {\n    this.logBuffer.delete(sessionId);\n    if (sessionId === this.selectedSessionId) {\n      this.clearLogDisplay();\n    }\n  }\n  \n  renderAllLogs() {\n    const content = document.getElementById('logContent');\n    const logs = this.logBuffer.get(this.selectedSessionId) || [];\n    \n    if (logs.length === 0) {\n      content.innerHTML = '<div class=\"log-placeholder\">No logs yet for this session</div>';\n      return;\n    }\n    \n    content.innerHTML = '';\n    logs.forEach(log => this.renderLog(log));\n    \n    if (this.autoScroll) {\n      this.scrollToBottom();\n    }\n  }\n  \n  renderLog(log) {\n    const content = document.getElementById('logContent');\n    \n    // Remove placeholder if present\n    const placeholder = content.querySelector('.log-placeholder');\n    if (placeholder) {\n      placeholder.remove();\n    }\n    \n    const entry = document.createElement('div');\n    entry.className = `log-entry ${log.type}`;\n    \n    const timestamp = new Date(log.timestamp).toLocaleTimeString();\n    entry.innerHTML = `\n      <span class=\"log-timestamp\">${timestamp}</span>\n      <span class=\"log-data\">${this.escapeHtml(log.data)}</span>\n    `;\n    \n    content.appendChild(entry);\n    \n    // Keep max 1000 DOM elements\n    const entries = content.querySelectorAll('.log-entry');\n    if (entries.length > 1000) {\n      entries[0].remove();\n    }\n  }\n  \n  clearLogDisplay() {\n    const content = document.getElementById('logContent');\n    content.innerHTML = '<div class=\"log-placeholder\">Logs cleared</div>';\n  }\n  \n  scrollToBottom() {\n    const content = document.getElementById('logContent');\n    content.scrollTop = content.scrollHeight;\n  }\n  \n  formatUptime(ms) {\n    if (!ms || ms < 0) return 'Unknown';\n    \n    const seconds = Math.floor(ms / 1000);\n    const minutes = Math.floor(seconds / 60);\n    const hours = Math.floor(minutes / 60);\n    const days = Math.floor(hours / 24);\n    \n    if (days > 0) {\n      return `${days}d ${hours % 24}h ${minutes % 60}m`;\n    } else if (hours > 0) {\n      return `${hours}h ${minutes % 60}m`;\n    } else if (minutes > 0) {\n      return `${minutes}m ${seconds % 60}s`;\n    } else {\n      return `${seconds}s`;\n    }\n  }\n  \n  escapeHtml(text) {\n    if (typeof text !== 'string') {\n      return String(text);\n    }\n    \n    const div = document.createElement('div');\n    div.textContent = text;\n    return div.innerHTML;\n  }\n  \n  updateSessionCount() {\n    const countElement = document.getElementById('sessionCount');\n    const count = this.sessions.size;\n    countElement.textContent = `${count} session${count !== 1 ? 's' : ''}`;\n  }\n  \n  updateLogSessionInfo(session) {\n    const infoElement = document.getElementById('logSessionInfo');\n    if (infoElement && session) {\n      infoElement.innerHTML = `\n        <span>Session: ${this.escapeHtml(session.name)}</span>\n        <span>Port: ${session.port}</span>\n        <span>Framework: ${session.framework || 'Unknown'}</span>\n        <span>Status: ${session.status}</span>\n      `;\n    }\n  }\n  \n  showLoadingState() {\n    const container = document.querySelector('.container');\n    if (container) {\n      container.classList.add('loading');\n    }\n  }\n  \n  hideLoadingState() {\n    const container = document.querySelector('.container');\n    if (container) {\n      container.classList.remove('loading');\n    }\n  }\n  \n  showErrorState(message) {\n    const container = document.querySelector('.container');\n    if (container) {\n      const errorDiv = document.createElement('div');\n      errorDiv.className = 'error-state';\n      errorDiv.innerHTML = `\n        <div class=\"error-content\">\n          <h3>⚠️ ${message}</h3>\n          <button onclick=\"window.location.reload()\" class=\"btn btn-primary\">\n            🔄 Reload Page\n          </button>\n        </div>\n      `;\n      container.appendChild(errorDiv);\n    }\n  }\n  \n  async loadInitialState() {\n    try {\n      const response = await fetch('/api/sessions');\n      if (response.ok) {\n        const data = await response.json();\n        this.loadSessions(data.sessions);\n      }\n    } catch (error) {\n      console.error('Error loading initial state:', error);\n      throw error;\n    }\n  }\n  \n  async stopSession(sessionId) {\n    if (!confirm('Are you sure you want to stop this server?')) {\n      return;\n    }\n    \n    try {\n      const response = await fetch(`/api/sessions/${sessionId}/stop`, {\n        method: 'POST'\n      });\n      \n      if (!response.ok) {\n        throw new Error(`HTTP ${response.status}: ${response.statusText}`);\n      }\n      \n      const result = await response.json();\n      console.log('Session stopped:', result);\n      this.showNotification('Session stopped successfully', 'success');\n    } catch (error) {\n      console.error('Error stopping session:', error);\n      this.showNotification(`Failed to stop session: ${error.message}`, 'error');\n    }\n  }\n  \n  async restartSession(sessionId) {\n    if (!confirm('Are you sure you want to restart this server?')) {\n      return;\n    }\n    \n    try {\n      const response = await fetch(`/api/sessions/${sessionId}/restart`, {\n        method: 'POST'\n      });\n      \n      if (!response.ok) {\n        throw new Error(`HTTP ${response.status}: ${response.statusText}`);\n      }\n      \n      const result = await response.json();\n      console.log('Session restarted:', result);\n      this.showNotification('Session restart initiated', 'success');\n    } catch (error) {\n      console.error('Error restarting session:', error);\n      this.showNotification(`Failed to restart session: ${error.message}`, 'error');\n    }\n  }\n  \n  bindEvents() {\n    // Header buttons\n    this.bindElement('refreshBtn', 'click', () => this.refreshSessions());\n    this.bindElement('settingsBtn', 'click', () => this.toggleSettings());\n    \n    // Log controls\n    this.bindElement('clearLogs', 'click', () => this.clearSessionLogs());\n    this.bindElement('exportLogs', 'click', () => this.exportSessionLogs());\n    \n    // Auto-scroll toggle\n    this.bindElement('autoScroll', 'click', (e) => {\n      this.autoScroll = !this.autoScroll;\n      e.target.classList.toggle('active', this.autoScroll);\n      \n      if (this.autoScroll) {\n        this.scrollToBottom();\n      }\n      \n      this.trackEvent('auto_scroll_toggled', { enabled: this.autoScroll });\n    });\n  }\n  \n  bindElement(elementId, event, handler) {\n    const element = document.getElementById(elementId);\n    if (element) {\n      element.addEventListener(event, handler);\n    } else {\n      console.warn(`Element not found: ${elementId}`);\n    }\n  }\n  \n  async refreshSessions() {\n    try {\n      const response = await fetch('/api/sessions');\n      if (response.ok) {\n        const data = await response.json();\n        this.loadSessions(data.sessions);\n        this.showNotification('Sessions refreshed', 'success');\n      }\n    } catch (error) {\n      console.error('Error refreshing sessions:', error);\n      this.showNotification('Failed to refresh sessions', 'error');\n    }\n  }\n  \n  toggleSettings() {\n    console.log('Settings panel - enhanced version to be implemented');\n    this.showNotification('Settings panel coming soon', 'info');\n  }\n  \n  async exportSessionLogs() {\n    if (!this.selectedSessionId) {\n      this.showNotification('Please select a session first', 'warning');\n      return;\n    }\n\n    try {\n      const response = await fetch(`/api/sessions/${this.selectedSessionId}/export?format=txt`);\n      if (response.ok) {\n        const blob = await response.blob();\n        const url = window.URL.createObjectURL(blob);\n        const a = document.createElement('a');\n        a.href = url;\n        a.download = `logs-${this.selectedSessionId}-${new Date().toISOString().split('T')[0]}.txt`;\n        document.body.appendChild(a);\n        a.click();\n        document.body.removeChild(a);\n        window.URL.revokeObjectURL(url);\n        \n        this.showNotification('Logs exported successfully', 'success');\n      }\n    } catch (error) {\n      console.error('Error exporting logs:', error);\n      this.showNotification('Failed to export logs', 'error');\n    }\n  }\n  \n  startPeriodicUpdates() {\n    // Refresh session data every 30 seconds (only when page is visible)\n    this.periodicUpdateInterval = setInterval(async () => {\n      if (document.hidden) {\n        return; // Skip updates when tab is hidden\n      }\n      \n      try {\n        await this.refreshSessions();\n      } catch (error) {\n        console.error('Error in periodic update:', error);\n      }\n    }, 30000);\n    \n    // Performance metrics update every 60 seconds\n    this.metricsUpdateInterval = setInterval(() => {\n      this.updatePerformanceMetrics();\n    }, 60000);\n  }\n  \n  updatePerformanceMetrics() {\n    if (this.wsManager) {\n      const status = this.wsManager.getStatus();\n      this.performanceMetrics = {\n        ...this.performanceMetrics,\n        ...status.metrics,\n        connectionUptime: status.lastConnectionTime ? Date.now() - status.lastConnectionTime : 0\n      };\n    }\n  }\n  \n  trackEvent(eventName, data = {}) {\n    const event = {\n      name: eventName,\n      timestamp: Date.now(),\n      userAgent: navigator.userAgent,\n      url: window.location.href,\n      wsStatus: this.wsManager ? this.wsManager.getStatus() : null,\n      ...data\n    };\n\n    // Enhanced analytics with WebSocket metrics\n    console.debug('Event tracked:', event);\n    \n    // Future: Send to analytics service via WebSocket\n    // this.send({ type: 'analytics-event', payload: event });\n  }\n}\n\n// Initialize app when DOM is ready\ndocument.addEventListener('DOMContentLoaded', () => {\n  try {\n    window.app = new DashboardApp();\n  } catch (error) {\n    console.error('Failed to initialize Enhanced DashboardApp:', error);\n    \n    // Show enhanced error message\n    document.body.innerHTML = `\n      <div style=\"\n        position: fixed;\n        top: 50%;\n        left: 50%;\n        transform: translate(-50%, -50%);\n        background: #1e293b;\n        color: #f1f5f9;\n        padding: 40px;\n        border-radius: 12px;\n        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);\n        text-align: center;\n        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n        max-width: 500px;\n      \">\n        <h2 style=\"color: #ef4444; margin-bottom: 16px;\">⚠️ Enhanced Dashboard Error</h2>\n        <p style=\"margin-bottom: 20px; color: #94a3b8;\">Failed to initialize the MCP Debug Host Dashboard with enhanced WebSocket features.</p>\n        <details style=\"margin-bottom: 20px; text-align: left; background: #0f172a; padding: 12px; border-radius: 6px;\">\n          <summary style=\"cursor: pointer; color: #3b82f6;\">Error Details</summary>\n          <pre style=\"margin-top: 8px; font-size: 12px; color: #ef4444;\">${error.message}\\n${error.stack}</pre>\n        </details>\n        <button \n          onclick=\"window.location.reload()\" \n          style=\"\n            background: #2563eb;\n            color: white;\n            border: none;\n            padding: 12px 24px;\n            border-radius: 8px;\n            cursor: pointer;\n            font-weight: 500;\n            margin-right: 12px;\n          \"\n        >🔄 Reload Page</button>\n        <button \n          onclick=\"window.history.back()\" \n          style=\"\n            background: #64748b;\n            color: white;\n            border: none;\n            padding: 12px 24px;\n            border-radius: 8px;\n            cursor: pointer;\n            font-weight: 500;\n          \"\n        >⬅️ Go Back</button>\n      </div>\n    `;\n  }\n});
+class DashboardApp {
+  constructor() {
+    this.ws = null;
+    this.sessions = new Map();
+    this.selectedSessionId = null;
+    this.logBuffer = new Map();
+    this.filteredLogs = new Map();
+    this.autoScroll = true;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 10;
+    this.currentFilter = '';
+    this.logTypes = new Set(['stdout', 'stderr', 'info', 'warn', 'error', 'debug']);
+    this.connectionState = 'disconnected'; // disconnected, connecting, connected
+    this.performanceMetrics = {
+      messagesReceived: 0,
+      lastMessageTime: null,
+      reconnections: 0
+    };
+    
+    // New session management features
+    this.selectedSessions = new Set();
+    this.favorites = new Set(JSON.parse(localStorage.getItem('sessionFavorites') || '[]'));
+    this.filters = {
+      status: 'all',
+      framework: 'all',
+      search: '',
+      favoritesOnly: false
+    };
+    this.sessionMetrics = new Map();
+    
+    // Enhanced log viewer properties
+    this.regexMode = false;
+    this.pauseStream = false;
+    this.searchResults = [];
+    this.currentSearchIndex = -1;
+    this.bookmarks = new Map();
+    this.logLevelFilter = 'all';
+    this.virtualScrollEnabled = true;
+    this.logAnalytics = {
+      errorCount: 0,
+      warningCount: 0,
+      logRate: 0,
+      patterns: new Map(),
+      lastRateCalculation: Date.now(),
+      recentLogs: []
+    };
+    this.chartContext = null;
+    this.sidebarVisible = false;
+    this.searchPanelVisible = false;
+    
+    this.initializeApp();
+  }
+  
+  async initializeApp() {
+    this.showLoadingState();
+    
+    try {
+      // Initialize WebSocket connection
+      await this.initializeWebSocket();
+      
+      // Bind all event listeners
+      this.bindEvents();
+      
+      // Start periodic updates
+      this.startPeriodicUpdates();
+      
+      // Load initial dashboard state
+      await this.loadInitialState();
+      
+      this.hideLoadingState();
+      
+      // Analytics initialization
+      this.trackEvent('dashboard_loaded', { timestamp: Date.now() });
+      
+    } catch (error) {
+      console.error('Failed to initialize dashboard:', error);
+      this.showErrorState('Failed to initialize dashboard');
+    }
+  }
+  
+  async initializeWebSocket() {
+    return new Promise((resolve, reject) => {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      
+      this.connectionState = 'connecting';
+      this.updateConnectionStatus('connecting');
+      
+      this.ws = new WebSocket(wsUrl);
+      
+      // Set connection timeout
+      const connectionTimeout = setTimeout(() => {
+        if (this.ws.readyState !== WebSocket.OPEN) {
+          this.ws.close();
+          reject(new Error('WebSocket connection timeout'));
+        }
+      }, 10000);
+      
+      this.ws.onopen = () => {
+        clearTimeout(connectionTimeout);
+        this.connectionState = 'connected';
+        this.updateConnectionStatus('connected');
+        this.reconnectAttempts = 0;
+        this.performanceMetrics.lastMessageTime = Date.now();
+        
+        console.log('Connected to MCP Debug Host');
+        this.trackEvent('websocket_connected', { attempt: this.reconnectAttempts });
+        
+        // Send initial handshake
+        this.send({
+          type: 'handshake',
+          data: {
+            userAgent: navigator.userAgent,
+            timestamp: Date.now(),
+            version: '1.0.0'
+          }
+        });
+        
+        resolve();
+      };
+      
+      this.ws.onclose = (event) => {
+        clearTimeout(connectionTimeout);
+        this.connectionState = 'disconnected';
+        this.updateConnectionStatus('disconnected');
+        
+        const reason = event.reason || 'Unknown reason';
+        console.log(`Disconnected from MCP Debug Host: ${reason} (${event.code})`);
+        
+        // Only attempt reconnection if it wasn't a clean close
+        if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.performanceMetrics.reconnections++;
+          const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+          this.reconnectAttempts++;
+          
+          console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})`);
+          this.trackEvent('websocket_reconnect_attempt', { 
+            attempt: this.reconnectAttempts, 
+            delay 
+          });
+          
+          setTimeout(() => {
+            this.initializeWebSocket().catch(console.error);
+          }, delay);
+        } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+          this.showErrorState('Unable to connect to server. Please refresh the page.');
+        }
+      };
+      
+      this.ws.onerror = (error) => {
+        clearTimeout(connectionTimeout);
+        console.error('WebSocket error:', error);
+        this.trackEvent('websocket_error', { error: error.message });
+        reject(error);
+      };
+      
+      this.ws.onmessage = (event) => {
+        try {
+          this.performanceMetrics.messagesReceived++;
+          this.performanceMetrics.lastMessageTime = Date.now();
+          
+          const data = JSON.parse(event.data);
+          this.handleMessage(data);
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+          this.trackEvent('websocket_parse_error', { error: error.message });
+        }
+      };
+    });
+  }
+  
+  handleMessage(data) {
+    switch (data.type) {
+      case 'initial-state':
+        this.loadSessions(data.sessions);
+        break;
+        
+      case 'log':
+        this.appendLog(data.sessionId, data.log);
+        break;
+        
+      case 'server-ready':
+        this.updateSession(data.session);
+        break;
+        
+      case 'process-exit':
+        this.handleProcessExit(data.sessionId, data.code, data.signal);
+        break;
+        
+      case 'process-error':
+        this.handleProcessError(data.sessionId, data.error);
+        break;
+        
+      case 'hook-notification':
+        this.handleHookNotification(data.data);
+        break;
+        
+      case 'logs-response':
+        this.handleLogsResponse(data.sessionId, data.logs);
+        break;
+        
+      case 'logs-cleared':
+        this.handleLogsCleared(data.sessionId);
+        break;
+    }
+  }
+  
+  loadSessions(sessions) {
+    this.sessions.clear();
+    sessions.forEach(session => {
+      this.sessions.set(session.id, session);
+    });
+    this.renderSessions();
+    this.updateSessionCount();
+  }
+  
+  updateSession(sessionData) {
+    const session = this.sessions.get(sessionData.id);
+    if (session) {
+      Object.assign(session, sessionData);
+    } else {
+      this.sessions.set(sessionData.id, sessionData);
+    }
+    this.renderSessions();
+    this.updateSessionCount();
+  }
+  
+  appendLog(sessionId, log) {
+    if (this.pauseStream && sessionId === this.selectedSessionId) {
+      return; // Skip rendering when paused
+    }
+    
+    if (!this.logBuffer.has(sessionId)) {
+      this.logBuffer.set(sessionId, []);
+    }
+    
+    const logs = this.logBuffer.get(sessionId);
+    logs.push(log);
+    
+    // Keep only last 2000 logs per session
+    if (logs.length > 2000) {
+      logs.shift();
+    }
+    
+    // Update analytics
+    this.updateLogAnalytics(log);
+    
+    // Update UI if this session is selected
+    if (sessionId === this.selectedSessionId) {
+      this.renderLog(log);
+      if (this.autoScroll) {
+        this.scrollToBottom();
+      }
+      this.updateLogStats();
+    }
+  }
+  
+  handleProcessExit(sessionId, code, signal) {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.status = 'stopped';
+      session.exitCode = code;
+      session.exitSignal = signal;
+      this.renderSessions();
+    }
+  }
+  
+  handleProcessError(sessionId, error) {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.status = 'error';
+      session.error = error;
+      this.renderSessions();
+    }
+  }
+  
+  handleHookNotification(data) {
+    console.log('Hook notification:', data);
+    // Could show a toast notification here
+  }
+  
+  handleLogsResponse(sessionId, logs) {
+    this.logBuffer.set(sessionId, logs);
+    if (sessionId === this.selectedSessionId) {
+      this.renderAllLogs();
+    }
+  }
+  
+  handleLogsCleared(sessionId) {
+    this.logBuffer.delete(sessionId);
+    if (sessionId === this.selectedSessionId) {
+      this.clearLogDisplay();
+    }
+  }
+  
+  renderSessions() {
+    const grid = document.getElementById('sessionsGrid');
+    const noSessions = document.getElementById('noSessions');
+    
+    if (this.sessions.size === 0) {
+      grid.innerHTML = '';
+      grid.appendChild(noSessions);
+      this.updateSessionCount(0);
+      return;
+    }
+    
+    // Remove no-sessions placeholder
+    if (noSessions.parentNode) {
+      noSessions.remove();
+    }
+    
+    grid.innerHTML = '';
+    
+    this.sessions.forEach(session => {
+      const card = this.createSessionCard(session);
+      card.setAttribute('data-session-id', session.id);
+      grid.appendChild(card);
+    });
+    
+    // Apply current filters
+    this.applyFilters();
+  }
+  
+  createSessionCard(session) {
+    const card = document.createElement('div');
+    card.className = `session-card status-${session.status}`;
+    if (session.id === this.selectedSessionId) {
+      card.classList.add('selected');
+    }
+    if (this.selectedSessions.has(session.id)) {
+      card.classList.add('selected-for-batch');
+    }
+    
+    const uptime = this.formatUptime(session.uptime);
+    const health = this.calculateSessionHealth(session);
+    const metrics = this.getSessionMetrics(session);
+    const frameworkClass = this.getFrameworkClass(session.framework);
+    const isFavorite = this.favorites.has(session.id);
+    
+    card.innerHTML = `
+      <input type="checkbox" class="session-checkbox" ${this.selectedSessions.has(session.id) ? 'checked' : ''} 
+             onchange="app.toggleSessionSelection('${session.id}', this.checked)">
+      
+      <div class="session-quick-actions">
+        <button class="quick-action-btn" onclick="app.duplicateSession('${session.id}')" title="Duplicate">
+          📄
+        </button>
+        <button class="quick-action-btn" onclick="app.showSessionConfig('${session.id}')" title="Settings">
+          ⚙️
+        </button>
+      </div>
+      
+      <button class="session-favorite ${isFavorite ? 'active' : ''}" 
+              onclick="app.toggleFavorite('${session.id}')" title="${isFavorite ? 'Remove from' : 'Add to'} favorites">
+        ${isFavorite ? '⭐' : '☆'}
+      </button>
+      
+      <div class="session-header">
+        <div>
+          <div class="session-name">
+            ${this.escapeHtml(session.name)}
+            <span class="session-framework-badge ${frameworkClass}">
+              ${this.getFrameworkIcon(session.framework)} ${session.framework || 'unknown'}
+            </span>
+          </div>
+          <div class="session-command">${this.escapeHtml(session.command)}</div>
+        </div>
+        <div class="session-status ${session.status}">
+          <span class="status-dot"></span>
+          ${session.status}
+        </div>
+      </div>
+      
+      <div class="session-health">
+        <div class="health-indicator ${health.level}">
+          <span>${health.icon}</span>
+          <span>${health.label}</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${metrics.cpu}%</span>
+          <span class="metric-label">CPU</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-value">${metrics.memory}</span>
+          <span class="metric-label">RAM</span>
+        </div>
+      </div>
+      
+      <div class="session-metrics">
+        <div class="metric-item">
+          <div class="metric-value">${session.port}</div>
+          <div class="metric-label">Port</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">${session.pid || 'N/A'}</div>
+          <div class="metric-label">PID</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">${uptime}</div>
+          <div class="metric-label">Uptime</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-value">${metrics.requests}</div>
+          <div class="metric-label">Requests</div>
+        </div>
+      </div>
+      
+      <div class="session-actions">
+        <button class="btn btn-primary" onclick="app.selectSession('${session.id}')">
+          📋 View Logs
+        </button>
+        ${session.status === 'running' ? `
+          <a href="http://localhost:${session.port}" target="_blank" class="btn btn-success">
+            🌐 Open App
+          </a>
+          <button class="btn btn-secondary" onclick="app.restartSession('${session.id}')">
+            🔄 Restart
+          </button>
+          <button class="btn btn-danger" onclick="app.stopSession('${session.id}')">
+            ⏹️ Stop
+          </button>
+        ` : session.status === 'stopped' || session.status === 'error' ? `
+          <button class="btn btn-success" onclick="app.startSession('${session.id}')">
+            ▶️ Start
+          </button>
+          <button class="btn btn-secondary" onclick="app.restartSession('${session.id}')">
+            🔄 Restart
+          </button>
+        ` : session.status === 'starting' ? `
+          <button class="btn btn-danger" onclick="app.stopSession('${session.id}')">
+            ⏹️ Cancel
+          </button>
+        ` : ''}
+      </div>
+    `;
+    
+    // Add click handler for card selection
+    card.addEventListener('click', (e) => {
+      if (!e.target.closest('.session-actions') && 
+          !e.target.closest('.session-checkbox') && 
+          !e.target.closest('.session-favorite') &&
+          !e.target.closest('.session-quick-actions')) {
+        this.selectSession(session.id);
+      }
+    });
+    
+    return card;
+  }
+  
+  getStatusIcon(status) {
+    switch (status) {
+      case 'running': return '🟢';
+      case 'starting': return '🟡';
+      case 'stopped': return '🔴';
+      case 'error': return '❌';
+      default: return '⚪';
+    }
+  }
+  
+  selectSession(sessionId) {
+    if (this.selectedSessionId === sessionId) {
+      return; // Already selected
+    }
+    
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      console.warn('Attempted to select non-existent session:', sessionId);
+      return;
+    }
+    
+    this.selectedSessionId = sessionId;
+    this.renderSessions();
+    this.updateLogSessionInfo(session);
+    this.renderAllLogs();
+    
+    // Request fresh logs from server
+    this.requestSessionLogs(sessionId);
+    
+    // Track session selection
+    this.trackEvent('session_selected', { 
+      sessionId, 
+      sessionName: session.name,
+      framework: session.framework 
+    });
+  }
+  
+  renderAllLogs() {
+    const content = document.getElementById('logContent');
+    const logs = this.logBuffer.get(this.selectedSessionId) || [];
+    
+    if (logs.length === 0) {
+      content.innerHTML = '<div class="log-placeholder">No logs yet for this session</div>';
+      return;
+    }
+    
+    content.innerHTML = '';
+    logs.forEach(log => this.renderLog(log));
+    
+    if (this.autoScroll) {
+      this.scrollToBottom();
+    }
+  }
+  
+  renderLog(log) {
+    const content = document.getElementById('logContent');
+    
+    // Remove placeholder if present
+    const placeholder = content.querySelector('.log-placeholder');
+    if (placeholder) {
+      placeholder.remove();
+    }
+    
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${log.type}`;
+    
+    const timestamp = new Date(log.timestamp).toLocaleTimeString();
+    entry.innerHTML = `
+      <span class="log-timestamp">${timestamp}</span>
+      <span class="log-data">${this.escapeHtml(log.data)}</span>
+    `;
+    
+    content.appendChild(entry);
+    
+    // Keep max 1000 DOM elements
+    const entries = content.querySelectorAll('.log-entry');
+    if (entries.length > 1000) {
+      entries[0].remove();
+    }
+  }
+  
+  clearLogDisplay() {
+    const content = document.getElementById('logContent');
+    content.innerHTML = '<div class="log-placeholder">Logs cleared</div>';
+  }
+  
+  scrollToBottom() {
+    const content = document.getElementById('logContent');
+    content.scrollTop = content.scrollHeight;
+  }
+  
+  async stopSession(sessionId, showConfirm = true) {
+    if (showConfirm && !confirm('Are you sure you want to stop this server?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/stop`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Session stopped:', result);
+    } catch (error) {
+      console.error('Error stopping session:', error);
+      if (showConfirm) {
+        alert(`Failed to stop session: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+  
+  async restartSession(sessionId, showConfirm = true) {
+    if (showConfirm && !confirm('Are you sure you want to restart this server?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/restart`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Session restarted:', result);
+    } catch (error) {
+      console.error('Error restarting session:', error);
+      if (showConfirm) {
+        alert(`Failed to restart session: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+  
+  updateConnectionStatus(state) {
+    const statusElement = document.querySelector('.connection-status');
+    const statusDot = document.querySelector('.status-dot');
+    const statusText = document.querySelector('.status-text');
+    
+    if (!statusElement || !statusDot || !statusText) {
+      console.warn('Connection status elements not found');
+      return;
+    }
+    
+    // Remove all status classes
+    statusElement.classList.remove('connected', 'connecting', 'disconnected');
+    statusDot.classList.remove('connected');
+    
+    switch (state) {
+      case 'connected':
+        statusElement.classList.add('connected');
+        statusDot.classList.add('connected');
+        statusText.textContent = 'Connected';
+        break;
+      case 'connecting':
+        statusElement.classList.add('connecting');
+        statusText.textContent = 'Connecting...';
+        break;
+      case 'disconnected':
+        statusElement.classList.add('disconnected');
+        statusText.textContent = `Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`;
+        break;
+      default:
+        statusText.textContent = 'Unknown';
+    }
+    
+    this.connectionState = state;
+  }
+  
+  updateSessionCount() {
+    const countElement = document.getElementById('sessionCount');
+    const count = this.sessions.size;
+    countElement.textContent = `${count} session${count !== 1 ? 's' : ''}`;
+  }
+  
+  bindEvents() {
+    // Header buttons
+    this.bindElement('refreshBtn', 'click', () => this.refreshSessions());
+    this.bindElement('settingsBtn', 'click', () => this.toggleSettings());
+    
+    // Session filters
+    this.bindElement('statusFilter', 'change', (e) => {
+      this.filters.status = e.target.value;
+      this.applyFilters();
+    });
+    
+    this.bindElement('frameworkFilter', 'change', (e) => {
+      this.filters.framework = e.target.value;
+      this.applyFilters();
+    });
+    
+    let searchTimeout;
+    this.bindElement('searchFilter', 'input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        this.filters.search = e.target.value;
+        this.applyFilters();
+      }, 300);
+    });
+    
+    this.bindElement('favoritesFilter', 'click', (e) => {
+      this.filters.favoritesOnly = !this.filters.favoritesOnly;
+      e.target.classList.toggle('active', this.filters.favoritesOnly);
+      this.applyFilters();
+    });
+    
+    this.bindElement('clearFilters', 'click', () => {
+      this.clearAllFilters();
+    });
+    
+    // Batch operations
+    this.bindElement('batchStart', 'click', () => this.batchStartSessions());
+    this.bindElement('batchRestart', 'click', () => this.batchRestartSessions());
+    this.bindElement('batchStop', 'click', () => this.batchStopSessions());
+    this.bindElement('batchClearSelection', 'click', () => this.clearBatchSelection());
+    
+    // Enhanced log controls
+    this.bindElement('clearLogs', 'click', () => this.clearSessionLogs());
+    this.bindElement('clearFilter', 'click', () => this.clearLogFilter());
+    
+    // Regex toggle
+    this.bindElement('regexToggle', 'click', (e) => {
+      this.regexMode = !this.regexMode;
+      e.target.classList.toggle('active', this.regexMode);
+      this.filterLogs(document.getElementById('logFilter').value);
+    });
+    
+    // Stream pause/resume
+    this.bindElement('pauseStream', 'click', (e) => {
+      this.pauseStream = !this.pauseStream;
+      e.target.textContent = this.pauseStream ? '\u25b6\ufe0f Resume' : '\u23f8\ufe0f Pause';
+      e.target.classList.toggle('active', this.pauseStream);
+      this.updateStreamingIndicator();
+    });
+    
+    // Export menu
+    this.bindElement('exportLogs', 'click', (e) => {
+      e.stopPropagation();
+      this.toggleExportMenu();
+    });
+    
+    // Export menu items
+    document.querySelectorAll('#exportMenu a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const format = e.target.dataset.format;
+        this.exportSessionLogs(format);
+        this.hideExportMenu();
+      });
+    });
+    
+    // Bookmarking
+    this.bindElement('bookmarkLog', 'click', () => this.addBookmark());
+    
+    // Navigation buttons
+    this.bindElement('jumpToTop', 'click', () => this.jumpToTop());
+    this.bindElement('jumpToBottom', 'click', () => this.jumpToBottom());
+    
+    // Level filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        this.logLevelFilter = e.target.dataset.level;
+        this.applyLogFilters();
+      });
+    });
+    
+    // Sidebar toggle
+    this.bindElement('toggleSidebar', 'click', () => this.toggleSidebar());
+    
+    // Search navigation
+    this.bindElement('prevResult', 'click', () => this.navigateSearchResults(-1));
+    this.bindElement('nextResult', 'click', () => this.navigateSearchResults(1));
+    this.bindElement('closeSearchResults', 'click', () => this.hideSearchResults());
+    
+    // Auto-scroll toggle
+    this.bindElement('autoScroll', 'click', (e) => {
+      this.autoScroll = !this.autoScroll;
+      e.target.classList.toggle('active', this.autoScroll);
+      
+      if (this.autoScroll) {
+        this.scrollToBottom();
+      }
+      
+      this.trackEvent('auto_scroll_toggled', { enabled: this.autoScroll });
+    });
+    
+    // Log filter with debouncing
+    let filterTimeout;
+    this.bindElement('logFilter', 'input', (e) => {
+      clearTimeout(filterTimeout);
+      filterTimeout = setTimeout(() => {
+        this.filterLogs(e.target.value);
+      }, 300);
+    });
+    
+    // Log filter with enhanced key support
+    this.bindElement('logFilter', 'keydown', (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(filterTimeout);
+        this.filterLogs(e.target.value);
+        this.performSearch(e.target.value);
+      } else if (e.key === 'Escape') {
+        this.clearLogFilter();
+        this.hideSearchResults();
+      } else if (e.key === 'ArrowDown' && this.searchResults.length > 0) {
+        e.preventDefault();
+        this.navigateSearchResults(1);
+      } else if (e.key === 'ArrowUp' && this.searchResults.length > 0) {
+        e.preventDefault();
+        this.navigateSearchResults(-1);
+      }
+    });
+    
+    // Handle scroll events for enhanced features
+    this.bindElement('logContent', 'scroll', (e) => {
+      const content = e.target;
+      const isAtBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 10;
+      
+      if (!isAtBottom && this.autoScroll) {
+        this.autoScroll = false;
+        const autoScrollBtn = document.getElementById('autoScroll');
+        if (autoScrollBtn) {
+          autoScrollBtn.classList.remove('active');
+        }
+      }
+      
+      this.updateScrollPosition();
+    });
+    
+    // Click outside to close menus
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.log-export-menu')) {
+        this.hideExportMenu();
+      }
+    });
+    
+    // Enhanced keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      this.handleEnhancedKeyboardShortcuts(e);
+    });
+    
+    // Window visibility change (pause updates when tab is hidden)
+    document.addEventListener('visibilitychange', () => {
+      this.handleVisibilityChange();
+    });
+    
+    // Window resize for responsive adjustments
+    window.addEventListener('resize', () => {
+      this.handleWindowResize();
+    });
+  }
+  
+  filterLogs(filter) {
+    this.currentFilter = filter;
+    const content = document.getElementById('logContent');
+    const entries = content.querySelectorAll('.log-entry');
+    const filterLower = filter.toLowerCase().trim();
+    
+    let visibleCount = 0;
+    let totalCount = entries.length;
+    
+    entries.forEach(entry => {
+      entry.classList.remove('filtered', 'highlight');
+      
+      if (!filterLower) {
+        entry.style.display = 'flex';
+        visibleCount++;
+        return;
+      }
+      
+      const text = entry.textContent.toLowerCase();
+      const matches = text.includes(filterLower);
+      
+      if (matches) {
+        entry.style.display = 'flex';
+        entry.classList.add('highlight');
+        visibleCount++;
+      } else {
+        entry.style.display = 'none';
+        entry.classList.add('filtered');
+      }
+    });
+    
+    // Update filter count display
+    this.updateLogFilterCount(visibleCount, totalCount, filterLower);
+    
+    // Track filtering usage
+    if (filterLower) {
+      this.trackEvent('logs_filtered', { 
+        filter: filterLower, 
+        visibleCount, 
+        totalCount 
+      });
+    }
+  }
+  
+  startPeriodicUpdates() {
+    // Refresh session data every 30 seconds (only when page is visible)
+    this.periodicUpdateInterval = setInterval(async () => {
+      if (document.hidden) {
+        return; // Skip updates when tab is hidden
+      }
+      
+      try {
+        await this.refreshSessions();
+      } catch (error) {
+        console.error('Error in periodic update:', error);
+      }
+    }, 30000);
+    
+    // Performance metrics update every 60 seconds
+    this.metricsUpdateInterval = setInterval(() => {
+      this.updatePerformanceMetrics();
+    }, 60000);
+  }
+  
+  formatUptime(ms) {
+    if (!ms || ms < 0) return 'Unknown';
+    
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (days > 0) {
+      return `${days}d ${hours % 24}h ${minutes % 60}m`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes % 60}m`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds % 60}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  }
+  
+  escapeHtml(text) {
+    if (typeof text !== 'string') {
+      return String(text);
+    }
+    
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Additional utility methods for enhanced functionality
+  
+  /**
+   * Safely bind event listener to element
+   */
+  bindElement(elementId, event, handler) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.addEventListener(event, handler);
+    } else {
+      console.warn(`Element not found: ${elementId}`);
+    }
+  }
+
+  /**
+   * Send WebSocket message safely
+   */
+  send(data) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
+      return true;
+    }
+    console.warn('WebSocket not connected, message not sent:', data);
+    return false;
+  }
+
+  /**
+   * Request logs for a specific session
+   */
+  requestSessionLogs(sessionId, options = {}) {
+    this.send({
+      type: 'get-logs',
+      data: {
+        sessionId,
+        options: { tail: 500, ...options }
+      }
+    });
+  }
+
+  /**
+   * Load initial dashboard state
+   */
+  async loadInitialState() {
+    try {
+      const response = await fetch('/api/sessions');
+      if (response.ok) {
+        const data = await response.json();
+        this.loadSessions(data.sessions);
+      }
+    } catch (error) {
+      console.error('Error loading initial state:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Show loading state
+   */
+  showLoadingState() {
+    const container = document.querySelector('.container');
+    if (container) {
+      container.classList.add('loading');
+    }
+  }
+
+  /**
+   * Hide loading state
+   */
+  hideLoadingState() {
+    const container = document.querySelector('.container');
+    if (container) {
+      container.classList.remove('loading');
+    }
+  }
+
+  /**
+   * Show error state
+   */
+  showErrorState(message) {
+    const container = document.querySelector('.container');
+    if (container) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-state';
+      errorDiv.innerHTML = `
+        <div class="error-content">
+          <h3>⚠️ ${message}</h3>
+          <button onclick="window.location.reload()" class="btn btn-primary">
+            🔄 Reload Page
+          </button>
+        </div>
+      `;
+      container.appendChild(errorDiv);
+    }
+  }
+
+  /**
+   * Update log session info display
+   */
+  updateLogSessionInfo(session) {
+    const infoElement = document.getElementById('logSessionInfo');
+    if (infoElement && session) {
+      infoElement.innerHTML = `
+        <span>Session: ${this.escapeHtml(session.name)}</span>
+        <span>Port: ${session.port}</span>
+        <span>Framework: ${session.framework || 'Unknown'}</span>
+        <span>Status: ${session.status}</span>
+      `;
+    }
+  }
+
+  /**
+   * Update log filter count display
+   */
+  updateLogFilterCount(visible, total, filter) {
+    const countElement = document.getElementById('logFilterCount');
+    if (countElement) {
+      if (filter) {
+        countElement.textContent = `Showing ${visible}/${total} logs`;
+        countElement.style.display = 'inline';
+      } else {
+        countElement.style.display = 'none';
+      }
+    }
+  }
+
+  /**
+   * Clear log filter
+   */
+  clearLogFilter() {
+    const filterInput = document.getElementById('logFilter');
+    if (filterInput) {
+      filterInput.value = '';
+      this.filterLogs('');
+    }
+  }
+
+  /**
+   * Clear session logs
+   */
+  clearSessionLogs() {
+    if (!this.selectedSessionId) {
+      alert('Please select a session first');
+      return;
+    }
+
+    if (confirm('Clear all logs for this session?')) {
+      this.send({
+        type: 'clear-logs',
+        data: { sessionId: this.selectedSessionId }
+      });
+    }
+  }
+
+  /**
+   * Export session logs
+   */
+  async exportSessionLogs() {
+    if (!this.selectedSessionId) {
+      alert('Please select a session first');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/sessions/${this.selectedSessionId}/export?format=txt`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `logs-${this.selectedSessionId}-${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error exporting logs:', error);
+      alert('Failed to export logs');
+    }
+  }
+
+  /**
+   * Refresh sessions from server
+   */
+  async refreshSessions() {
+    try {
+      const response = await fetch('/api/sessions');
+      if (response.ok) {
+        const data = await response.json();
+        this.loadSessions(data.sessions);
+      }
+    } catch (error) {
+      console.error('Error refreshing sessions:', error);
+    }
+  }
+
+  /**
+   * Toggle settings panel (placeholder)
+   */
+  toggleSettings() {
+    console.log('Settings panel - to be implemented in future version');
+    // Future: Show settings modal/panel
+  }
+
+  /**
+   * Handle keyboard shortcuts
+   */
+  handleKeyboardShortcuts(e) {
+    // Only handle shortcuts when not typing in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    switch (e.key) {
+      case 'r':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.refreshSessions();
+        }
+        break;
+      case '/':
+        e.preventDefault();
+        const filterInput = document.getElementById('logFilter');
+        if (filterInput) {
+          filterInput.focus();
+        }
+        break;
+      case 'Escape':
+        this.clearLogFilter();
+        break;
+    }
+  }
+
+  /**
+   * Handle window visibility changes
+   */
+  handleVisibilityChange() {
+    if (document.hidden) {
+      console.log('Dashboard hidden, pausing updates');
+    } else {
+      console.log('Dashboard visible, resuming updates');
+      this.refreshSessions();
+    }
+  }
+
+  /**
+   * Handle window resize
+   */
+  handleWindowResize() {
+    // Responsive adjustments if needed
+    if (this.autoScroll) {
+      this.scrollToBottom();
+    }
+  }
+
+  /**
+   * Update performance metrics
+   */
+  updatePerformanceMetrics() {
+    const metrics = {
+      ...this.performanceMetrics,
+      uptime: Date.now() - (this.performanceMetrics.startTime || Date.now()),
+      sessionsCount: this.sessions.size,
+      connectionState: this.connectionState
+    };
+
+    // Could send to analytics service or display in settings
+    console.debug('Performance metrics:', metrics);
+  }
+
+  /**
+   * Track events for analytics
+   */
+  trackEvent(eventName, data = {}) {
+    const event = {
+      name: eventName,
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      ...data
+    };
+
+    // Future: Send to analytics service
+    console.debug('Event tracked:', event);
+  }
+
+  // === NEW SESSION MANAGEMENT METHODS ===
+
+  /**
+   * Toggle session selection for batch operations
+   */
+  toggleSessionSelection(sessionId, selected) {
+    if (selected) {
+      this.selectedSessions.add(sessionId);
+    } else {
+      this.selectedSessions.delete(sessionId);
+    }
+    
+    this.updateBatchOperationsUI();
+    this.renderSessions();
+  }
+
+  /**
+   * Update batch operations UI visibility and count
+   */
+  updateBatchOperationsUI() {
+    const batchOps = document.getElementById('batchOperations');
+    const batchCount = document.getElementById('batchCount');
+    
+    if (this.selectedSessions.size > 0) {
+      batchOps.classList.add('show');
+      batchCount.textContent = `${this.selectedSessions.size} selected`;
+    } else {
+      batchOps.classList.remove('show');
+    }
+  }
+
+  /**
+   * Clear batch selection
+   */
+  clearBatchSelection() {
+    this.selectedSessions.clear();
+    this.updateBatchOperationsUI();
+    this.renderSessions();
+  }
+
+  /**
+   * Batch start sessions
+   */
+  async batchStartSessions() {
+    if (this.selectedSessions.size === 0) return;
+    
+    if (!confirm(`Start ${this.selectedSessions.size} selected sessions?`)) {
+      return;
+    }
+    
+    const promises = Array.from(this.selectedSessions).map(sessionId => 
+      this.startSession(sessionId, false)
+    );
+    
+    try {
+      await Promise.all(promises);
+      this.clearBatchSelection();
+    } catch (error) {
+      console.error('Batch start failed:', error);
+    }
+  }
+
+  /**
+   * Batch restart sessions
+   */
+  async batchRestartSessions() {
+    if (this.selectedSessions.size === 0) return;
+    
+    if (!confirm(`Restart ${this.selectedSessions.size} selected sessions?`)) {
+      return;
+    }
+    
+    const promises = Array.from(this.selectedSessions).map(sessionId => 
+      this.restartSession(sessionId, false)
+    );
+    
+    try {
+      await Promise.all(promises);
+      this.clearBatchSelection();
+    } catch (error) {
+      console.error('Batch restart failed:', error);
+    }
+  }
+
+  /**
+   * Batch stop sessions
+   */
+  async batchStopSessions() {
+    if (this.selectedSessions.size === 0) return;
+    
+    if (!confirm(`Stop ${this.selectedSessions.size} selected sessions?`)) {
+      return;
+    }
+    
+    const promises = Array.from(this.selectedSessions).map(sessionId => 
+      this.stopSession(sessionId, false)
+    );
+    
+    try {
+      await Promise.all(promises);
+      this.clearBatchSelection();
+    } catch (error) {
+      console.error('Batch stop failed:', error);
+    }
+  }
+
+  /**
+   * Start a session
+   */
+  async startSession(sessionId, showConfirm = true) {
+    if (showConfirm && !confirm('Start this server?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/start`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Session started:', result);
+    } catch (error) {
+      console.error('Error starting session:', error);
+      if (showConfirm) {
+        alert(`Failed to start session: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Toggle favorite status for a session
+   */
+  toggleFavorite(sessionId) {
+    if (this.favorites.has(sessionId)) {
+      this.favorites.delete(sessionId);
+    } else {
+      this.favorites.add(sessionId);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('sessionFavorites', JSON.stringify([...this.favorites]));
+    
+    this.renderSessions();
+    this.trackEvent('session_favorite_toggled', { sessionId, isFavorite: this.favorites.has(sessionId) });
+  }
+
+  /**
+   * Apply all active filters to sessions
+   */
+  applyFilters() {
+    const grid = document.getElementById('sessionsGrid');
+    const cards = grid.querySelectorAll('.session-card');
+    
+    let visibleCount = 0;
+    
+    this.sessions.forEach((session, sessionId) => {
+      const card = grid.querySelector(`.session-card[data-session-id="${sessionId}"]`);
+      if (!card) return;
+      
+      let visible = true;
+      
+      // Status filter
+      if (this.filters.status !== 'all' && session.status !== this.filters.status) {
+        visible = false;
+      }
+      
+      // Framework filter
+      if (this.filters.framework !== 'all' && 
+          (session.framework || 'unknown').toLowerCase() !== this.filters.framework.toLowerCase()) {
+        visible = false;
+      }
+      
+      // Search filter
+      if (this.filters.search) {
+        const searchText = this.filters.search.toLowerCase();
+        const sessionText = `${session.name} ${session.command} ${session.framework || ''}`.toLowerCase();
+        if (!sessionText.includes(searchText)) {
+          visible = false;
+        }
+      }
+      
+      // Favorites filter
+      if (this.filters.favoritesOnly && !this.favorites.has(sessionId)) {
+        visible = false;
+      }
+      
+      card.style.display = visible ? 'flex' : 'none';
+      if (visible) visibleCount++;
+    });
+    
+    // Update session count to show filtered results
+    this.updateSessionCount(visibleCount);
+  }
+
+  /**
+   * Clear all filters
+   */
+  clearAllFilters() {
+    this.filters = {
+      status: 'all',
+      framework: 'all',
+      search: '',
+      favoritesOnly: false
+    };
+    
+    // Reset UI elements
+    const statusFilter = document.getElementById('statusFilter');
+    const frameworkFilter = document.getElementById('frameworkFilter');
+    const searchFilter = document.getElementById('searchFilter');
+    const favoritesFilter = document.getElementById('favoritesFilter');
+    
+    if (statusFilter) statusFilter.value = 'all';
+    if (frameworkFilter) frameworkFilter.value = 'all';
+    if (searchFilter) searchFilter.value = '';
+    if (favoritesFilter) favoritesFilter.classList.remove('active');
+    
+    this.applyFilters();
+  }
+
+  /**
+   * Calculate session health based on various metrics
+   */
+  calculateSessionHealth(session) {
+    const metrics = this.getSessionMetrics(session);
+    
+    if (session.status === 'error') {
+      return { level: 'critical', label: 'Critical', icon: '🚨' };
+    }
+    
+    if (session.status === 'stopped') {
+      return { level: 'critical', label: 'Offline', icon: '⚫' };
+    }
+    
+    if (session.status === 'starting') {
+      return { level: 'warning', label: 'Starting', icon: '🟡' };
+    }
+    
+    if (session.status === 'running') {
+      const cpuUsage = parseFloat(metrics.cpu);
+      const memoryUsage = this.parseMemoryUsage(metrics.memory);
+      
+      if (cpuUsage > 80 || memoryUsage > 80) {
+        return { level: 'warning', label: 'High Load', icon: '⚠️' };
+      } else if (cpuUsage > 50 || memoryUsage > 50) {
+        return { level: 'good', label: 'Moderate', icon: '🔵' };
+      } else {
+        return { level: 'excellent', label: 'Excellent', icon: '🟢' };
+      }
+    }
+    
+    return { level: 'warning', label: 'Unknown', icon: '❓' };
+  }
+
+  /**
+   * Get session metrics (CPU, memory, requests, etc.)
+   */
+  getSessionMetrics(session) {
+    // In a real implementation, these would come from the server
+    // For now, we'll simulate realistic metrics
+    const baseMetrics = {
+      cpu: (Math.random() * 60 + 5).toFixed(1),
+      memory: this.formatMemoryUsage(Math.random() * 200 + 50),
+      requests: Math.floor(Math.random() * 1000),
+      errors: Math.floor(Math.random() * 10)
+    };
+    
+    return this.sessionMetrics.get(session.id) || baseMetrics;
+  }
+
+  /**
+   * Format memory usage
+   */
+  formatMemoryUsage(mb) {
+    if (mb > 1024) {
+      return `${(mb / 1024).toFixed(1)}GB`;
+    }
+    return `${Math.round(mb)}MB`;
+  }
+
+  /**
+   * Parse memory usage to percentage (simplified)
+   */
+  parseMemoryUsage(memoryStr) {
+    const value = parseFloat(memoryStr);
+    const isGB = memoryStr.includes('GB');
+    const maxMemory = 8 * 1024; // Assume 8GB max
+    const memoryMB = isGB ? value * 1024 : value;
+    return (memoryMB / maxMemory) * 100;
+  }
+
+  /**
+   * Get framework CSS class
+   */
+  getFrameworkClass(framework) {
+    if (!framework) return 'default';
+    const fw = framework.toLowerCase();
+    if (fw.includes('react') || fw.includes('vite')) return 'react';
+    if (fw.includes('django')) return 'django';
+    if (fw.includes('laravel')) return 'laravel';
+    if (fw.includes('node')) return 'nodejs';
+    return 'default';
+  }
+
+  /**
+   * Get framework icon
+   */
+  getFrameworkIcon(framework) {
+    if (!framework) return '❓';
+    const fw = framework.toLowerCase();
+    if (fw.includes('react') || fw.includes('vite')) return '⚛️';
+    if (fw.includes('django')) return '🐍';
+    if (fw.includes('laravel')) return '🎼';
+    if (fw.includes('node')) return '🟢';
+    return '📦';
+  }
+
+  /**
+   * Duplicate session configuration
+   */
+  async duplicateSession(sessionId) {
+    const session = this.sessions.get(sessionId);
+    if (!session) return;
+    
+    try {
+      const response = await fetch(`/api/sessions/${sessionId}/duplicate`, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Session duplicated:', result);
+      this.refreshSessions();
+    } catch (error) {
+      console.error('Error duplicating session:', error);
+      alert(`Failed to duplicate session: ${error.message}`);
+    }
+  }
+
+  /**
+   * Show session configuration modal
+   */
+  showSessionConfig(sessionId) {
+    const session = this.sessions.get(sessionId);
+    if (!session) return;
+    
+    // This would open a configuration modal in a real implementation
+    console.log('Session config for:', session);
+    alert('Session configuration panel - to be implemented in future version');
+  }
+
+  /**
+   * Update session count display
+   */
+  updateSessionCount(filteredCount = null) {
+    const countElement = document.getElementById('sessionCount');
+    const totalCount = this.sessions.size;
+    const displayCount = filteredCount !== null ? filteredCount : totalCount;
+    
+    if (filteredCount !== null && filteredCount < totalCount) {
+      countElement.textContent = `${displayCount}/${totalCount} sessions`;
+    } else {
+      countElement.textContent = `${displayCount} session${displayCount !== 1 ? 's' : ''}`;
+    }
+  }
+
+  // ===============================================
+  // ENHANCED LOG VIEWER METHODS - STORY 19.5
+  // ===============================================
+
+  /**
+   * Advanced log filtering with regex support and level filtering
+   */
+  filterLogs(filter) {
+    this.currentFilter = filter;
+    const content = document.getElementById('logContent');
+    const entries = content.querySelectorAll('.log-entry');
+    const filterValue = filter.trim();
+    
+    let visibleCount = 0;
+    let totalCount = entries.length;
+    
+    entries.forEach(entry => {
+      entry.classList.remove('filtered', 'highlight', 'search-match');
+      
+      // Apply level filter
+      if (this.logLevelFilter !== 'all') {
+        const entryLevel = entry.classList.contains('stderr') ? 'stderr' :
+                           entry.classList.contains('warn') ? 'warn' :
+                           entry.classList.contains('info') ? 'info' :
+                           entry.classList.contains('debug') ? 'debug' : 'stdout';
+        
+        if (entryLevel !== this.logLevelFilter) {
+          entry.style.display = 'none';
+          entry.classList.add('filtered');
+          return;
+        }
+      }
+      
+      if (!filterValue) {
+        entry.style.display = 'flex';
+        visibleCount++;
+        return;
+      }
+      
+      const text = entry.textContent;
+      let matches = false;
+      
+      try {
+        if (this.regexMode) {
+          const regex = new RegExp(filterValue, 'gi');
+          matches = regex.test(text);
+          if (matches) {
+            // Highlight matches
+            const logData = entry.querySelector('.log-data');
+            if (logData) {
+              logData.innerHTML = logData.textContent.replace(regex, '<span class="search-highlight">$&</span>');
+            }
+          }
+        } else {
+          matches = text.toLowerCase().includes(filterValue.toLowerCase());
+          if (matches) {
+            // Highlight matches
+            const logData = entry.querySelector('.log-data');
+            if (logData) {
+              const originalText = logData.textContent;
+              const highlightedText = originalText.replace(
+                new RegExp(this.escapeRegex(filterValue), 'gi'),
+                '<span class="search-highlight">$&</span>'
+              );
+              logData.innerHTML = highlightedText;
+            }
+          }
+        }
+      } catch (error) {
+        // Invalid regex, fall back to simple text search
+        matches = text.toLowerCase().includes(filterValue.toLowerCase());
+      }
+      
+      if (matches) {
+        entry.style.display = 'flex';
+        entry.classList.add('search-match');
+        visibleCount++;
+      } else {
+        entry.style.display = 'none';
+        entry.classList.add('filtered');
+      }
+    });
+    
+    // Update filter count display
+    this.updateLogFilterCount(visibleCount, totalCount, filterValue);
+    
+    // Track filtering usage
+    if (filterValue) {
+      this.trackEvent('logs_filtered', { 
+        filter: filterValue, 
+        visibleCount, 
+        totalCount,
+        regexMode: this.regexMode 
+      });
+    }
+  }
+
+  /**
+   * Perform advanced search with results navigation
+   */
+  performSearch(query) {
+    if (!query.trim()) {
+      this.hideSearchResults();
+      return;
+    }
+    
+    const content = document.getElementById('logContent');
+    const entries = Array.from(content.querySelectorAll('.log-entry:not(.filtered)'));
+    
+    this.searchResults = [];
+    
+    entries.forEach((entry, index) => {
+      const text = entry.textContent;
+      let matches = false;
+      
+      try {
+        if (this.regexMode) {
+          const regex = new RegExp(query, 'gi');
+          matches = regex.test(text);
+        } else {
+          matches = text.toLowerCase().includes(query.toLowerCase());
+        }
+      } catch (error) {
+        matches = text.toLowerCase().includes(query.toLowerCase());
+      }
+      
+      if (matches) {
+        this.searchResults.push({
+          element: entry,
+          index: index,
+          timestamp: entry.querySelector('.log-timestamp')?.textContent || '',
+          preview: text.substring(0, 100) + (text.length > 100 ? '...' : '')
+        });
+      }
+    });
+    
+    if (this.searchResults.length > 0) {
+      this.showSearchResults();
+      this.currentSearchIndex = 0;
+      this.navigateToSearchResult(0);
+    } else {
+      this.hideSearchResults();
+    }
+  }
+
+  /**
+   * Navigate search results
+   */
+  navigateSearchResults(direction) {
+    if (this.searchResults.length === 0) return;
+    
+    this.currentSearchIndex += direction;
+    
+    if (this.currentSearchIndex >= this.searchResults.length) {
+      this.currentSearchIndex = 0;
+    } else if (this.currentSearchIndex < 0) {
+      this.currentSearchIndex = this.searchResults.length - 1;
+    }
+    
+    this.navigateToSearchResult(this.currentSearchIndex);
+  }
+
+  /**
+   * Navigate to specific search result
+   */
+  navigateToSearchResult(index) {
+    if (!this.searchResults[index]) return;
+    
+    // Clear previous highlights
+    document.querySelectorAll('.log-entry.search-current').forEach(entry => {
+      entry.classList.remove('search-current');
+    });
+    
+    // Highlight current result
+    const result = this.searchResults[index];
+    result.element.classList.add('search-current');
+    result.element.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'center' 
+    });
+    
+    // Update search navigation UI
+    this.updateSearchNavigation();
+  }
+
+  /**
+   * Show search results panel
+   */
+  showSearchResults() {
+    const panel = document.getElementById('searchResultsPanel');
+    if (panel) {
+      panel.classList.add('show');
+      this.searchPanelVisible = true;
+      this.renderSearchResults();
+    }
+  }
+
+  /**
+   * Hide search results panel
+   */
+  hideSearchResults() {
+    const panel = document.getElementById('searchResultsPanel');
+    if (panel) {
+      panel.classList.remove('show');
+      this.searchPanelVisible = false;
+    }
+    
+    // Clear search highlights
+    document.querySelectorAll('.log-entry.search-current, .log-entry.search-match').forEach(entry => {
+      entry.classList.remove('search-current', 'search-match');
+    });
+    
+    this.searchResults = [];
+    this.currentSearchIndex = -1;
+  }
+
+  /**
+   * Render search results list
+   */
+  renderSearchResults() {
+    const list = document.getElementById('searchResultsList');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    this.searchResults.forEach((result, index) => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item';
+      if (index === this.currentSearchIndex) {
+        item.classList.add('current');
+      }
+      
+      item.innerHTML = `
+        <div class="search-result-timestamp">${result.timestamp}</div>
+        <div class="search-result-preview">${this.escapeHtml(result.preview)}</div>
+      `;
+      
+      item.addEventListener('click', () => {
+        this.currentSearchIndex = index;
+        this.navigateToSearchResult(index);
+        this.renderSearchResults(); // Re-render to update current item
+      });
+      
+      list.appendChild(item);
+    });
+  }
+
+  /**
+   * Update search navigation display
+   */
+  updateSearchNavigation() {
+    const info = document.getElementById('searchResultsInfo');
+    if (info && this.searchResults.length > 0) {
+      info.textContent = `${this.currentSearchIndex + 1} of ${this.searchResults.length}`;
+    }
+  }
+
+  /**
+   * Add bookmark at current scroll position
+   */
+  addBookmark() {
+    if (!this.selectedSessionId) return;
+    
+    const content = document.getElementById('logContent');
+    const scrollPosition = content.scrollTop;
+    const timestamp = Date.now();
+    
+    this.bookmarks.set(timestamp, {
+      sessionId: this.selectedSessionId,
+      scrollPosition: scrollPosition,
+      timestamp: new Date().toLocaleTimeString(),
+      label: `Bookmark ${this.bookmarks.size + 1}`
+    });
+    
+    this.renderBookmarks();
+    this.trackEvent('bookmark_added', { sessionId: this.selectedSessionId });
+  }
+
+  /**
+   * Render bookmarks in toolbar
+   */
+  renderBookmarks() {
+    const container = document.getElementById('bookmarksContainer');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    Array.from(this.bookmarks.entries())
+      .filter(([_, bookmark]) => bookmark.sessionId === this.selectedSessionId)
+      .forEach(([id, bookmark]) => {
+        const item = document.createElement('div');
+        item.className = 'bookmark-item';
+        item.textContent = bookmark.timestamp;
+        item.title = bookmark.label;
+        
+        item.addEventListener('click', () => {
+          const content = document.getElementById('logContent');
+          if (content) {
+            content.scrollTop = bookmark.scrollPosition;
+          }
+        });
+        
+        container.appendChild(item);
+      });
+  }
+
+  /**
+   * Jump to top of logs
+   */
+  jumpToTop() {
+    const content = document.getElementById('logContent');
+    if (content) {
+      content.scrollTop = 0;
+    }
+  }
+
+  /**
+   * Jump to bottom of logs
+   */
+  jumpToBottom() {
+    const content = document.getElementById('logContent');
+    if (content) {
+      content.scrollTop = content.scrollHeight;
+    }
+  }
+
+  /**
+   * Toggle analytics sidebar
+   */
+  toggleSidebar() {
+    const sidebar = document.getElementById('logSidebar');
+    if (sidebar) {
+      this.sidebarVisible = !this.sidebarVisible;
+      sidebar.classList.toggle('show', this.sidebarVisible);
+      
+      if (this.sidebarVisible) {
+        this.updateAnalyticsSidebar();
+      }
+    }
+  }
+
+  /**
+   * Toggle export menu
+   */
+  toggleExportMenu() {
+    const menu = document.getElementById('exportMenu');
+    if (menu) {
+      menu.classList.toggle('show');
+    }
+  }
+
+  /**
+   * Hide export menu
+   */
+  hideExportMenu() {
+    const menu = document.getElementById('exportMenu');
+    if (menu) {
+      menu.classList.remove('show');
+    }
+  }
+
+  /**
+   * Enhanced export with multiple formats
+   */
+  async exportSessionLogs(format = 'txt') {
+    if (!this.selectedSessionId) {
+      alert('Please select a session first');
+      return;
+    }
+
+    const logs = this.logBuffer.get(this.selectedSessionId) || [];
+    const session = this.sessions.get(this.selectedSessionId);
+    const sessionName = session ? session.name : this.selectedSessionId;
+    const timestamp = new Date().toISOString().split('T')[0];
+    
+    let content, filename, mimeType;
+    
+    switch (format) {
+      case 'json':
+        content = JSON.stringify({
+          session: sessionName,
+          exportDate: new Date().toISOString(),
+          totalLogs: logs.length,
+          logs: logs
+        }, null, 2);
+        filename = `logs-${sessionName}-${timestamp}.json`;
+        mimeType = 'application/json';
+        break;
+        
+      case 'csv':
+        const csvHeaders = 'Timestamp,Type,Data\\n';
+        const csvRows = logs.map(log => 
+          `"${new Date(log.timestamp).toISOString()}","${log.type}","${log.data.replace(/"/g, '""')}"`
+        ).join('\\n');
+        content = csvHeaders + csvRows;
+        filename = `logs-${sessionName}-${timestamp}.csv`;
+        mimeType = 'text/csv';
+        break;
+        
+      case 'filtered':
+        const visibleEntries = Array.from(document.querySelectorAll('.log-entry:not(.filtered)'));
+        const filteredLogs = visibleEntries.map(entry => {
+          const timestamp = entry.querySelector('.log-timestamp')?.textContent || '';
+          const data = entry.querySelector('.log-data')?.textContent || '';
+          return `[${timestamp}] ${data}`;
+        }).join('\\n');
+        content = filteredLogs;
+        filename = `logs-${sessionName}-filtered-${timestamp}.txt`;
+        mimeType = 'text/plain';
+        break;
+        
+      default: // txt
+        content = logs.map(log => 
+          `[${new Date(log.timestamp).toLocaleTimeString()}] ${log.data}`
+        ).join('\\n');
+        filename = `logs-${sessionName}-${timestamp}.txt`;
+        mimeType = 'text/plain';
+    }
+
+    try {
+      const blob = new Blob([content], { type: mimeType });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      this.trackEvent('logs_exported', { 
+        sessionId: this.selectedSessionId, 
+        format: format,
+        logCount: logs.length 
+      });
+    } catch (error) {
+      console.error('Error exporting logs:', error);
+      alert('Failed to export logs');
+    }
+  }
+
+  /**
+   * Update log analytics
+   */
+  updateLogAnalytics(log) {
+    const now = Date.now();
+    
+    // Update counters
+    if (log.type === 'stderr' || log.data.toLowerCase().includes('error')) {
+      this.logAnalytics.errorCount++;
+    }
+    if (log.type === 'warn' || log.data.toLowerCase().includes('warning')) {
+      this.logAnalytics.warningCount++;
+    }
+    
+    // Track recent logs for rate calculation
+    this.logAnalytics.recentLogs.push(now);
+    this.logAnalytics.recentLogs = this.logAnalytics.recentLogs.filter(time => now - time < 60000); // Last minute
+    
+    // Calculate log rate every 5 seconds
+    if (now - this.logAnalytics.lastRateCalculation > 5000) {
+      this.logAnalytics.logRate = this.logAnalytics.recentLogs.length / 60; // per second
+      this.logAnalytics.lastRateCalculation = now;
+      this.updateAnalyticsDisplay();
+    }
+    
+    // Pattern detection
+    this.detectLogPatterns(log);
+  }
+
+  /**
+   * Detect common log patterns
+   */
+  detectLogPatterns(log) {
+    const patterns = [
+      { name: 'HTTP Error', regex: /HTTP\\s+(4|5)\\d{2}/, type: 'error' },
+      { name: 'Database Error', regex: /database|sql|connection.*error/i, type: 'error' },
+      { name: 'Memory Warning', regex: /memory|heap|out of memory/i, type: 'warning' },
+      { name: 'Performance Issue', regex: /slow|timeout|performance/i, type: 'warning' },
+      { name: 'API Call', regex: /GET|POST|PUT|DELETE|PATCH/i, type: 'info' }
+    ];
+    
+    patterns.forEach(pattern => {
+      if (pattern.regex.test(log.data)) {
+        const key = pattern.name;
+        const current = this.logAnalytics.patterns.get(key) || { count: 0, type: pattern.type };
+        current.count++;
+        this.logAnalytics.patterns.set(key, current);
+      }
+    });
+  }
+
+  /**
+   * Update analytics display
+   */
+  updateAnalyticsDisplay() {
+    // Update toolbar analytics
+    const errorRate = document.getElementById('errorRate');
+    const logRate = document.getElementById('logRate');
+    const totalLogs = document.getElementById('totalLogs');
+    
+    if (errorRate) errorRate.textContent = `Errors: ${this.logAnalytics.errorCount}`;
+    if (logRate) logRate.textContent = `Rate: ${this.logAnalytics.logRate.toFixed(1)}/s`;
+    if (totalLogs) {
+      const logs = this.logBuffer.get(this.selectedSessionId) || [];
+      totalLogs.textContent = `Total: ${logs.length}`;
+    }
+    
+    // Update sidebar if visible
+    if (this.sidebarVisible) {
+      this.updateAnalyticsSidebar();
+    }
+  }
+
+  /**
+   * Update analytics sidebar
+   */
+  updateAnalyticsSidebar() {
+    const messageRate = document.getElementById('messageRate');
+    const errorRatePercent = document.getElementById('errorRatePercent');
+    const bufferSize = document.getElementById('bufferSize');
+    const patternList = document.getElementById('patternList');
+    
+    if (messageRate) {
+      messageRate.textContent = this.logAnalytics.logRate.toFixed(1);
+    }
+    
+    if (errorRatePercent) {
+      const logs = this.logBuffer.get(this.selectedSessionId) || [];
+      const errorPercent = logs.length > 0 ? ((this.logAnalytics.errorCount / logs.length) * 100).toFixed(1) : 0;
+      errorRatePercent.textContent = `${errorPercent}%`;
+    }
+    
+    if (bufferSize) {
+      const logs = this.logBuffer.get(this.selectedSessionId) || [];
+      const sizeKB = (JSON.stringify(logs).length / 1024).toFixed(1);
+      bufferSize.textContent = `${sizeKB} KB`;
+    }
+    
+    if (patternList) {
+      patternList.innerHTML = '';
+      if (this.logAnalytics.patterns.size === 0) {
+        patternList.innerHTML = '<div class="pattern-item">No patterns detected</div>';
+      } else {
+        Array.from(this.logAnalytics.patterns.entries())
+          .sort((a, b) => b[1].count - a[1].count)
+          .slice(0, 5)
+          .forEach(([name, data]) => {
+            const item = document.createElement('div');
+            item.className = `pattern-item ${data.type}`;
+            item.textContent = `${name}: ${data.count}`;
+            patternList.appendChild(item);
+          });
+      }
+    }
+    
+    // Update chart if available
+    this.updateLogChart();
+  }
+
+  /**
+   * Update log visualization chart
+   */
+  updateLogChart() {
+    const canvas = document.getElementById('logChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Simple bar chart showing log types distribution
+    const logs = this.logBuffer.get(this.selectedSessionId) || [];
+    const distribution = {
+      stdout: 0,
+      stderr: 0,
+      info: 0,
+      warn: 0,
+      debug: 0
+    };
+    
+    logs.forEach(log => {
+      distribution[log.type] = (distribution[log.type] || 0) + 1;
+    });
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw simple bars
+    const barWidth = canvas.width / Object.keys(distribution).length;
+    const maxCount = Math.max(...Object.values(distribution), 1);
+    
+    Object.entries(distribution).forEach(([type, count], index) => {
+      const barHeight = (count / maxCount) * (canvas.height - 20);
+      const x = index * barWidth;
+      const y = canvas.height - barHeight - 10;
+      
+      // Set color based on type
+      ctx.fillStyle = type === 'stderr' ? '#ef4444' :
+                      type === 'warn' ? '#f59e0b' :
+                      type === 'info' ? '#06b6d4' :
+                      type === 'debug' ? '#64748b' : '#10b981';
+      
+      ctx.fillRect(x + 2, y, barWidth - 4, barHeight);
+      
+      // Draw label
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8px monospace';
+      ctx.fillText(type.substring(0, 3), x + 2, canvas.height - 2);
+    });
+  }
+
+  /**
+   * Apply log level filters
+   */
+  applyLogFilters() {
+    this.filterLogs(this.currentFilter);
+  }
+
+  /**
+   * Update streaming indicator
+   */
+  updateStreamingIndicator() {
+    let indicator = document.querySelector('.streaming-indicator');
+    
+    if (!indicator && this.selectedSessionId) {
+      indicator = document.createElement('div');
+      indicator.className = 'streaming-indicator';
+      document.getElementById('logContent').appendChild(indicator);
+    }
+    
+    if (indicator) {
+      if (this.pauseStream) {
+        indicator.className = 'streaming-indicator paused';
+        indicator.innerHTML = '<div class="streaming-dot"></div>Stream Paused';
+      } else {
+        indicator.className = 'streaming-indicator';
+        indicator.innerHTML = '<div class="streaming-dot"></div>Live Stream';
+      }
+    }
+  }
+
+  /**
+   * Update scroll position indicator
+   */
+  updateScrollPosition() {
+    const content = document.getElementById('logContent');
+    const position = document.getElementById('logPosition');
+    
+    if (content && position) {
+      const scrollPercent = Math.round((content.scrollTop / (content.scrollHeight - content.clientHeight)) * 100) || 0;
+      position.textContent = `${scrollPercent}%`;
+    }
+  }
+
+  /**
+   * Update log statistics
+   */
+  updateLogStats() {
+    const logCount = document.querySelector('.log-count');
+    const logs = this.logBuffer.get(this.selectedSessionId) || [];
+    
+    if (logCount) {
+      logCount.textContent = `${logs.length} logs`;
+    }
+  }
+
+  /**
+   * Enhanced keyboard shortcuts
+   */
+  handleEnhancedKeyboardShortcuts(e) {
+    // Only handle shortcuts when not typing in input fields
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    switch (e.key) {
+      case 'r':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.refreshSessions();
+        }
+        break;
+      case '/':
+        e.preventDefault();
+        const filterInput = document.getElementById('logFilter');
+        if (filterInput) {
+          filterInput.focus();
+        }
+        break;
+      case 'Escape':
+        this.clearLogFilter();
+        this.hideSearchResults();
+        break;
+      case 'b':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.addBookmark();
+        }
+        break;
+      case 's':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          this.toggleSidebar();
+        }
+        break;
+      case 'p':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          document.getElementById('pauseStream')?.click();
+        }
+        break;
+      case 'Home':
+        if (e.ctrlKey) {
+          e.preventDefault();
+          this.jumpToTop();
+        }
+        break;
+      case 'End':
+        if (e.ctrlKey) {
+          e.preventDefault();
+          this.jumpToBottom();
+        }
+        break;
+    }
+  }
+
+  /**
+   * Escape regex special characters
+   */
+  escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');
+  }
+}
+
+// Initialize app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    window.app = new DashboardApp();
+  } catch (error) {
+    console.error('Failed to initialize DashboardApp:', error);
+    
+    // Show basic error message
+    document.body.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1e293b;
+        color: #f1f5f9;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      ">
+        <h2 style="color: #ef4444; margin-bottom: 16px;">⚠️ Dashboard Error</h2>
+        <p style="margin-bottom: 20px; color: #94a3b8;">Failed to initialize the MCP Debug Host Dashboard.</p>
+        <button 
+          onclick="window.location.reload()" 
+          style="
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+          "
+        >🔄 Reload Page</button>
+      </div>
+    `;
+  }
+});

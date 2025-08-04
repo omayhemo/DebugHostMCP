@@ -46,5 +46,24 @@ module.exports = (sessionManager) => {
     }
   });
   
+  // POST /api/v1/sessions/clear-inactive
+  router.post('/clear-inactive', async (req, res) => {
+    try {
+      const result = await sessionManager.clearInactiveSessions();
+      
+      res.json({
+        success: true,
+        ...result,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        timestamp: Date.now()
+      });
+    }
+  });
+  
   return router;
 };

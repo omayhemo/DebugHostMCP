@@ -6,8 +6,9 @@
  * This runs per-Claude-session with no state or port bindings
  */
 
-const { Server } = require('@modelcontextprotocol/sdk/server/index');
-const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio');
+const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
+const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
+const { CallToolRequestSchema, ListToolsRequestSchema } = require('@modelcontextprotocol/sdk/types.js');
 const axios = require('axios');
 
 // Configuration
@@ -50,7 +51,7 @@ const server = new Server(
 );
 
 // Tool: server_start
-server.setRequestHandler('tools/call', async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
   
   try {
@@ -91,7 +92,7 @@ server.setRequestHandler('tools/call', async (request) => {
 });
 
 // List available tools
-server.setRequestHandler('tools/list', async () => {
+server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {

@@ -203,6 +203,86 @@ class DashboardServer {
       }
     });
 
+    // Restart a server session
+    this.app.post('/api/sessions/:id/restart', async (req, res) => {
+      try {
+        const { id } = req.params;
+        
+        if (!id) {
+          return res.status(400).json({
+            success: false,
+            error: 'Session ID is required'
+          });
+        }
+
+        const result = await this.processManager.restartServer(id);
+        
+        this.logger.info('Server restart requested:', { sessionId: id, result });
+        
+        res.json({
+          success: true,
+          ...result
+        });
+      } catch (error) {
+        this.logger.error('Error restarting session:', error);
+        const statusCode = error.message.includes('not found') ? 404 : 500;
+        res.status(statusCode).json({
+          success: false,
+          error: error.message
+        });
+      }
+    });
+
+    // Delete a server session
+    this.app.delete('/api/sessions/:id', (req, res) => {
+      try {
+        const { id } = req.params;
+        
+        if (!id) {
+          return res.status(400).json({
+            success: false,
+            error: 'Session ID is required'
+          });
+        }
+
+        const result = this.processManager.deleteSession(id);
+        
+        this.logger.info('Session deleted:', { sessionId: id, result });
+        
+        res.json({
+          success: true,
+          ...result
+        });
+      } catch (error) {
+        this.logger.error('Error deleting session:', error);
+        const statusCode = error.message.includes('not found') ? 404 : 500;
+        res.status(statusCode).json({
+          success: false,
+          error: error.message
+        });
+      }
+    });
+
+    // Clear inactive sessions
+    this.app.post('/api/sessions/clear-inactive', (req, res) => {
+      try {
+        const result = this.processManager.clearInactiveSessions();
+        
+        this.logger.info('Inactive sessions cleared:', result);
+        
+        res.json({
+          success: true,
+          ...result
+        });
+      } catch (error) {
+        this.logger.error('Error clearing inactive sessions:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message
+        });
+      }
+    });
+
     // Start a new server session
     this.app.post('/api/sessions', async (req, res) => {
       try {

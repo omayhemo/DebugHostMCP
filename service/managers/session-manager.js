@@ -110,6 +110,32 @@ class SessionManager extends EventEmitter {
   }
   
   /**
+   * Clear inactive sessions
+   */
+  async clearInactiveSessions() {
+    const inactiveSessions = [];
+    
+    for (const [sessionId, session] of this.sessions.entries()) {
+      if (['stopped', 'error', 'exited'].includes(session.status)) {
+        inactiveSessions.push(sessionId);
+        this.sessions.delete(sessionId);
+        this.logger.info('Removed inactive session:', { sessionId, status: session.status });
+      }
+    }
+    
+    if (inactiveSessions.length > 0) {
+      await this.saveSessions();
+      this.emit('sessions-cleared', { sessionIds: inactiveSessions });
+    }
+    
+    return {
+      removedCount: inactiveSessions.length,
+      removedSessions: inactiveSessions,
+      message: `Cleared ${inactiveSessions.length} inactive session(s)`
+    };
+  }
+  
+  /**
    * Load sessions from disk
    */
   async loadSessions() {

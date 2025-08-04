@@ -186,6 +186,106 @@ class ProcessManager extends EventEmitter {
       };
     }
   }
+
+  /**
+   * Restart a server session
+   * @param {string} sessionId - Session ID to restart
+   * @returns {Promise<Object>} Restart result
+   */
+  async restartServer(sessionId) {
+    const session = this.processes.get(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    
+    this.logger.info('Restarting server:', { sessionId, status: session.status });
+    
+    // Store the original configuration
+    const config = {
+      command: session.command,
+      cwd: session.cwd,
+      env: session.env,
+      port: session.port,
+      name: session.name
+    };
+    
+    // Stop the server if it's running
+    if (['starting', 'running'].includes(session.status)) {
+      this.stopServer(sessionId);
+      
+      // Wait for the process to stop
+      await new Promise(resolve => {
+        const checkStop = setInterval(() => {
+          if (!['starting', 'running', 'stopping'].includes(session.status)) {
+            clearInterval(checkStop);
+            resolve();
+          }
+        }, 100);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkStop);
+          resolve();
+        }, 10000);
+      });
+    }
+    
+    // Start the server with the same configuration
+    return this.startServer(config);
+  }
+
+  /**
+   * Clear inactive sessions
+   * @returns {Object} Clear result with removed session count
+   */
+  clearInactiveSessions() {
+    const inactiveSessions = [];
+    
+    for (const [sessionId, session] of this.processes.entries()) {
+      if (['stopped', 'error'].includes(session.status)) {
+        inactiveSessions.push(sessionId);
+        this.processes.delete(sessionId);
+        this.logger.info('Removed inactive session:', { sessionId, status: session.status });
+      }
+    }
+    
+    this.emit('sessions-cleared', { sessionIds: inactiveSessions });
+    
+    return {
+      success: true,
+      removedCount: inactiveSessions.length,
+      removedSessions: inactiveSessions,
+      message: `Cleared ${inactiveSessions.length} inactive session(s)`
+    };
+  }
+
+  /**
+   * Delete a specific session
+   * @param {string} sessionId - Session ID to delete
+   * @returns {Object} Delete result
+   */
+  deleteSession(sessionId) {
+    const session = this.processes.get(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
+    
+    // Stop the session if it's running
+    if (['starting', 'running'].includes(session.status)) {
+      this.stopServer(sessionId);
+    }
+    
+    // Remove from processes map
+    this.processes.delete(sessionId);
+    this.logger.info('Deleted session:', { sessionId });
+    
+    this.emit('session-deleted', { sessionId });
+    
+    return {
+      success: true,
+      message: `Session ${sessionId} deleted`
+    };
+  }
   
   /**
    * Get logs for a session

@@ -250,7 +250,18 @@ processManager.on('server-started', (session) => {
   });
 });
 
-processManager.on('server-stopped', (session) => {
+processManager.on('server-stopped', async (session) => {
+  // Update session status in session manager
+  try {
+    await sessionManager.updateSession(session.id, {
+      status: 'stopped',
+      exitCode: session.exitCode,
+      endTime: session.endTime
+    });
+  } catch (error) {
+    logger.error('Failed to update session status:', error);
+  }
+  
   broadcast({
     type: 'server-stopped',
     session,
@@ -258,7 +269,17 @@ processManager.on('server-stopped', (session) => {
   });
 });
 
-processManager.on('server-error', (session, error) => {
+processManager.on('server-error', async (session, error) => {
+  // Update session status in session manager
+  try {
+    await sessionManager.updateSession(session.id, {
+      status: 'error',
+      error: error.message
+    });
+  } catch (error) {
+    logger.error('Failed to update session error status:', error);
+  }
+  
   broadcast({
     type: 'server-error',
     session,
