@@ -161,8 +161,9 @@ start-global-service.sh
 *-fixed.*
 app-original.js
 
-# Claude private instructions
+# Claude private instructions (but keep slash commands)
 .claude/
+!.claude/slash-commands/
 
 # Piper TTS installation (project-local)
 .piper/

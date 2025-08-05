@@ -1,0 +1,47 @@
+{
+  "commands": [
+    {
+      "name": "deploy-to-global",
+      "description": "Deploy MCP Debug Host from development to global installation",
+      "script": "./deploy-to-global.sh",
+      "documentation": "./deploy-to-global.md",
+      "category": "deployment",
+      "requiresConfirmation": true,
+      "aliases": [
+        "deploy",
+        "publish",
+        "deploy-mcp"
+      ],
+      "parameters": [],
+      "preChecks": [
+        {
+          "name": "Check development directory exists",
+          "command": "test -d /mnt/c/Code/MCPServers/DebugHostMCP"
+        },
+        {
+          "name": "Check Node.js is available",
+          "command": "which node"
+        }
+      ],
+      "postActions": [
+        {
+          "name": "Show service status",
+          "command": "ps aux | grep -E 'apm-debug-host/src/index.js' | grep -v grep"
+        }
+      ],
+      "rollback": {
+        "script": "./rollback-deployment.sh",
+        "description": "Restore from most recent backup"
+      },
+      "tags": [
+        "mcp",
+        "debug-host",
+        "deployment",
+        "production"
+      ],
+      "minVersion": "1.0.0",
+      "author": "MCP Debug Host Team",
+      "lastUpdated": "2025-08-05"
+    }
+  ]
+}
