@@ -136,3 +136,36 @@ mcp-home/
 dashboard.pid
 server.state
 rollback/
+
+# APM framework files (these are installer/templates, not source)
+.apm/.installer/
+.apm/session_notes/
+.apm/rules/
+.apm/CLAUDE.md
+harmonization.log
+
+# Service and debug files
+service*.log
+service-*.log
+nohup.out
+start-global-service.sh
+
+# Generated/minified files
+*.minified
+*.min.js
+*.min.css
+
+# Backup and old files
+*-backup.*
+*-old.*
+*-fixed.*
+app-original.js
+
+# Claude private instructions
+.claude/
+
+# Piper TTS installation (project-local)
+.piper/
+
+# Design sync repository (cloned from external source)
+lovable/
