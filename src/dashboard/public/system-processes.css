@@ -1,0 +1,198 @@
+/* System Processes Styles */
+
+.system-processes-section {
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.system-processes-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.system-processes-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.processes-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.environment-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  background: var(--bg-color, #fff);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.environment-select:hover {
+  border-color: var(--primary-color, #3b82f6);
+}
+
+.environment-select:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 3px var(--primary-alpha, rgba(59, 130, 246, 0.1));
+}
+
+.processes-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary, #f8fafc);
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.processes-stats span {
+  font-weight: 500;
+}
+
+.processes-list {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.processes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.processes-table thead {
+  background: var(--bg-secondary, #f8fafc);
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+}
+
+.processes-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  white-space: nowrap;
+}
+
+.processes-table tbody tr {
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  transition: background-color 0.2s;
+}
+
+.processes-table tbody tr:hover {
+  background: var(--bg-hover, #f8fafc);
+}
+
+.processes-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.process-row.orphaned {
+  background: var(--danger-bg, rgba(239, 68, 68, 0.05));
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.tracked {
+  background: var(--success-bg, #d1fae5);
+  color: var(--success-color, #065f46);
+}
+
+.status-badge.orphaned {
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger-color, #991b1b);
+}
+
+.command-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary, #64748b);
+  font-style: italic;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .system-processes-section {
+    background: var(--card-bg-dark, #1e293b);
+  }
+  
+  .environment-select {
+    background: var(--bg-dark, #0f172a);
+    border-color: var(--border-dark, #334155);
+    color: var(--text-dark, #e2e8f0);
+  }
+  
+  .processes-stats {
+    background: var(--bg-secondary-dark, #0f172a);
+  }
+  
+  .processes-table thead {
+    background: var(--bg-secondary-dark, #0f172a);
+    border-color: var(--border-dark, #334155);
+  }
+  
+  .processes-table tbody tr {
+    border-color: var(--border-dark, #334155);
+  }
+  
+  .processes-table tbody tr:hover {
+    background: var(--bg-hover-dark, #1e293b);
+  }
+  
+  .process-row.orphaned {
+    background: rgba(239, 68, 68, 0.1);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .processes-controls {
+    flex-wrap: wrap;
+  }
+  
+  .processes-stats {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .processes-table {
+    font-size: 0.75rem;
+  }
+  
+  .processes-table th,
+  .processes-table td {
+    padding: 0.5rem;
+  }
+  
+  .command-cell {
+    max-width: 150px;
+  }
+}

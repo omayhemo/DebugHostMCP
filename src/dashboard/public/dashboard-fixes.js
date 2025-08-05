@@ -18,24 +18,14 @@
   }
   
   function applyFixes() {
-    // Fix the API URLs to use the global service on port 8081
-    const originalFetch = window.fetch;
-    window.fetch = function(url, options) {
-      // Redirect dashboard API calls to global service
-      if (url.startsWith('/api/sessions')) {
-        url = url.replace('/api/sessions', 'http://localhost:8081/api/v1/sessions');
-      } else if (url.startsWith('/api/')) {
-        url = url.replace('/api/', 'http://localhost:8081/api/v1/');
-      }
-      
-      return originalFetch.call(this, url, options);
-    };
+    // No need to redirect API URLs since dashboard and API are on the same port (2601)
+    // Keep original fetch behavior
     
     // Override loadInitialState to use the correct data structure
     const originalLoadInitialState = window.app.loadInitialState;
     window.app.loadInitialState = async function() {
       try {
-        const response = await fetch('http://localhost:8081/api/v1/sessions');
+        const response = await fetch('/api/sessions');
         if (response.ok) {
           const result = await response.json();
           // The global service returns { success: true, data: [...] }
@@ -72,7 +62,7 @@
     // Override refreshSessions with the same logic
     window.app.refreshSessions = async function() {
       try {
-        const response = await fetch('http://localhost:8081/api/v1/sessions');
+        const response = await fetch('/api/sessions');
         if (response.ok) {
           const result = await response.json();
           const sessions = result.data || [];
@@ -119,7 +109,7 @@
       }
       
       try {
-        const response = await fetch('http://localhost:8081/api/v1/sessions/clear-inactive', {
+        const response = await fetch('/api/sessions/clear-inactive', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -158,7 +148,7 @@
       
       try {
         // Use DELETE method on /servers endpoint for stop
-        const response = await fetch(`http://localhost:8081/api/v1/servers/${sessionId}`, {
+        const response = await fetch(`/api/sessions/${sessionId}/stop`, {
           method: 'DELETE'
         });
         
@@ -191,7 +181,7 @@
       }
       
       try {
-        const response = await fetch(`http://localhost:8081/api/v1/servers/${sessionId}/restart`, {
+        const response = await fetch(`/api/sessions/${sessionId}/restart`, {
           method: 'POST'
         });
         

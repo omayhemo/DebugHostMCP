@@ -49,7 +49,7 @@ class DashboardServer {
     // Enhanced CORS middleware with security considerations
     this.app.use((req, res, next) => {
       // Only allow localhost origins for development
-      const allowedOrigins = ['http://localhost:8080', 'http://127.0.0.1:8080'];
+      const allowedOrigins = ['http://localhost:2601', 'http://127.0.0.1:2601'];
       const origin = req.headers.origin;
       
       if (allowedOrigins.includes(origin) || !origin) {
@@ -764,7 +764,7 @@ class DashboardServer {
    * @param {number} port - Port to listen on
    * @returns {Promise} Promise that resolves when server is started
    */
-  async start(port = 8080) {
+  async start(port = 2601) {
     return new Promise((resolve, reject) => {
       this.server = http.createServer(this.app);
       

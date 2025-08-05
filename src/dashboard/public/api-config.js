@@ -6,20 +6,20 @@
 class ApiConfig {
   constructor() {
     // Default to the current host
-    this.dashboardPort = window.location.port || '8080';
-    this.globalServicePort = '8081';
+    this.dashboardPort = window.location.port || '2601';
+    this.globalServicePort = '2601';
     
     // Determine which API to use based on available services
     this.apiBase = this.getApiBase();
   }
 
   getApiBase() {
-    // Check if we're on the dashboard port (8080)
-    if (this.dashboardPort === '8080') {
+    // Check if we're on the dashboard port (2601)
+    if (this.dashboardPort === '2601') {
       // Use local dashboard API
       return '/api';
     } else {
-      // Use global service API on port 8081
+      // Use global service API on port 2601
       return `http://localhost:${this.globalServicePort}/api/v1`;
     }
   }
