@@ -257,20 +257,28 @@ class ProcessManager extends EventEmitter {
       throw new Error(`Session ${sessionId} not found`);
     }
     
-    // Stop the server
-    await this.stopServer(sessionId);
-    
-    // Wait a moment
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Start with same configuration
-    return this.startServer({
-      sessionId,
+    // Store the configuration before stopping
+    const config = {
       name: session.name,
       command: session.command,
       cwd: session.cwd,
       port: session.port,
       env: session.env
+    };
+    
+    // Stop the server
+    await this.stopServer(sessionId);
+    
+    // Remove the old session from processes map to allow restart
+    this.processes.delete(sessionId);
+    
+    // Wait a moment
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Start with same configuration and new sessionId
+    return this.startServer({
+      ...config,
+      sessionId: sessionId // This will create a new session with the same ID
     });
   }
   
@@ -398,6 +406,85 @@ class ProcessManager extends EventEmitter {
     ];
     
     return readyPatterns.some(pattern => pattern.test(output));
+  }
+  
+  /**
+   * Get all system processes matching a command pattern
+   * This helps identify orphaned processes not tracked in sessions
+   */
+  async getSystemProcesses(commandPattern) {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    
+    try {
+      // Use ps to find all processes matching the pattern
+      const { stdout } = await execAsync(`ps aux | grep -E "${commandPattern}" | grep -v grep`);
+      const lines = stdout.trim().split('\n').filter(line => line);
+      
+      const processes = lines.map(line => {
+        const parts = line.split(/\s+/);
+        return {
+          user: parts[0],
+          pid: parseInt(parts[1]),
+          cpu: parseFloat(parts[2]),
+          mem: parseFloat(parts[3]),
+          vsz: parts[4],
+          rss: parts[5],
+          tty: parts[6],
+          stat: parts[7],
+          start: parts[8],
+          time: parts[9],
+          command: parts.slice(10).join(' ')
+        };
+      });
+      
+      // Cross-reference with our tracked sessions
+      const trackedPids = Array.from(this.processes.values())
+        .filter(s => s.pid)
+        .map(s => s.pid);
+      
+      processes.forEach(proc => {
+        proc.tracked = trackedPids.includes(proc.pid);
+        // Try to find the session if tracked
+        if (proc.tracked) {
+          const session = Array.from(this.processes.values())
+            .find(s => s.pid === proc.pid);
+          if (session) {
+            proc.sessionId = session.id;
+            proc.sessionName = session.name;
+            proc.port = session.port;
+          }
+        }
+      });
+      
+      return processes;
+    } catch (error) {
+      // If ps fails or no processes found, return empty array
+      if (error.message.includes('Command failed')) {
+        return [];
+      }
+      throw error;
+    }
+  }
+  
+  /**
+   * Get all processes for a specific environment (npm, node, python, etc.)
+   */
+  async getProcessesByEnvironment(environment) {
+    const patterns = {
+      npm: 'npm|node.*npm',
+      node: 'node',
+      python: 'python',
+      java: 'java',
+      ruby: 'ruby',
+      go: 'go run',
+      rust: 'cargo',
+      php: 'php'
+    };
+    
+    const pattern = patterns[environment.toLowerCase()] || environment;
+    return this.getSystemProcesses(pattern);
   }
 }
 

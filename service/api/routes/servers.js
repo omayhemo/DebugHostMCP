@@ -282,5 +282,75 @@ module.exports = (processManager, sessionManager, broadcast) => {
     }
   );
   
+  /**
+   * GET /api/v1/servers/processes/:environment
+   * Get all system processes for a specific environment
+   */
+  router.get('/processes/:environment',
+    async (req, res) => {
+      try {
+        const { environment } = req.params;
+        
+        const processes = await processManager.getProcessesByEnvironment(environment);
+        
+        res.json({
+          success: true,
+          data: {
+            environment,
+            processes,
+            total: processes.length,
+            tracked: processes.filter(p => p.tracked).length,
+            orphaned: processes.filter(p => !p.tracked).length
+          },
+          timestamp: Date.now()
+        });
+        
+      } catch (error) {
+        console.error('Failed to get system processes:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message,
+          timestamp: Date.now()
+        });
+      }
+    }
+  );
+  
+  /**
+   * POST /api/v1/processes/:pid/kill
+   * Kill a specific process by PID
+   */
+  router.post('/processes/:pid/kill',
+    async (req, res) => {
+      try {
+        const { pid } = req.params;
+        
+        // Kill the process
+        const { exec } = require('child_process');
+        const { promisify } = require('util');
+        const execAsync = promisify(exec);
+        
+        await execAsync(`kill -9 ${pid}`);
+        
+        res.json({
+          success: true,
+          data: {
+            pid,
+            message: 'Process killed successfully'
+          },
+          timestamp: Date.now()
+        });
+        
+      } catch (error) {
+        console.error('Failed to kill process:', error);
+        res.status(500).json({
+          success: false,
+          error: error.message,
+          timestamp: Date.now()
+        });
+      }
+    }
+  );
+  
   return router;
 };
