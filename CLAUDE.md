@@ -36,6 +36,21 @@ cp -r /mnt/c/Code/MCPServers/DebugHostMCP/* ~/.apm-debug-host/
 - System processes monitoring: Added ability to view all processes by environment (npm, node, etc.)
 # APM Claude.md Template
 
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
 <BEGIN-APM-CLAUDE-MERGE>
 
 ## 🚀 AGENTIC PERSONA MAPPING (APM)

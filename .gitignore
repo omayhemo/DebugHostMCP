@@ -170,3 +170,28 @@ app-original.js
 
 # Design sync repository (cloned from external source)
 lovable/
+
+# Archive of legacy system (preserved but ignored)
+archive-legacy-system/
+
+# New structure data directories
+data/logs/**/*
+data/projects/*.json
+data/system/*.json
+!data/logs/.gitkeep
+!data/projects/.gitkeep
+!data/system/.gitkeep
+
+# Docker volumes for persistent dependencies
+volumes/
+
+# Session notes (APM infrastructure)
+.apm/session_notes/
+.apm/rules/
+
+# AP Mapping generated files
+.apm/CLAUDE.md
+harmonization.log
+
+# Piper TTS installation (project-local)
+.piper/

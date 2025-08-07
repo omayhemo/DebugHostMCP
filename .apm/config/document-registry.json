@@ -1,0 +1,277 @@
+{
+  "version": "1.0",
+  "updated": "{{CURRENT_DATE}}",
+  "enforcement": {
+    "level": "strict",
+    "allow_override": true,
+    "override_flag": "--force-location",
+    "log_overrides": true
+  },
+  "document_types": {
+    "backlog": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/backlog.md",
+      "type": "singleton",
+      "naming": "fixed",
+      "detection": {
+        "filename_patterns": ["backlog\\.md$"],
+        "content_markers": ["## Epic", "## Stories", "velocity", "capacity"],
+        "agent_hints": ["Product Owner", "PO"]
+      }
+    },
+    "story": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/",
+      "type": "collection",
+      "naming": {
+        "pattern": "STORY-{id}-{title}.md",
+        "id_format": "\\d{3}",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["story", "user-story", "STORY-\\d+"],
+        "content_markers": ["Acceptance Criteria", "Story Points", "As a", "User Story"],
+        "agent_hints": ["Product Owner", "PO", "Scrum Master", "SM"]
+      }
+    },
+    "epic": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/epics/",
+      "type": "collection",
+      "naming": {
+        "pattern": "EPIC-{id}-{title}.md",
+        "id_format": "\\d{2}",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["epic", "EPIC-\\d+"],
+        "content_markers": ["Success Criteria", "Child Stories", "Epic", "Business Value"],
+        "agent_hints": ["Product Owner", "PO"]
+      }
+    },
+    "test_plan": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/test-plans/",
+      "type": "collection",
+      "naming": {
+        "pattern": "TEST-PLAN-{date}-{seq}.md",
+        "date_format": "YYYY-MM-DD",
+        "seq_format": "\\d{3}"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["test", "test-plan", "testing", "test_plan"],
+        "content_markers": ["Test Cases", "Test Plan", "Test Scenarios", "Expected Results", "Test Coverage"],
+        "agent_hints": ["QA", "Developer", "Dev"]
+      }
+    },
+    "test_result": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/test-results/",
+      "type": "collection",
+      "naming": {
+        "pattern": "TEST-RESULT-{date}-{seq}.md",
+        "date_format": "YYYY-MM-DD",
+        "seq_format": "\\d{3}"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["result", "test-result", "test_result"],
+        "content_markers": ["Test Results", "PASSED", "FAILED", "Test Execution", "Test Summary"],
+        "agent_hints": ["QA"]
+      }
+    },
+    "architecture_decision": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/architecture/decisions/",
+      "type": "collection",
+      "naming": {
+        "pattern": "ADR-{seq}-{title}.md",
+        "seq_format": "\\d{4}",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["adr", "ADR-\\d+", "decision", "architecture-decision"],
+        "content_markers": ["Context", "Decision", "Consequences", "Architecture", "Status: Accepted"],
+        "agent_hints": ["Architect", "Tech Lead"]
+      }
+    },
+    "specification": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/architecture/specifications/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{component}-SPEC.md",
+        "component_format": "UPPERCASE-KEBAB"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["spec", "specification", "-SPEC\\.md$"],
+        "content_markers": ["Specification", "Requirements", "Interface", "API", "Technical Specification"],
+        "agent_hints": ["Architect", "Developer", "Dev"]
+      }
+    },
+    "report": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/reports/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{date}-{title}.md",
+        "date_format": "YYYY-MM-DD",
+        "title_format": "UPPERCASE-KEBAB"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["report", "analysis", "summary", "findings"],
+        "content_markers": ["Executive Summary", "Findings", "Recommendations", "Analysis", "Conclusion"],
+        "agent_hints": ["Analyst", "QA", "PM"]
+      }
+    },
+    "session_note": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/.apm/session_notes/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{timestamp}-{description}.md",
+        "timestamp_format": "YYYY-MM-DD-HH-mm-ss",
+        "description_format": "Title-Case"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["session", "note", "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}"],
+        "content_markers": ["Session:", "Objectives", "Progress", "Next Steps", "Decisions Made"],
+        "agent_hints": ["*"]
+      }
+    },
+    "defect": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/defects/",
+      "type": "collection",
+      "naming": {
+        "pattern": "DEFECT-{id}-{title}.md",
+        "id_format": "\\d{4}",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["defect", "bug", "issue", "DEFECT-\\d+"],
+        "content_markers": ["Defect", "Steps to Reproduce", "Expected Behavior", "Actual Behavior", "Bug"],
+        "agent_hints": ["QA", "Developer", "Dev"]
+      }
+    },
+    "meeting_note": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/meetings/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{date}-{title}.md",
+        "date_format": "YYYY-MM-DD",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["meeting", "minutes", "notes"],
+        "content_markers": ["Meeting", "Attendees", "Agenda", "Action Items", "Discussion"],
+        "agent_hints": ["SM", "PM", "PO"]
+      }
+    },
+    "retrospective": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/retrospectives/",
+      "type": "collection",
+      "naming": {
+        "pattern": "RETRO-{date}-SPRINT-{sprint}.md",
+        "date_format": "YYYY-MM-DD",
+        "sprint_format": "\\d{2}"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["retro", "retrospective", "RETRO-"],
+        "content_markers": ["What Went Well", "What Could Be Improved", "Action Items", "Retrospective"],
+        "agent_hints": ["SM", "Scrum Master"]
+      }
+    },
+    "roadmap": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/roadmaps/",
+      "type": "collection",
+      "naming": {
+        "pattern": "ROADMAP-{year}-{quarter}.md",
+        "year_format": "\\d{4}",
+        "quarter_format": "Q[1-4]"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["roadmap", "ROADMAP-"],
+        "content_markers": ["Roadmap", "Milestones", "Timeline", "Quarterly Goals"],
+        "agent_hints": ["PM", "PO", "Product Manager", "Product Owner"]
+      }
+    },
+    "api_documentation": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/api/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{service}-API.md",
+        "service_format": "kebab-case"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["api", "endpoint", "swagger", "openapi"],
+        "content_markers": ["Endpoint", "Request", "Response", "API", "Parameters"],
+        "agent_hints": ["Developer", "Dev", "Architect"]
+      }
+    },
+    "deployment_guide": {
+      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/deployment/",
+      "type": "collection",
+      "naming": {
+        "pattern": "DEPLOY-{environment}-{version}.md",
+        "environment_format": "uppercase",
+        "version_format": "v\\d+\\.\\d+\\.\\d+"
+      },
+      "allow_subfolders": true,
+      "detection": {
+        "filename_patterns": ["deploy", "deployment", "release"],
+        "content_markers": ["Deployment", "Prerequisites", "Steps", "Rollback", "Environment"],
+        "agent_hints": ["DevOps", "Developer", "Dev"]
+      }
+    }
+  },
+  "uncertain_handling": {
+    "action": "prompt",
+    "prompt_message": "I cannot determine the document type. Please select:",
+    "options": [
+      {"key": "1", "type": "story", "label": "User Story"},
+      {"key": "2", "type": "epic", "label": "Epic"},
+      {"key": "3", "type": "test_plan", "label": "Test Plan"},
+      {"key": "4", "type": "test_result", "label": "Test Results"},
+      {"key": "5", "type": "specification", "label": "Technical Specification"},
+      {"key": "6", "type": "architecture_decision", "label": "Architecture Decision"},
+      {"key": "7", "type": "report", "label": "Report/Analysis"},
+      {"key": "8", "type": "defect", "label": "Defect/Bug Report"},
+      {"key": "9", "type": "meeting_note", "label": "Meeting Notes"},
+      {"key": "10", "type": "api_documentation", "label": "API Documentation"},
+      {"key": "11", "type": "general", "label": "General Documentation"}
+    ],
+    "default_location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/general/"
+  },
+  "override_audit": {
+    "log_file": "/mnt/c/Code/MCPServers/DebugHostMCP/.apm/logs/location-overrides.json",
+    "required_fields": ["timestamp", "agent", "original_path", "override_path", "justification"],
+    "retention_days": 90,
+    "alert_threshold": 5,
+    "alert_message": "Warning: {count} override(s) used in the last 24 hours"
+  },
+  "subfolder_patterns": {
+    "allowed": [
+      "unit", "integration", "e2e", "performance",
+      "sprint-\\d+", "iteration-\\d+",
+      "\\d{4}", "\\d{4}-Q[1-4]", "\\d{4}-\\d{2}",
+      "v\\d+\\.\\d+", "release-\\d+",
+      "frontend", "backend", "mobile", "api",
+      "draft", "review", "approved", "archived"
+    ],
+    "auto_create": true
+  },
+  "statistics": {
+    "track_placement": true,
+    "track_corrections": true,
+    "report_frequency": "weekly",
+    "metrics": [
+      "correct_placement_rate",
+      "override_usage_rate",
+      "uncertain_detection_rate",
+      "agent_performance"
+    ]
+  }
+}

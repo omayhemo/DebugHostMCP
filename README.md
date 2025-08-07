@@ -1,294 +1,82 @@
-# Debug Host MCP Server
+# MCP Debug Host Platform
 
-A powerful Model Context Protocol (MCP) server for monitoring and debugging development servers with real-time dashboard capabilities.
+**Version**: 2.0.0 (Complete Redesign)  
+**Architecture**: Container-based with MCP HTTP/SSE Interface  
+**Status**: Clean Slate - Ready for Implementation  
 
-## Features
+## Overview
 
-- 🔍 **Real-time Process Monitoring** - Automatically detects and monitors running development servers
-- 🌐 **Web Dashboard** - Interactive dashboard at http://localhost:8080
-- 🔧 **Multi-Framework Support** - Works with Node.js, Python, PHP, and more
-- 📊 **Live Metrics** - Performance monitoring, logging, and process management
-- 🤖 **Claude Code Integration** - Seamless MCP protocol communication
-- 🎯 **Intelligent Interception** - Automatically captures development server commands
-- 🔄 **Session Persistence** - Maintains server state across Claude Code sessions
+The MCP Debug Host Platform is a centralized service management system designed specifically for Claude Code agents to orchestrate multiple project services without port conflicts or resource contention.
 
-## Installation
+## New Architecture
 
-### Prerequisites
+See: `project_docs/architecture/MCP-DEBUG-HOST-ARCHITECTURE.md`
 
-- Node.js 18+ (tested with v22.16.0)
-- npm or yarn package manager
-- ~50MB disk space
+### Key Features
+- **MCP HTTP/SSE Interface** on port 2601
+- **4 Pre-built Docker Base Images** (Node, Python, PHP, Static)
+- **Automatic Port Management** with dedicated ranges per language
+- **File Watching & Auto-Restart** for all environments
+- **3-Day Log Retention** with automatic rotation
+- **React Dashboard** for human monitoring on port 2602
 
-### Quick Install
+### Port Allocation
+- **System**: 2601-2699
+- **Node Apps**: 3000-3999
+- **Static Apps**: 4000-4999
+- **Python Apps**: 5000-5999
+- **PHP Apps**: 8080-8980
 
-```bash
-# Clone the repository
-git clone https://github.com/your-org/DebugHostMCP.git
-cd DebugHostMCP
-
-# Install dependencies
-npm install
-
-# Run installation script
-./install-mcp-host.sh
-```
-
-### Manual Installation
-
-1. **Install to home directory:**
-```bash
-# Copy to standard location
-cp -r . ~/.apm-debug-host
-
-# Install dependencies
-cd ~/.apm-debug-host
-npm install
-
-# Generate configuration
-node scripts/config-setup.js
-```
-
-2. **Configure Claude Code:**
-
-Add to your Claude Code configuration (`.mcp.json` or `~/.claude.json`):
-
-```json
-{
-  "mcpServers": {
-    "apm-debug-host": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["/home/your-user/.apm-debug-host/src/index.js"],
-      "env": {
-        "CONFIG_PATH": "/home/your-user/.apm-debug-host/config.json",
-        "PORT": "8080"
-      }
-    }
-  }
-}
-```
-
-3. **Start the service:**
-
-Linux (systemd):
-```bash
-sudo systemctl start apm-debug-host
-sudo systemctl enable apm-debug-host
-```
-
-macOS (launchd):
-```bash
-launchctl load ~/Library/LaunchAgents/com.apm.debug-host.plist
-```
-
-## Usage
-
-### Dashboard Access
-
-Open your browser to: **http://localhost:8080**
-
-The dashboard provides:
-- Active development servers list
-- Real-time console output
-- Process control (stop/restart)
-- Performance metrics
-- Log viewer
-
-### Claude Code Commands
-
-Once integrated, use these commands in Claude Code:
+## Project Structure
 
 ```
-"Show me running development servers"
-"Start the React development server"
-"Stop the Django server on port 8000"
-"Display server logs"
-"Check server health status"
-```
+/mnt/c/Code/MCPServers/DebugHostMCP/
+├── src/                    # New source code (to be implemented)
+│   ├── mcp/               # MCP server implementation
+│   ├── docker/            # Docker management
+│   ├── managers/          # Port, log, project managers
+│   └── utils/             # Utilities
+├── dashboard/             # React monitoring dashboard
+│   ├── src/              # React source
+│   └── public/           # Static assets
+├── docker/               # Docker configurations
+│   └── images/          # Dockerfiles for base images
+├── data/                # Runtime data (JSON storage)
+│   ├── projects/        # Project registry
+│   ├── logs/           # Application logs
+│   └── system/         # System configuration
+├── volumes/            # Docker volumes for dependencies
+├── scripts/           # Utility scripts
+└── project_docs/      # Documentation
+    └── architecture/  # Architecture specifications
 
-### Supported Frameworks
+## Legacy System
 
-The Debug Host MCP automatically detects and manages:
+The previous implementation (v1.x) has been archived to `archive-legacy-system/2025-08-05/`. This includes all source code, tests, documentation, and configurations from the original system.
 
-- **Node.js**: Express, Next.js, React, Vue, Angular, Nest.js
-- **Python**: Django, Flask, FastAPI, Streamlit
-- **PHP**: Laravel, Symfony, WordPress
-- **Ruby**: Rails, Sinatra
-- **Others**: Custom servers with configurable adapters
+## Implementation Status
 
-## Configuration
+- ✅ Architecture defined and approved
+- ✅ Legacy system archived
+- ✅ Clean project structure created
+- ⏳ MCP HTTP server implementation
+- ⏳ Docker base images creation
+- ⏳ Port management system
+- ⏳ Dashboard development
+- ⏳ Testing suite
 
-### Main Configuration (`config.json`)
+## Getting Started
 
-```json
-{
-  "server": {
-    "port": 8080,
-    "host": "localhost"
-  },
-  "dashboard": {
-    "enabled": true,
-    "authRequired": false
-  },
-  "monitoring": {
-    "interval": 5000,
-    "maxLogs": 1000
-  }
-}
-```
+*Implementation in progress - instructions will be added as components are built.*
 
-### Environment Variables
+## Development with APM Framework
 
-Create a `.env` file:
-
-```bash
-PORT=8080
-NODE_ENV=production
-LOG_LEVEL=info
-DASHBOARD_ENABLED=true
-API_KEY=your-secure-api-key
-```
-
-## API Documentation
-
-### MCP Tools
-
-The server exposes the following MCP tools:
-
-#### `server:list`
-Lists all active development servers
-
-#### `server:start`
-Starts a development server
-- Parameters: `command`, `cwd`, `sessionName`
-
-#### `server:stop`
-Stops a running server
-- Parameters: `sessionId`
-
-#### `server:logs`
-Retrieves server logs
-- Parameters: `sessionId`, `lines`
-
-#### `server:health`
-Checks server health status
-
-### REST API Endpoints
-
-- `GET /api/health` - Health check
-- `GET /api/sessions` - List all sessions
-- `POST /api/sessions` - Create new session
-- `DELETE /api/sessions/:id` - Stop session
-- `GET /api/logs/:sessionId` - Get session logs
-- `WS /ws` - WebSocket connection for real-time updates
-
-## Development
-
-### Project Structure
-
-```
-DebugHostMCP/
-├── src/
-│   ├── index.js              # Main MCP server entry
-│   ├── process-manager.js    # Process lifecycle management
-│   ├── log-store.js         # Log storage and retrieval
-│   ├── mcp-tools.js         # MCP protocol implementation
-│   ├── adapters/            # Framework-specific adapters
-│   └── dashboard/           # Web dashboard
-├── tests/                   # Test suite
-├── docs/                    # Documentation
-└── scripts/                 # Utility scripts
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-npm test
-
-# Run specific test suite
-npm run test:unit
-npm run test:integration
-npm run test:e2e
-
-# Coverage report
-npm run test:coverage
-```
-
-### Building
-
-```bash
-# Development build
-npm run dev
-
-# Production build
-npm run build
-
-# Start with watch mode
-npm run watch
-```
-
-## Troubleshooting
-
-### Common Issues
-
-**Port Already in Use**
-```bash
-# Find process using port 8080
-lsof -i :8080
-
-# Kill the process
-kill -9 <PID>
-```
-
-**Service Not Starting**
-```bash
-# Check service status
-systemctl status apm-debug-host
-
-# View logs
-journalctl -u apm-debug-host -f
-```
-
-**WebSocket Connection Failed**
-- Check firewall settings
-- Ensure port 8080 is accessible
-- Verify Claude Code has network access
-
-### Debug Mode
-
-Enable debug logging:
-```bash
-LOG_LEVEL=debug node src/index.js
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for details.
+This project uses the Agentic Persona Mapping (APM) framework for development. The framework is located in `.apm/` and provides specialized AI agents for different development phases.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file
-
-## Support
-
-- Documentation: [docs/](docs/)
-- Issues: [GitHub Issues](https://github.com/your-org/DebugHostMCP/issues)
-- Discussions: [GitHub Discussions](https://github.com/your-org/DebugHostMCP/discussions)
-
-## Acknowledgments
-
-Originally developed as part of the APM (Agentic Persona Mapping) Framework.
+MIT
 
 ---
 
-**Version**: 1.0.0  
-**Status**: Production Ready  
-**Last Updated**: 2025-01-03
+*For the legacy system documentation and code, see `archive-legacy-system/`*
