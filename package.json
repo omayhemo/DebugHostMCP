@@ -1,11 +1,11 @@
 {
-  "name": "mcp-debug-host",
-  "version": "1.0.0",
-  "description": "MCP Debug Host Platform for managing development environments",
-  "main": "src/mcp-server.js",
+  "name": "plopdock",
+  "version": "2.0.0",
+  "description": "PlopDock - Instant containerized development environments",
+  "main": "src/mcp-stdio-server.js",
   "scripts": {
-    "start": "node src/mcp-server.js",
-    "dev": "node --watch src/mcp-server.js",
+    "start": "node src/mcp-stdio-server.js",
+    "dev": "node --watch src/mcp-stdio-server.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -15,6 +15,8 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
+    "2": "^3.0.0",
+    "@modelcontextprotocol/sdk": "^1.17.2",
     "cors": "^2.8.5",
     "dockerode": "^4.0.2",
     "express": "^4.18.2",
@@ -47,11 +49,13 @@
     "testTimeout": 10000
   },
   "keywords": [
-    "mcp",
-    "debug",
+    "plopdock",
+    "docker",
+    "containerization",
     "development",
+    "instant-environments",
     "model-context-protocol"
   ],
-  "author": "MCP Debug Host Team",
+  "author": "PlopDock Team",
   "license": "MIT"
 }

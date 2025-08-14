@@ -1,12 +1,13 @@
-# MCP Debug Host Platform
+# PlopDock Platform
 
 **Version**: 2.0.0 (Complete Redesign)  
 **Architecture**: Container-based with MCP HTTP/SSE Interface  
 **Status**: Clean Slate - Ready for Implementation  
+**Tagline**: "Just plop it down and dock it!"
 
 ## Overview
 
-The MCP Debug Host Platform is a centralized service management system designed specifically for Claude Code agents to orchestrate multiple project services without port conflicts or resource contention.
+PlopDock (formerly MCP Debug Host Platform) is a centralized containerized development environment system that instantly spins up isolated Docker containers for your projects. Just "plop" your project down and let it "dock" - no port conflicts, no resource contention, just instant development environments.
 
 ## New Architecture
 

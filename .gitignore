@@ -142,7 +142,9 @@ rollback/
 .apm/session_notes/
 .apm/rules/
 .apm/CLAUDE.md
+./apm
 harmonization.log
+
 
 # Service and debug files
 service*.log

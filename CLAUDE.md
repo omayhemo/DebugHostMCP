@@ -1,32 +1,32 @@
-# MCP Debug Host - Important Development Notes
+# PlopDock - Important Development Notes
 
 ## Global Installation Policy
 
-**CRITICAL**: The production version of MCP Debug Host ALWAYS runs from the global installation at `~/.apm-debug-host/`. This is the ONLY production version that should ever be running.
+**CRITICAL**: The production version of PlopDock ALWAYS runs from the global installation at `~/.plopdock/`. This is the ONLY production version that should ever be running.
 
 ### Key Points:
-1. **Global Installation Path**: `~/.apm-debug-host/`
-2. **Global Config**: `~/.config/claude/mcp.json` - Configures MCP Debug Host for ALL Claude Code projects
+1. **Global Installation Path**: `~/.plopdock/`
+2. **Global Config**: `~/.config/claude/mcp.json` - Configures PlopDock for ALL Claude Code projects
 3. **Development Path**: `/mnt/c/Code/MCPServers/DebugHostMCP/` - For development ONLY
 
 ### Publishing/Deployment:
-- When we publish or deploy changes, we ALWAYS publish to the global version at `~/.apm-debug-host/`
+- When we publish or deploy changes, we ALWAYS publish to the global version at `~/.plopdock/`
 - Never run the development version as a service
 - The global version is what all Claude Code instances use across all projects
 
 ### Development Workflow:
 1. Make changes in `/mnt/c/Code/MCPServers/DebugHostMCP/`
 2. Test changes locally (stop global version temporarily if needed)
-3. When ready to deploy, copy changes to `~/.apm-debug-host/`
+3. When ready to deploy, copy changes to `~/.plopdock/`
 4. Restart the global service
 
 ### Commands:
 ```bash
 # Stop global instance (for testing dev version)
-pkill -f 'apm-debug-host/src/index.js'
+pkill -f 'plopdock/src/index.js'
 
 # Copy changes to global installation
-cp -r /mnt/c/Code/MCPServers/DebugHostMCP/* ~/.apm-debug-host/
+cp -r /mnt/c/Code/MCPServers/DebugHostMCP/* ~/.plopdock/
 
 # The global instance auto-starts with Claude Code
 ```
@@ -34,6 +34,33 @@ cp -r /mnt/c/Code/MCPServers/DebugHostMCP/* ~/.apm-debug-host/
 ## Current Issues Fixed:
 - Restart bug: Fixed in process-manager.js - now properly stops before restarting
 - System processes monitoring: Added ability to view all processes by environment (npm, node, etc.)
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
+# APM Claude.md Template
+
+
 # APM Claude.md Template
 
 
