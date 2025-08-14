@@ -51,6 +51,14 @@ async function ensureServicesInitialized() {
   }
 }
 
+// Ensure error handler is available
+function ensureErrorHandler() {
+  if (!errorHandler) {
+    errorHandler = new ErrorHandler();
+  }
+  return errorHandler;
+}
+
 /**
  * Tool definitions with JSON schemas for validation
  */
@@ -409,7 +417,7 @@ const TOOL_HANDLERS = {
       return result;
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'container-start',
         tool: 'host.start',
         projectId: params.projectId
@@ -437,7 +445,7 @@ const TOOL_HANDLERS = {
       return result;
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'container-stop',
         tool: 'host.stop',
         projectId: params.projectId
@@ -467,7 +475,7 @@ const TOOL_HANDLERS = {
       return result;
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'container-restart',
         tool: 'host.restart',
         projectId: params.projectId
@@ -493,7 +501,7 @@ const TOOL_HANDLERS = {
       return result;
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'container-status',
         tool: 'host.status',
         projectId: params.projectId
@@ -517,7 +525,7 @@ const TOOL_HANDLERS = {
       return result;
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'list-projects',
         tool: 'host.list',
         params
@@ -577,7 +585,7 @@ const TOOL_HANDLERS = {
       };
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'get-logs',
         tool: 'host.logs',
         containerName: params.containerName
@@ -606,7 +614,7 @@ const TOOL_HANDLERS = {
       };
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'search-logs',
         tool: 'host.searchLogs',
         query: params.query
@@ -636,7 +644,7 @@ const TOOL_HANDLERS = {
       };
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'clear-logs',
         tool: 'host.clearLogs',
         containerName: params.containerName
@@ -665,7 +673,7 @@ const TOOL_HANDLERS = {
       };
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'export-logs',
         tool: 'host.exportLogs',
         containerName: params.containerName,
@@ -707,7 +715,7 @@ const TOOL_HANDLERS = {
       };
       
     } catch (error) {
-      const errorResponse = errorHandler.handleError(error, {
+      const errorResponse = ensureErrorHandler().handleError(error, {
         operation: 'log-stats',
         tool: 'host.logStats',
         containerName: params.containerName

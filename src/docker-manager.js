@@ -18,6 +18,7 @@ class DockerManager {
     this.containers = new Map(); // Track managed containers
     this.baseImages = {
       node: 'debug-host/node:latest',
+      vite: 'debug-host/vite:latest',  // New Vite-specific image
       python: 'debug-host/python:latest',
       php: 'debug-host/php:latest',
       static: 'debug-host/static:latest'
@@ -41,17 +42,24 @@ class DockerManager {
       console.log('Initializing Docker Manager...');
       
       // Test Docker connectivity with retry logic
+      console.log('Step 1: Testing Docker connection...');
       await this.testDockerConnection();
+      console.log('Step 1: Complete');
       
       // Ensure debug-host-network exists
+      console.log('Step 2: Ensuring network exists...');
       await this.network.ensureNetwork();
+      console.log('Step 2: Complete');
       
       // Clean up any orphaned containers
+      console.log('Step 3: Cleaning up orphans...');
       await this.cleanupOrphans();
+      console.log('Step 3: Complete');
       
       console.log('Docker Manager initialized successfully');
     } catch (error) {
       console.error('Failed to initialize Docker Manager:', error.message);
+      console.error('Stack:', error.stack);
       throw error;
     }
   }
@@ -362,20 +370,95 @@ class DockerManager {
    * @returns {Array<object>} Array of container information
    */
   async listContainers() {
-    const containerList = [];
-    
-    for (const [containerId, containerInfo] of this.containers) {
-      try {
-        const fullInfo = await this.getContainerInfo(containerId);
-        containerList.push(fullInfo);
-      } catch (error) {
-        // Container might have been removed externally
-        console.warn(`Could not get info for container ${containerId}: ${error.message}`);
-        this.containers.delete(containerId);
-      }
+    try {
+      // Get all containers with debug-host label
+      const containers = await this.docker.listContainers({
+        all: false, // Only running containers
+        filters: {
+          label: ['debug-host=true']
+        }
+      });
+      
+      return containers;
+    } catch (error) {
+      console.error('Failed to list containers:', error);
+      return [];
     }
-    
-    return containerList;
+  }
+
+  /**
+   * Get container details
+   * 
+   * @param {string} containerId - Container ID
+   * @returns {Promise<object>} Container details
+   */
+  async getContainer(containerId) {
+    try {
+      const container = this.docker.getContainer(containerId);
+      const info = await container.inspect();
+      return info;
+    } catch (error) {
+      console.error(`Failed to get container ${containerId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get container by project ID
+   * 
+   * @param {string} projectId - Project ID
+   * @returns {Promise<object|null>} Container info or null
+   */
+  async getContainerByProject(projectId) {
+    try {
+      const containers = await this.docker.listContainers({
+        all: true,
+        filters: {
+          label: [`project-id=${projectId}`, 'debug-host=true']
+        }
+      });
+      
+      if (containers.length > 0) {
+        const containerInfo = containers[0];
+        return {
+          id: containerInfo.Id,
+          name: containerInfo.Names[0].replace(/^\//, ''),
+          status: containerInfo.State,
+          projectId: projectId
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error(`Failed to get container for project ${projectId}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Get container logs
+   * 
+   * @param {string} containerId - Container ID
+   * @param {object} options - Log options
+   * @returns {Promise<string>} Container logs
+   */
+  async getContainerLogs(containerId, options = {}) {
+    try {
+      const container = this.docker.getContainer(containerId);
+      const stream = await container.logs({
+        stdout: true,
+        stderr: true,
+        tail: options.tail || 100,
+        timestamps: true
+      });
+      
+      // Convert stream to string
+      const logs = stream.toString('utf8');
+      return logs;
+    } catch (error) {
+      console.error(`Failed to get logs for container ${containerId}:`, error);
+      throw error;
+    }
   }
 
   /**

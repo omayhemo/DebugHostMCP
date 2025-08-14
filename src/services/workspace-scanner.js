@@ -14,6 +14,11 @@ const { createMcpError, MCP_ERROR_CODES } = require('../middleware/error-handler
  * Each pattern maps to specific files that indicate the technology
  */
 const DETECTION_PATTERNS = {
+  vite: {
+    files: ['vite.config.js', 'vite.config.ts', 'vite.config.mjs'],
+    dependencies: ['vite'],
+    weight: 15 // Higher priority than generic nodejs
+  },
   nodejs: {
     files: ['package.json', '.nvmrc', 'yarn.lock', 'package-lock.json'],
     directories: ['node_modules'],
@@ -61,6 +66,7 @@ const DETECTION_PATTERNS = {
  * Port preferences by technology stack
  */
 const TECH_PORT_PREFERENCES = {
+  vite: { range: [5173, 5180], default: 5173 },
   nodejs: { range: [3000, 3999], default: 3000 },
   python: { range: [5000, 5999], default: 5000 },
   php: { range: [8080, 8980], default: 8080 },

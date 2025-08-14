@@ -359,6 +359,14 @@ class ProjectRegistry {
   }
 
   /**
+   * Get all projects (alias for listProjects)
+   * @returns {Promise<Array>} Array of all projects
+   */
+  async getAllProjects() {
+    return this.listProjects({});
+  }
+
+  /**
    * List all projects with optional filtering
    * @param {Object} filters - Filter options
    * @returns {Promise<Object>} List of projects
