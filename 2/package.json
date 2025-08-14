@@ -1,0 +1,57 @@
+{
+  "name": "mcp-debug-host",
+  "version": "1.0.0",
+  "description": "MCP Debug Host Platform for managing development environments",
+  "main": "src/mcp-server.js",
+  "scripts": {
+    "start": "node src/mcp-server.js",
+    "dev": "node --watch src/mcp-server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest --testPathPattern=tests/integration"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dockerode": "^4.0.2",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "axios": "^1.11.0",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/?(*.)+(spec|test).js"
+    ],
+    "roots": [
+      "<rootDir>"
+    ],
+    "modulePathIgnorePatterns": [
+      "archive-legacy-system",
+      ".apm"
+    ],
+    "testTimeout": 10000
+  },
+  "keywords": [
+    "mcp",
+    "debug",
+    "development",
+    "model-context-protocol"
+  ],
+  "author": "MCP Debug Host Team",
+  "license": "MIT"
+}

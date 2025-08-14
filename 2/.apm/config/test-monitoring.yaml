@@ -1,0 +1,14 @@
+# APM Framework Test Monitoring Configuration
+monitoring:
+  refresh_interval: 5
+  dashboard:
+    default_port: 8080
+    auto_refresh: true
+  notifications:
+    enabled: true
+    tts_enabled: true
+  features:
+    process_monitoring: true
+    file_watching: true
+    coverage_tracking: true
+    ai_ml_integration: true
