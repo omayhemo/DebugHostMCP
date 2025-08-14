@@ -80,7 +80,7 @@ The test monitoring framework is automatically installed with the APM framework:
 ./scripts/test-monitoring/monitor-tests.sh --processes
 
 # Monitor with web dashboard
-./scripts/test-monitoring/test-dashboard.sh --port 8080
+./scripts/test-monitoring/test-dashboard.sh --port 2601
 ```
 
 ### APM Integration
@@ -200,7 +200,7 @@ open test monitoring dashboard
 
 ```bash
 # Start web dashboard
-./scripts/test-monitoring/test-dashboard.sh --port 8080
+./scripts/test-monitoring/test-dashboard.sh --port 2601
 
 # Custom dashboard with metrics
 ./scripts/test-monitoring/test-dashboard.sh --metrics-only

@@ -7,7 +7,7 @@
 PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
 APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
 QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
-DEFAULT_PORT="${APM_DASHBOARD_PORT:-8080}"
+DEFAULT_PORT="${APM_DASHBOARD_PORT:-2601}"
 DASHBOARD_MODE="${APM_DASHBOARD_MODE:-full}"
 
 # Colors
@@ -406,7 +406,7 @@ show_help() {
     echo ""
     echo "OPTIONS:"
     echo "  --help, -h         Show this help message"
-    echo "  --port, -p N       Set dashboard port (default: 8080)"
+    echo "  --port, -p N       Set dashboard port (default: 2601)"
     echo "  --mode, -m MODE    Set dashboard mode (full, metrics, executive)"
     echo "  --generate, -g     Generate HTML file only"
     echo "  --status           Show current dashboard status"
@@ -417,7 +417,7 @@ show_help() {
     echo "  executive         High-level view for management"
     echo ""
     echo "Environment Variables:"
-    echo "  APM_DASHBOARD_PORT    Default dashboard port (default: 8080)"
+    echo "  APM_DASHBOARD_PORT    Default dashboard port (default: 2601)"
     echo "  APM_DASHBOARD_MODE    Default dashboard mode (default: full)"
     echo ""
     echo "Examples:"

@@ -9,7 +9,7 @@ For the current AP Orchestrator implementation, see:
 ## Migration Note
 
 The AP Orchestrator has been enhanced with:
-1. **Parallel Initialization Protocol** - Loads all required context using Task tool
+1. **Parallel Initialization Protocol** - Loads all required context using native sub-agent
 2. **Merged Command/Persona** - Single source of truth in the command file
 3. **Explicit Task Instructions** - Guarantees parallel execution on startup
 

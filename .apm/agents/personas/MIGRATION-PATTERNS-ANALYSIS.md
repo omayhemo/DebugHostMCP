@@ -1,15 +1,15 @@
-# Task-Based to Natural Language Migration Patterns
+# Native Sub-Agent to Natural Language Migration Patterns
 
 ## Migration Overview
 
 **Story**: 17.10 - Migrate Remaining Persona Commands  
 **Objective**: Convert Task-based parallel commands to native sub-agent coordination  
 **Target Performance**: Minimum 4x improvement across all commands  
-**Method**: Natural language sub-agent coordination replacing Task tool usage
+**Method**: Natural language sub-agent coordination replacing native sub-agent usage
 
-## Task-Based Pattern Analysis
+## Native Sub-Agent Pattern Analysis
 
-### Current Task-Based Structure
+### Current Native Sub-Agent Structure
 The existing parallel commands use this pattern:
 ```javascript
 [Task({
@@ -39,7 +39,7 @@ Focus: [COMPLEMENTARY_FOCUS_AREAS]"
 ### Pattern 1: Analyst Commands
 **Commands**: parallel-requirements, parallel-research-prompt, parallel-brainstorming, parallel-stakeholder-review
 
-#### Task-Based Example (Before)
+#### Native Sub-Agent Example (Before)
 ```javascript
 Task({
   description: "Stakeholder Requirements & Business Objectives Analysis",
@@ -63,7 +63,7 @@ Focus: Stakeholder mapping, business goals, success criteria, constraints, compl
 ### Pattern 2: PM Commands  
 **Commands**: parallel-prd
 
-#### Task-Based Example (Before)
+#### Native Sub-Agent Example (Before)
 ```javascript
 Task({
   description: "Market & User Analysis for PRD Foundation",
@@ -87,7 +87,7 @@ Focus: User persona analysis, market opportunity assessment, competitive landsca
 ### Pattern 3: Developer Commands
 **Commands**: parallel-review
 
-#### Task-Based Example (Before)
+#### Native Sub-Agent Example (Before)
 ```javascript
 Task({
   description: "Code Logic and Structure Review",
@@ -123,7 +123,7 @@ Focus: Algorithm efficiency, code organization, design patterns, error handling,
 4. **Context Preservation**: Better information retention across coordination
 
 ### Reliability Improvements
-1. **No CLI Crashes**: Elimination of Task tool instability
+1. **No CLI Crashes**: Elimination of native sub-agent instability
 2. **Predictable Performance**: Consistent execution patterns
 3. **Error Recovery**: Natural language resilience vs structured task failures
 4. **Graceful Degradation**: Adaptive execution when agents encounter issues

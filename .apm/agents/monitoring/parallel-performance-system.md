@@ -63,16 +63,16 @@ Adoption_Tracking:
 ```python
 class ParallelPerformanceTracker:
     def __init__(self):
-        self.metrics_db = Path("/mnt/c/Code/agentic-persona-mapping/.claude/metrics/parallel_performance.json")
+        self.metrics_db = Path("/mnt/c/Code/MCPServers/DebugHostMCP/.claude/metrics/parallel_performance.json")
         self.session_tracking = {}
         
     def track_parallel_execution_start(self, tool_calls, context):
         """Track when parallel execution begins"""
         
-        parallel_tasks = [call for call in tool_calls if call.get('function') == 'Task']
+        parallel_agents = [call for call in tool_calls if call.get('function') in ['general-purpose', 'Task']]  # Support both native sub-agents and legacy
         
-        if len(parallel_tasks) > 1:
-            execution_id = f"parallel_{int(time.time())}_{len(parallel_tasks)}"
+        if len(parallel_agents) > 1:
+            execution_id = f"parallel_{int(time.time())}_{len(parallel_agents)}"
             
             execution_data = {
                 "execution_id": execution_id,
@@ -140,7 +140,7 @@ class ParallelPerformanceAnalyzer:
                 "execution_id": execution_id,
                 "end_time": time.time(),
                 "total_execution_time": time.time() - start_data.get('start_time', time.time()),
-                "task_results": self._analyze_task_results(tool_results),
+                "agent_results": self._analyze_agent_results(tool_results),
                 "quality_assessment": self._assess_result_quality(tool_results),
                 "synthesis_effectiveness": self._evaluate_synthesis_quality(tool_results),
                 "performance_improvement": self._calculate_actual_improvement(start_data, tool_results),
@@ -168,7 +168,7 @@ class ParallelPerformanceAnalyzer:
         
         quality_metrics = {
             "completeness": self._check_result_completeness(tool_results),
-            "consistency": self._check_cross_task_consistency(tool_results),
+            "consistency": self._check_cross_agent_consistency(tool_results),
             "depth": self._assess_analysis_depth(tool_results),
             "actionability": self._assess_actionability(tool_results)
         }

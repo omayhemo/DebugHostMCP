@@ -13,7 +13,7 @@
 
 #### 1. Execution Time Measurement
 ```markdown
-## Baseline Measurements (Task-Based)
+## Baseline Measurements (Native Sub-Agent)
 - parallel-requirements: 4 hours (240 minutes)
 - parallel-research-prompt: 2 hours (120 minutes)  
 - parallel-brainstorming: 2 hours (120 minutes)
@@ -71,7 +71,7 @@ Start: 2025-07-25 14:00:00
 End: 2025-07-25 18:00:00
 Duration: 4 hours 0 minutes
 Quality Score: 85/100
-Issues: 2 Task tool timeouts, 1 context loss
+Issues: 2 native sub-agent timeouts, 1 context loss
 Completeness: 95% (missing technical constraints section)
 ```
 

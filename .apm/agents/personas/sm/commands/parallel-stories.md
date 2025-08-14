@@ -139,7 +139,7 @@ Apply **Batch Story Integration Matrix**:
 
 ## 📈 PERFORMANCE IMPROVEMENTS
 
-### vs Task-Based Approach
+### vs Native Sub-Agent Approach
 - **Speed**: 75% faster execution (60 min vs 240 min for 5-10 stories)
 - **Quality**: Enhanced through specialized agent expertise per story domain
 - **Consistency**: Standardized story format and estimation across batch

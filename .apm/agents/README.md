@@ -1,6 +1,26 @@
-# AP Mapping - Agentic Persona Mapping v3.3.0
+# AP Mapping - Agentic Persona Mapping v3.5.0
 
-The AP (Agentic Persona) Mapping is a revolutionary project-agnostic approach to orchestrating AI agents for software development with **native sub-agent architecture** and **MCP Debug Host integration**. This system provides specialized agent personas, each with specific expertise and responsibilities, working together with **true parallel execution** to deliver high-quality software projects at **4.1x faster speed**.
+## 🚨 CRITICAL: ALWAYS USE SLASH COMMANDS
+
+**⚠️ MANDATORY REQUIREMENT:** The APM Framework **REQUIRES** slash commands for proper agent activation.
+
+### ✅ CORRECT: Always use slash commands
+```
+/analyst   /pm   /architect   /dev   /qa   /ap
+```
+
+### ❌ WRONG: Never use informal requests
+```
+"Please load analyst"  "Act as developer"  "Be the QA agent"
+```
+
+**Without slash commands:** 4.6x slower, missing files, no parallelism, broken features.
+
+**📖 MUST READ:** See `/project_docs/CRITICAL-SLASH-COMMAND-USAGE.md` for full details.
+
+---
+
+The AP (Agentic Persona) Mapping is a revolutionary project-agnostic approach to orchestrating AI agents for software development with **native sub-agent architecture** and **MCP Plopdock integration**. This system provides specialized agent personas, each with specific expertise and responsibilities, working together with **true parallel execution** to deliver high-quality software projects at **4.1x faster speed**.
 
 ## 🚀 Epic 17 Complete - Revolutionary Architecture
 
@@ -12,11 +32,11 @@ The AP (Agentic Persona) Mapping is a revolutionary project-agnostic approach to
 - ✅ **34+ Hours/Week Saved** per development team
 - ✅ **100% Backward Compatibility** maintained
 
-## 🖥️ MCP Debug Host Integration (v3.3.0 - Epic 26)
+## 🖥️ MCP Plopdock Integration (v3.5.0 - Epic 26)
 
-**🚀 MCP Debug Host Integration (Epic 26 - 93% Complete):**
+**🚀 MCP Plopdock Integration (Epic 26 - 93% Complete):**
 - **Persistent Development Servers**: Servers survive Claude Code restarts
-- **Real-time Web Dashboard**: Full console output at http://localhost:8080
+- **Real-time Web Dashboard**: Full console output at http://localhost:2601
 - **Tech Stack Auto-Detection**: 11+ frameworks (React, Django, Laravel, etc.)
 - **Intelligent Command Interception**: PreToolUse hooks prevent conflicts
 - **Zero-Config Setup**: Automatic detection and optimal server management
@@ -42,7 +62,7 @@ The AP (Agentic Persona) Mapping is a revolutionary project-agnostic approach to
 **Benefits:**
 - **Persistent Servers**: Survive Claude Code session restarts
 - **Resource Management**: Prevents port conflicts and zombie processes
-- **Real-time Monitoring**: Web dashboard at http://localhost:8080
+- **Real-time Monitoring**: Web dashboard at http://localhost:2601
 - **Automatic Cleanup**: Proper server lifecycle management
 
 ## Quick Start
@@ -395,7 +415,7 @@ All voice scripts are located in `/`:
 - **Quality**: Maintained 95%+ quality standards during 4x acceleration
 
 ### 🎮 Key Technical Achievements
-- **Native Sub-Agent Architecture**: True parallel execution without Task tool overhead
+- **Native Sub-Agent Architecture**: True parallel execution without native sub-agent overhead
 - **Enterprise-Grade Stability**: Zero performance degradation under load
 - **AI/ML Integration**: Preserved advanced analytics in QA framework
 - **Real-Time Coordination**: Live dependency resolution and conflict prevention

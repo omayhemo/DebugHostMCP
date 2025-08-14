@@ -106,7 +106,7 @@ monitoring:
   
   # Dashboard configuration
   dashboard:
-    default_port: 8080
+    default_port: 2601
     auto_refresh: true
     themes:
       - light

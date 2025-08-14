@@ -290,6 +290,29 @@ Agents MUST update their session note file when:
 - **Context carryover**: Include unfinished tasks and key decisions
 - **Link references**: Reference previous session file for continuity
 
+## 📋 MANDATORY BACKLOG MANAGEMENT
+
+🚨 **CRITICAL**: ALL AGENTS MUST FOLLOW BACKLOG MANAGEMENT RULES
+
+### Required Reading at Session Start
+Every agent MUST read the backlog management rules:
+- **Rules File**: `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/rules/backlog-management.md`
+- **Backlog File**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/backlog.md`
+
+### Key Requirements (Summary)
+1. **ALWAYS update backlog.md** when working on stories, epics, or tasks
+2. **Track acceptance criteria progress** - check off criteria as completed
+3. **Never mark story "Done"** without ALL acceptance criteria checked
+4. **Update immediately** upon status changes or blocker discovery
+5. **Include evidence** for each completed acceptance criterion
+
+### Enforcement
+- Agents MUST verify backlog is updated before session end
+- Failure to update backlog = CRITICAL VIOLATION
+- Use `git diff /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/backlog.md` to verify updates
+
+**See full rules**: `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/rules/backlog-management.md`
+
 ## 🧪 TESTING YOUR UNDERSTANDING
 
 Before using with employees, test:

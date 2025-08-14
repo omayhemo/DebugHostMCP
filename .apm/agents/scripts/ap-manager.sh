@@ -26,7 +26,7 @@ fi
 REPO_OWNER="omayhemo"
 REPO_NAME="agentic-persona-mapping"
 VERSION_FILE="$AP_ROOT/../VERSION"
-TEMPLATES_DIR="$AP_ROOT/.templates"
+INSTALLER_DIR="$AP_ROOT/../.installer"  # Minimal preserved installer files
 BACKUP_DIR="$AP_ROOT/.backups"
 APM_ROOT="$(dirname "$AP_ROOT")"  # Get .apm directory from AP_ROOT
 PROJECT_ROOT="$(dirname "$APM_ROOT")"  # Get project root from .apm directory
@@ -141,19 +141,14 @@ perform_update() {
     fi
     
     # Run integrity check on current installation
-    if [ -f "$TEMPLATES_DIR/integrity-checker.sh" ]; then
+    if [ -f "$INSTALLER_DIR/integrity-checker.sh" ]; then
         echo -e "${BLUE}Running pre-update integrity check...${NC}"
-        "$TEMPLATES_DIR/integrity-checker.sh" --quiet || true
+        "$INSTALLER_DIR/integrity-checker.sh" --quiet || true
     fi
     
-    # Update templates files
-    echo -e "${BLUE}Updating templates files...${NC}"
-    if [ -d "$TEMPLATES_DIR" ]; then
-        rm -rf "$TEMPLATES_DIR.old"
-        mv "$TEMPLATES_DIR" "$TEMPLATES_DIR.old"
-    fi
-    mkdir -p "$TEMPLATES_DIR"
-    cp -r templates/* "$TEMPLATES_DIR/"
+    # Note: Templates are applied directly from the downloaded update
+    # We don't maintain a separate templates directory anymore
+    echo -e "${BLUE}Preparing to apply update...${NC}"
     
     # Remove .apm directory for fresh install
     echo -e "${BLUE}Removing existing .apm directory for fresh update...${NC}"
@@ -177,9 +172,9 @@ perform_update() {
     echo "New version: $new_version"
     
     # Run post-update integrity check
-    if [ -f "$TEMPLATES_DIR/integrity-checker.sh" ]; then
+    if [ -f "$INSTALLER_DIR/integrity-checker.sh" ]; then
         echo -e "${BLUE}Running post-update integrity check...${NC}"
-        "$TEMPLATES_DIR/integrity-checker.sh" --quiet
+        "$INSTALLER_DIR/integrity-checker.sh" --quiet
     fi
 }
 
@@ -201,8 +196,8 @@ create_backup() {
 verify_installation() {
     echo -e "${BLUE}Verifying AP Mapping installation...${NC}"
     
-    if [ -f "$TEMPLATES_DIR/integrity-checker.sh" ]; then
-        "$TEMPLATES_DIR/integrity-checker.sh"
+    if [ -f "$INSTALLER_DIR/integrity-checker.sh" ]; then
+        "$INSTALLER_DIR/integrity-checker.sh"
     else
         # Basic verification if integrity checker not available
         local issues=0
@@ -579,15 +574,19 @@ case "${1:-help}" in
         echo -e "${BLUE}Removing .apm directory for fresh repair...${NC}"
         rm -rf "$APM_ROOT"
         
-        # Run installer for fresh install
-        if [ -f "$TEMPLATES_DIR/install.sh" ]; then
-            echo -e "${BLUE}Installing fresh files...${NC}"
-            bash "$TEMPLATES_DIR/install.sh" "$(dirname "$APM_ROOT")"
-        else
-            echo -e "${RED}Error: Installer not found in templates directory${NC}"
-            echo "Please run update instead"
-            exit 1
-        fi
+        # Repair requires downloading the installer again
+        echo -e "${YELLOW}To complete repair, please download and run the installer:${NC}"
+        echo ""
+        echo "1. Download the latest release from:"
+        echo "   https://github.com/$REPO_OWNER/$REPO_NAME/releases/latest"
+        echo ""
+        echo "2. Extract and run the installer:"
+        echo "   tar -xzf apm-v*.tar.gz"
+        echo "   cd apm-v*"
+        echo "   bash installer/install.sh"
+        echo ""
+        echo "Your session notes have been preserved and will be restored."
+        exit 0
         
         # Restore session notes
         if [ -n "$temp_session_notes" ] && [ -d "$temp_session_notes/session_notes" ]; then

@@ -72,7 +72,7 @@
 3. **Quality Assurance**
    - Execute comprehensive test suite
    - Validate 4x performance improvement
-   - Confirm zero Task tool usage
+   - Confirm zero native sub-agent usage
 
 ### Phase 2: PM Command Migration (1 day)
 
@@ -156,7 +156,7 @@
 1. **Performance Achievement Confirmation**
    - Document 4x+ improvement for all commands
    - Validate quality maintenance or improvement
-   - Confirm zero CLI crashes and Task tool elimination
+   - Confirm zero CLI crashes and native sub-agent elimination
 
 2. **Quality Assurance Completion**
    - Execute comprehensive test suite across all commands
@@ -193,7 +193,7 @@
 ### 4. Performance Consistency ✓
 - [ ] Minimum 4x improvement across all commands achieved
 - [ ] Consistent execution patterns implemented
-- [ ] No Task tool usage remaining
+- [ ] No native sub-agent usage remaining
 - [ ] Zero CLI crashes confirmed
 - [ ] Predictable performance validated
 
@@ -268,7 +268,7 @@ Focus: [DETAILED_FOCUS_AREAS_AND_DELIVERABLES]"
 ### Quantitative Success Criteria
 - ✅ All 6 commands migrated to native sub-agents
 - ✅ Minimum 4x performance improvement achieved
-- ✅ Zero Task tool usage remaining
+- ✅ Zero native sub-agent usage remaining
 - ✅ Zero CLI crashes during execution
 - ✅ Quality scores maintained or improved (≥85/100)
 

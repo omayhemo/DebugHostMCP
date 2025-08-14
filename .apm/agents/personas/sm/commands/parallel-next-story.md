@@ -121,7 +121,7 @@ Apply **Next Story Integration Matrix**:
 
 ## 📈 PERFORMANCE IMPROVEMENTS
 
-### vs Task-Based Approach
+### vs Native Sub-Agent Approach
 - **Speed**: 75% faster execution (25 min vs 100 min)
 - **Quality**: Enhanced through specialized agent expertise
 - **Consistency**: Standardized outputs through agent coordination
@@ -177,4 +177,4 @@ Result: Payment processing fix story with:
 
 ---
 
-This native sub-agent approach eliminates Task tool dependency while providing true parallel execution and enhanced story quality through specialized agent expertise.
+This native sub-agent approach eliminates native sub-agent dependency while providing true parallel execution and enhanced story quality through specialized agent expertise.

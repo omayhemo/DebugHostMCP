@@ -57,7 +57,7 @@ bash $AP_ROOT//parallel-sprint.sh --sprint feature-auth --agents dev-frontend,de
 Extracts tasks from story files and adds them to the central task tracking file.
 
 ```bash
-./extract-tasks.sh /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/stories/STORY-001.md
+./extract-tasks.sh /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/STORY-001.md
 ```
 
 #### query-tasks.sh
@@ -167,7 +167,7 @@ These scripts are designed to work seamlessly with Claude Code:
 ### File Locations
 - **Tasks File**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/session-notes/tasks/tasks.md`
 - **Archive Directory**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/session-notes/tasks/archive/`
-- **Story Files**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/stories/`
+- **Story Files**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/`
 
 ## Troubleshooting
 

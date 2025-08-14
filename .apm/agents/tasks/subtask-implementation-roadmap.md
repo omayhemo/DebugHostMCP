@@ -31,7 +31,7 @@ Add to `/architect.md`:
 
 When analyzing complex systems:
 1. Break down into independent components
-2. Use Task tool for parallel analysis:
+2. Use native sub-agents for parallel analysis:
    - Task("Analyze database design patterns and optimization opportunities")
    - Task("Review API architecture for REST compliance and security")
    - Task("Assess frontend architecture for scalability")
@@ -96,7 +96,7 @@ Return results in this format:
 ### Immediate Actions
 - [ ] Create subtask directory structure
 - [ ] Write README for subtask usage
-- [ ] Update Architect persona with Task tool instructions
+- [ ] Update Architect persona with native sub-agent instructions
 - [ ] Create 3 initial subtask templates
 - [ ] Test with simple parallel analysis
 
@@ -119,7 +119,7 @@ Return results in this format:
 # In agent conversation:
 I'll analyze this system using parallel subtasks for efficiency.
 
-*Uses Task tool to spawn:*
+*Uses native sub-agent to spawn:*
 - Task("Analyze security vulnerabilities in authentication system")
 - Task("Review database queries for N+1 problems")
 - Task("Check API rate limiting implementation")

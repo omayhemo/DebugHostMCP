@@ -28,7 +28,7 @@ Before running this command, ensure:
 
 ### Native Sub-Agent Launch Pattern
 
-Instead of using Task tool, launch multiple Architect sub-agents using this pattern:
+Instead of using native sub-agent, launch multiple Architect sub-agents using this pattern:
 
 ```markdown
 I'm initiating parallel architecture analysis using specialized Architect sub-agents for comprehensive system design.
