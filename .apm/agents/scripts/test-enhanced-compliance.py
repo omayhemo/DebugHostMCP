@@ -50,7 +50,7 @@ As a user, I want to login to the system so that I can access my account.
 - Documentation updated
 ''',
         'expected_type': 'user_story',
-        'expected_location': 'project_docs/planning/stories/'
+        'expected_location': 'project_docs/planning/planning-stories/'
     },
     
     'architecture.md': {
@@ -71,7 +71,7 @@ We will use PostgreSQL as our primary database.
 - Mature ecosystem
 ''',
         'expected_type': 'architecture_decision',
-        'expected_location': 'project_docs/architecture/decisions/'
+        'expected_location': 'project_docs/planning-architecture/decisions/'
     },
     
     'meeting-notes.md': {
@@ -135,8 +135,8 @@ class ComplianceTestSuite:
             '.apm/logs',
             '.apm/session_notes',
             'project_docs/qa/test-plans',
-            'project_docs/planning/stories',
-            'project_docs/architecture/decisions',
+            'project_docs/planning/planning-stories',
+            'project_docs/planning-architecture/decisions',
             'project_docs/general',
             'project_docs/reports'
         ]
@@ -169,7 +169,7 @@ class ComplianceTestSuite:
                     }
                 },
                 "user_story": {
-                    "location": f"{self.test_dir}/project_docs/planning/stories/",
+                    "location": f"{self.test_dir}/project_docs/planning/planning-stories/",
                     "type": "collection",
                     "naming": {
                         "pattern": "STORY-{date}-{seq}.md",
@@ -183,7 +183,7 @@ class ComplianceTestSuite:
                     }
                 },
                 "architecture_decision": {
-                    "location": f"{self.test_dir}/project_docs/architecture/decisions/",
+                    "location": f"{self.test_dir}/project_docs/planning-architecture/decisions/",
                     "type": "collection",
                     "naming": {
                         "pattern": "ADR-{seq}-{title}.md",

@@ -4,9 +4,9 @@
 # Description: Web-based test monitoring dashboard
 
 # Configuration
-PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
-APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
-QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
+PROJECT_ROOT="/mnt/c/Code/plopdock"
+APM_ROOT="/mnt/c/Code/plopdock/.apm"
+QA_REPORTS_DIR="/mnt/c/Code/plopdock/project_docs/qa"
 DEFAULT_PORT="${APM_DASHBOARD_PORT:-2601}"
 DASHBOARD_MODE="${APM_DASHBOARD_MODE:-full}"
 

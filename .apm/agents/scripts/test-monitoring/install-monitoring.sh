@@ -4,10 +4,10 @@
 # Description: Install test monitoring capabilities into APM framework
 
 # Configuration
-APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
-PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
+APM_ROOT="/mnt/c/Code/plopdock/.apm"
+PROJECT_ROOT="/mnt/c/Code/plopdock"
 SCRIPTS_DIR="$APM_ROOT/scripts/test-monitoring"
-QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
+QA_REPORTS_DIR="/mnt/c/Code/plopdock/project_docs/qa"
 
 # Colors
 RED='\033[0;31m'
@@ -162,10 +162,10 @@ monitoring:
 
 # Environment variable mappings
 environment:
-  project_root: "/mnt/c/Code/MCPServers/DebugHostMCP"
-  apm_root: "/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
-  qa_reports_dir: "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
-  scripts_dir: "/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring"
+  project_root: "/mnt/c/Code/plopdock"
+  apm_root: "/mnt/c/Code/plopdock/.apm"
+  qa_reports_dir: "/mnt/c/Code/plopdock/project_docs/qa"
+  scripts_dir: "/mnt/c/Code/plopdock/.apm/scripts/test-monitoring"
 
 # Integration settings
 integrations:
@@ -209,32 +209,32 @@ install_command_aliases() {
 # Template Version: {{VERSION}}
 
 # Main monitoring commands
-alias apm-monitor="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh"
-alias apm-dashboard="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-dashboard.sh"
-alias apm-metrics="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-metrics-collector.sh"
+alias apm-monitor="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh"
+alias apm-dashboard="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-dashboard.sh"
+alias apm-metrics="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-metrics-collector.sh"
 
 # Monitoring shortcuts
-alias monitor-tests="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh"
-alias test-dashboard="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-dashboard.sh"
-alias test-metrics="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-metrics-collector.sh"
+alias monitor-tests="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh"
+alias test-dashboard="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-dashboard.sh"
+alias test-metrics="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-metrics-collector.sh"
 
 # Quick monitoring commands
-alias show-test-status="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh --once"
-alias monitor-processes="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh --processes"
-alias monitor-reports="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh --reports"
+alias show-test-status="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh --once"
+alias monitor-processes="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh --processes"
+alias monitor-reports="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh --reports"
 
 # Dashboard variants
-alias exec-dashboard="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-dashboard.sh --mode executive"
-alias metrics-dashboard="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-dashboard.sh --mode metrics"
+alias exec-dashboard="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-dashboard.sh --mode executive"
+alias metrics-dashboard="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-dashboard.sh --mode metrics"
 
 # Export commands
-alias export-test-metrics-csv="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-metrics-collector.sh --export csv"
-alias export-test-metrics-json="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-metrics-collector.sh --export json"
+alias export-test-metrics-csv="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-metrics-collector.sh --export csv"
+alias export-test-metrics-json="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-metrics-collector.sh --export json"
 
 # Help commands
-alias apm-monitor-help="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/monitor-tests.sh --help"
-alias apm-dashboard-help="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-dashboard.sh --help"
-alias apm-metrics-help="/mnt/c/Code/MCPServers/DebugHostMCP/.apm/scripts/test-monitoring/test-metrics-collector.sh --help"
+alias apm-monitor-help="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/monitor-tests.sh --help"
+alias apm-dashboard-help="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-dashboard.sh --help"
+alias apm-metrics-help="/mnt/c/Code/plopdock/.apm/scripts/test-monitoring/test-metrics-collector.sh --help"
 
 echo "APM Test Monitoring aliases loaded"
 echo "Available commands:"
@@ -288,7 +288,7 @@ This directory contains the complete test monitoring infrastructure for the APM 
 
 ## Configuration
 
-See `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/config/test-monitoring.yaml` for configuration options.
+See `/mnt/c/Code/plopdock/.apm/config/test-monitoring.yaml` for configuration options.
 
 ## Integration with QA Agent
 
@@ -300,14 +300,14 @@ The monitoring framework integrates seamlessly with the APM QA agent:
 
 # Within QA session
 monitor tests
-test dashboard
-test metrics
+qa test dashboard
+qa test metrics
 ```
 
 ## Documentation
 
 Complete documentation is available at:
-`/mnt/c/Code/MCPServers/DebugHostMCP/.apm/templates/scripts/test-monitoring/README.md.template`
+`/mnt/c/Code/plopdock/.apm/templates/scripts/test-monitoring/README.md.template`
 EOF
     
     if [ -f "$readme_file" ]; then
@@ -392,7 +392,7 @@ show_post_install_info() {
     echo -e "${BLUE}Integration with QA Agent:${NC}"
     echo -e "  ${GREEN}/qa${NC}                 - Activate QA agent"
     echo -e "  ${GREEN}monitor tests${NC}       - Start monitoring from QA agent"
-    echo -e "  ${GREEN}test dashboard${NC}      - Launch dashboard from QA agent"
+    echo -e "  ${GREEN}qa test dashboard${NC}      - Launch dashboard from QA agent"
     echo ""
     echo -e "${BLUE}Configuration:${NC}"
     echo -e "  Config file: ${YELLOW}$APM_ROOT/config/test-monitoring.yaml${NC}"

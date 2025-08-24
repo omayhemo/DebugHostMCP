@@ -1,5 +1,5 @@
 #!/bin/bash
-# AP Mapping Manager - Update, uninstall, and manage AP Mapping installation
+# Coherence Manager - Update, uninstall, and manage Coherence installation
 
 set -e
 
@@ -34,13 +34,13 @@ PROJECT_ROOT="$(dirname "$APM_ROOT")"  # Get project root from .apm directory
 # Show usage
 usage() {
     cat << EOF
-AP Mapping Manager v1.0.0
+Coherence Manager v1.0.0
 
 Usage: $(basename "$0") <command> [options]
 
 Commands:
     update                    Check for and install updates
-    uninstall                 Remove AP Mapping from project
+    uninstall                 Remove Coherence from project
     verify                    Verify installation integrity
     repair                    Repair corrupted installation
     rollback                  Rollback to previous version
@@ -194,7 +194,7 @@ create_backup() {
 
 # Verify installation
 verify_installation() {
-    echo -e "${BLUE}Verifying AP Mapping installation...${NC}"
+    echo -e "${BLUE}Verifying Coherence installation...${NC}"
     
     if [ -f "$INSTALLER_DIR/integrity-checker.sh" ]; then
         "$INSTALLER_DIR/integrity-checker.sh"
@@ -233,9 +233,9 @@ verify_installation() {
     fi
 }
 
-# Uninstall AP Mapping
+# Uninstall Coherence
 uninstall_ap_method() {
-    echo -e "${YELLOW}Warning: This will remove AP Mapping from your project${NC}"
+    echo -e "${YELLOW}Warning: This will remove Coherence from your project${NC}"
     
     # Check for --keep-settings flag
     local keep_settings=false
@@ -244,7 +244,7 @@ uninstall_ap_method() {
         echo "Settings and session notes will be preserved"
     fi
     
-    read -p "Are you sure you want to uninstall AP Mapping? (y/N): " -n 1 -r
+    read -p "Are you sure you want to uninstall Coherence? (y/N): " -n 1 -r
     echo
     
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -319,7 +319,7 @@ uninstall_ap_method() {
 # Show version
 show_version() {
     local version=$(get_current_version)
-    echo "AP Mapping version: $version"
+    echo "Coherence version: $version"
     
     if [ -f "$AP_ROOT/.templates/manifest.txt" ]; then
         local install_date=$(stat -c %y "$AP_ROOT/.templates/manifest.txt" 2>/dev/null | cut -d' ' -f1)
@@ -329,7 +329,7 @@ show_version() {
     fi
 }
 
-# Uninstall AP Mapping
+# Uninstall Coherence
 uninstall_ap_method() {
     local force_mode="$1"
     
@@ -375,7 +375,7 @@ uninstall_ap_method() {
     if [ -d "$PROJECT_ROOT/.claude/commands" ]; then
         local apm_commands=(
             "ap_orchestrator.md" "ap.md" "handoff.md" "wrap.md" "switch.md"
-            "session-note-setup.md" "analyst.md" "architect.md" "design-architect.md"
+            "session-note-setup.md" "analyst.md" "architect.md" "designer.md"
             "dev.md" "developer.md" "personas.md" "pm.md" "po.md" "qa.md" "sm.md"
             "parallel-sprint.md" "subtask.md"
         )
@@ -443,7 +443,7 @@ uninstall_ap_method() {
             del(.env.SPEAK_ANALYST) |
             del(.env.SPEAK_PO) |
             del(.env.SPEAK_SM) |
-            del(.env.SPEAK_DESIGN_ARCHITECT) |
+            del(.env.SPEAK_DESIGNER) |
             del(.hooks) |
             del(.claude_chats_to_save)' "$PROJECT_ROOT/.claude/settings.json" > "$tmp_file" && mv "$tmp_file" "$PROJECT_ROOT/.claude/settings.json"
         
@@ -581,9 +581,9 @@ case "${1:-help}" in
         echo "   https://github.com/$REPO_OWNER/$REPO_NAME/releases/latest"
         echo ""
         echo "2. Extract and run the installer:"
-        echo "   tar -xzf apm-v*.tar.gz"
-        echo "   cd apm-v*"
-        echo "   bash installer/install.sh"
+        echo "   tar -xzf coherence-v*-installer.tar.gz"
+        echo "   cd coherence-v*-installer"
+        echo "   bash payload/install.sh"
         echo ""
         echo "Your session notes have been preserved and will be restored."
         exit 0

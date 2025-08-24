@@ -4,9 +4,9 @@
 # Description: Real-time test monitoring for QA operations
 
 # Configuration
-PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
-APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
-QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
+PROJECT_ROOT="/mnt/c/Code/plopdock"
+APM_ROOT="/mnt/c/Code/plopdock/.apm"
+QA_REPORTS_DIR="/mnt/c/Code/plopdock/project_docs/qa"
 TEST_OUTPUT_DIR="workspace/tests"
 REFRESH_INTERVAL="${APM_TEST_MONITOR_INTERVAL:-5}"
 

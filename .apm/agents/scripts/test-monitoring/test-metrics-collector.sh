@@ -4,9 +4,9 @@
 # Description: Collect and aggregate test metrics for analysis
 
 # Configuration
-PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
-APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
-QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
+PROJECT_ROOT="/mnt/c/Code/plopdock"
+APM_ROOT="/mnt/c/Code/plopdock/.apm"
+QA_REPORTS_DIR="/mnt/c/Code/plopdock/project_docs/qa"
 METRICS_DIR="$QA_REPORTS_DIR/metrics"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 OUTPUT_FORMAT="${APM_METRICS_FORMAT:-json}"

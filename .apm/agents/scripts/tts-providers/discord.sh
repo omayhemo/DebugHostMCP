@@ -73,16 +73,16 @@ get_persona_name() {
     local persona="$1"
     
     case "$persona" in
-        orchestrator) echo "AP Orchestrator" ;;
-        developer) echo "AP Developer" ;;
-        architect) echo "AP Architect" ;;
-        analyst) echo "AP Analyst" ;;
-        qa) echo "AP QA" ;;
-        pm) echo "AP Project Manager" ;;
-        po) echo "AP Product Owner" ;;
-        sm) echo "AP Scrum Master" ;;
-        design_architect) echo "AP Design Architect" ;;
-        *) echo "AP Agent" ;;
+        orchestrator) echo "Coherence Orchestrator" ;;
+        developer) echo "Coherence Developer" ;;
+        architect) echo "Coherence Architect" ;;
+        analyst) echo "Coherence Analyst" ;;
+        qa) echo "Coherence QA" ;;
+        pm) echo "Coherence Project Manager" ;;
+        po) echo "Coherence Product Owner" ;;
+        sm) echo "Coherence Scrum Master" ;;
+        design_architect) echo "Coherence Design Architect" ;;
+        *) echo "Coherence Agent" ;;
     esac
 }
 
@@ -185,7 +185,7 @@ configure() {
     
     # Test webhook
     echo "Testing webhook..."
-    local test_payload='{"content": "🔧 AP Mapping TTS Test", "username": "AP Mapping Setup"}'
+    local test_payload='{"content": "🔧 Coherence TTS Test", "username": "Coherence Setup"}'
     local response=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Content-Type: application/json" \
         -X POST \
@@ -242,7 +242,7 @@ configure() {
         
         if ! grep -q "export DISCORD_WEBHOOK_URL=" "$shell_profile" 2>/dev/null; then
             echo "" >> "$shell_profile"
-            echo "# Discord webhook for AP Mapping notifications" >> "$shell_profile"
+            echo "# Discord webhook for Coherence notifications" >> "$shell_profile"
             echo "export DISCORD_WEBHOOK_URL='$webhook_url'" >> "$shell_profile"
         else
             sed -i.bak "s|export DISCORD_WEBHOOK_URL=.*|export DISCORD_WEBHOOK_URL='$webhook_url'|" "$shell_profile"

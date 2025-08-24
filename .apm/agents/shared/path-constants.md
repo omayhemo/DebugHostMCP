@@ -5,13 +5,13 @@ These are the standard paths that all agents should use:
 
 ```bash
 # Base paths
-PROJECT_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP"
-APM_ROOT="/mnt/c/Code/MCPServers/DebugHostMCP/.apm"
+PROJECT_ROOT="/mnt/c/Code/plopdock"
+APM_ROOT="/mnt/c/Code/plopdock/.apm"
 
 # Documentation paths
 DOCS_ROOT="$PROJECT_ROOT/project_docs"
-REQUIREMENTS_PATH="$DOCS_ROOT/requirements"
-ARCHITECTURE_PATH="$DOCS_ROOT/architecture"
+REQUIREMENTS_PATH="$DOCS_ROOT/planning-requirements"
+ARCHITECTURE_PATH="$DOCS_ROOT/planning-architecture"
 SPECIFICATIONS_PATH="$DOCS_ROOT/specifications"
 BACKLOG_PATH="$DOCS_ROOT/backlog.md"
 PLANNING_PATH="$DOCS_ROOT/planning"

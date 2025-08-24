@@ -49,7 +49,7 @@ The test monitoring framework is automatically installed with the APM framework:
 
 ```bash
 # Standard APM installation includes test monitoring
-./installer/install.sh
+./payload/install.sh
 
 # Verify monitoring installation
 ./scripts/test-monitoring/monitor-tests.sh --help
@@ -108,7 +108,7 @@ The test monitoring framework is automatically installed with the APM framework:
 export APM_TEST_MONITOR_INTERVAL=5
 
 # Set QA reports directory
-export APM_QA_REPORTS_DIR="/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa"
+export APM_QA_REPORTS_DIR="/mnt/c/Code/plopdock/project_docs/qa"
 
 # Enable advanced monitoring features
 export APM_MONITOR_ADVANCED=true
@@ -119,7 +119,7 @@ export APM_MONITOR_WEBHOOK_URL="https://hooks.slack.com/..."
 
 ### Configuration File
 
-Create `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/config/test-monitoring.yaml`:
+Create `/mnt/c/Code/plopdock/.apm/config/test-monitoring.yaml`:
 
 ```yaml
 monitoring:
@@ -262,10 +262,10 @@ The monitoring script provides color-coded, real-time console output:
 2. **QA reports not found**
    ```bash
    # Verify QA reports directory
-   ls -la /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/
+   ls -la /mnt/c/Code/plopdock/project_docs/qa/
    
    # Create QA reports directory
-   mkdir -p /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/reports/
+   mkdir -p /mnt/c/Code/plopdock/project_docs/qa/reports/
    ```
 
 3. **Monitoring script permission denied**
@@ -316,7 +316,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup APM Test Monitoring
         run: |
-          ./installer/install.sh
+          ./payload/install.sh
           ./scripts/test-monitoring/monitor-tests.sh --once --report
 ```
 
@@ -361,7 +361,7 @@ OPTIONS:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `APM_TEST_MONITOR_INTERVAL` | Refresh interval (seconds) | 5 |
-| `APM_QA_REPORTS_DIR` | QA reports directory | `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa` |
+| `APM_QA_REPORTS_DIR` | QA reports directory | `/mnt/c/Code/plopdock/project_docs/qa` |
 | `APM_MONITOR_ADVANCED` | Enable advanced features | false |
 | `APM_MONITOR_WEBHOOK_URL` | Notification webhook URL | - |
 

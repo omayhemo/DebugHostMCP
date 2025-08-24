@@ -35,20 +35,20 @@ Creates Git worktrees for all agents to enable parallel development.
 bash $AP_ROOT//setup-agent-worktrees.sh
 ```
 
-#### parallel-sprint.sh (v{{VERSION}} - Native Sub-Agents)
-Launches multiple native sub-agents with true parallelism for sprint work.
+#### parallel-implementation-sprint.sh (v{{VERSION}} - Native Sub-Agents)
+Launches multiple native sub-agents with true parallelism for implementation-sprint work.
 
-**Performance**: 4.6x faster sprint completion with zero CLI crashes
+**Performance**: 4.6x faster implementation-sprint completion with zero CLI crashes
 
 ```bash
 # Launch default agents (dev-frontend, dev-backend, qa)
-bash $AP_ROOT//parallel-sprint.sh
+bash $AP_ROOT//parallel-implementation-sprint.sh
 
 # Launch specific agents
-bash $AP_ROOT//parallel-sprint.sh --agents dev-frontend,dev-backend,architect
+bash $AP_ROOT//parallel-implementation-sprint.sh --agents dev-frontend,dev-backend,architect
 
-# Launch with custom sprint name
-bash $AP_ROOT//parallel-sprint.sh --sprint feature-auth --agents dev-frontend,dev-backend
+# Launch with custom implementation-sprint name
+bash $AP_ROOT//parallel-implementation-sprint.sh --implementation-sprint feature-auth --agents dev-frontend,dev-backend
 ```
 
 ### Task Management Scripts
@@ -57,7 +57,7 @@ bash $AP_ROOT//parallel-sprint.sh --sprint feature-auth --agents dev-frontend,de
 Extracts tasks from story files and adds them to the central task tracking file.
 
 ```bash
-./extract-tasks.sh /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/STORY-001.md
+./extract-tasks.sh /mnt/c/Code/plopdock/project_docs/planning/planning-stories/STORY-001.md
 ```
 
 #### query-tasks.sh
@@ -71,8 +71,8 @@ Query and filter tasks by various criteria.
 ./query-tasks.sh status pending
 ./query-tasks.sh status in-progress --format count
 
-# Query by epic/story
-./query-tasks.sh epic EPIC-001
+# Query by planning-epic/story
+./query-tasks.sh planning-epic EPIC-001
 ./query-tasks.sh story STORY-002 --format summary
 ```
 
@@ -165,9 +165,9 @@ These scripts are designed to work seamlessly with Claude Code:
 - **Quick Reference**: [`../docs/PARALLEL-SUBTASK-QUICK-REFERENCE.md`](../docs/PARALLEL-SUBTASK-QUICK-REFERENCE.md)
 
 ### File Locations
-- **Tasks File**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/session-notes/tasks/tasks.md`
-- **Archive Directory**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/session-notes/tasks/archive/`
-- **Story Files**: `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/`
+- **Tasks File**: `/mnt/c/Code/plopdock/project_docs/session-notes/tasks/tasks.md`
+- **Archive Directory**: `/mnt/c/Code/plopdock/project_docs/session-notes/tasks/archive/`
+- **Story Files**: `/mnt/c/Code/plopdock/project_docs/planning/planning-stories/`
 
 ## Troubleshooting
 

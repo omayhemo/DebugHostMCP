@@ -1,5 +1,5 @@
 #\!/bin/bash
-# Voice script for AP Analyst using TTS manager
+# Voice script for Coherence Analyst using TTS manager
 
 # Get the script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
