@@ -35,6 +35,18 @@ const TECH_STACK_CONFIG = {
     startupTimeoutMs: 30000,
     shutdownGracePeriodMs: 10000
   },
+  node: {
+    image: 'node',
+    healthCheckPath: '/health',
+    startupTimeoutMs: 30000,
+    shutdownGracePeriodMs: 10000
+  },
+  vite: {
+    image: 'vite',
+    healthCheckPath: '/',
+    startupTimeoutMs: 45000,
+    shutdownGracePeriodMs: 10000
+  },
   python: {
     image: 'python',
     healthCheckPath: '/health',
@@ -163,8 +175,8 @@ class ContainerLifecycle {
       // Start health monitoring
       await this.healthMonitor.startMonitoring(containerInfo.containerId, {
         projectId,
-        healthCheckPath: TECH_STACK_CONFIG[project.primaryTech]?.healthCheckPath || '/health',
-        port: project.ports.primary
+        healthCheckPath: TECH_STACK_CONFIG[project.primaryTech || project.type]?.healthCheckPath || '/health',
+        port: project.ports?.primary || project.port
       });
 
       // Wait for container to be ready
@@ -193,10 +205,10 @@ class ContainerLifecycle {
         status: CONTAINER_STATES.RUNNING,
         startTime: duration,
         ports: {
-          primary: project.ports.primary,
-          exposed: project.ports.allocated || []
+          primary: project.ports?.primary || project.port,
+          exposed: project.ports?.allocated || []
         },
-        accessUrl: `http://localhost:${project.ports.primary}`,
+        accessUrl: `http://localhost:${project.ports?.primary || project.port}`,
         message: `Container started successfully for ${project.name}`
       };
 
@@ -277,7 +289,7 @@ class ContainerLifecycle {
       this.healthMonitor.stopMonitoring(project.containerId);
 
       // Determine grace period
-      const techConfig = TECH_STACK_CONFIG[project.primaryTech];
+      const techConfig = TECH_STACK_CONFIG[project.primaryTech || project.type];
       const effectiveGracePeriod = gracePeriod || (techConfig?.shutdownGracePeriodMs / 1000) || 10;
 
       // Stop the container
@@ -454,16 +466,16 @@ class ContainerLifecycle {
         status: project.status || CONTAINER_STATES.STOPPED,
         containerId: project.containerId || null,
         containerName: project.containerName || null,
-        techStack: project.primaryTech,
+        techStack: project.primaryTech || project.type,
         ports: {
-          primary: project.ports?.primary,
+          primary: project.ports?.primary || project.port,
           allocated: project.ports?.allocated || []
         },
         uptime: this.calculateUptime(project.startedAt),
         lastHealthCheck: project.lastHealthCheck,
         container: containerInfo,
         health: healthInfo,
-        accessUrl: project.containerId ? `http://localhost:${project.ports?.primary}` : null,
+        accessUrl: project.containerId ? `http://localhost:${project.ports?.primary || project.port}` : null,
         isHealthy: healthInfo?.healthy || false,
         isRunning: containerInfo?.running || false
       };
@@ -490,20 +502,20 @@ class ContainerLifecycle {
    * @returns {Object} Container configuration
    */
   buildContainerConfig(project, options = {}) {
-    const techConfig = TECH_STACK_CONFIG[project.primaryTech];
-    const image = techConfig?.image || project.primaryTech;
+    const techConfig = TECH_STACK_CONFIG[project.primaryTech || project.type];
+    const image = techConfig?.image || project.primaryTech || project.type;
 
     return {
-      projectId: project.id,
+      projectId: project.projectId || project.id,
       type: image,
       workspace: project.workspace,
-      port: project.ports.primary,
+      port: project.ports?.primary || project.port,
       env: {
         NODE_ENV: 'development',
         DEBUG: '*',
         PROJECT_NAME: project.name,
-        PROJECT_ID: project.id,
-        PRIMARY_TECH: project.primaryTech,
+        PROJECT_ID: project.projectId || project.id,
+        PRIMARY_TECH: project.primaryTech || project.type,
         ...options.env || {}
       }
     };
@@ -516,7 +528,7 @@ class ContainerLifecycle {
    * @returns {Promise<void>}
    */
   async waitForContainerReady(containerId, project) {
-    const techConfig = TECH_STACK_CONFIG[project.primaryTech];
+    const techConfig = TECH_STACK_CONFIG[project.primaryTech || project.type];
     const timeoutMs = techConfig?.startupTimeoutMs || 30000;
     const startTime = Date.now();
 
@@ -526,7 +538,7 @@ class ContainerLifecycle {
         
         if (containerInfo.running) {
           // Additional readiness check for web applications
-          if (project.primaryTech !== 'static') {
+          if ((project.primaryTech || project.type) !== 'static') {
             await new Promise(resolve => setTimeout(resolve, 2000));
           }
           return;

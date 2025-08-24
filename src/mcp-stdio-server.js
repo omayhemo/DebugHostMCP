@@ -14,6 +14,8 @@ const {
   ReadResourceRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 const fs = require('fs/promises');
+const fsSync = require('fs');
+const os = require('os');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 const { promisify } = require('util');
@@ -598,6 +600,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       try {
         const startCommand = args.command || 'npm run dev';
+        
+        // Create log file path
+        const logDir = path.join(os.homedir(), '.plopdock', 'logs');
+        if (!fsSync.existsSync(logDir)) {
+          fsSync.mkdirSync(logDir, { recursive: true });
+        }
+        const logFile = path.join(logDir, `${args.projectId}.log`);
+        
+        // Create write stream for logging
+        const logStream = fsSync.createWriteStream(logFile, { flags: 'a' });
+        logStream.write(`\n=== Starting ${args.projectId} at ${new Date().toISOString()} ===\n`);
+        logStream.write(`Command: ${startCommand}\n`);
+        logStream.write(`Working Directory: ${project.path}\n\n`);
+        
         const child = spawn('bash', ['-c', startCommand], {
           cwd: project.path,
           detached: false,
@@ -610,22 +626,90 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           pid: child.pid,
           port: project.port,
           startTime: new Date().toISOString(),
-          logs: []
+          logs: [],
+          logFile: logFile
         });
+        
+        // Update backend's projects.json
+        const projectsJsonPath = path.join(os.homedir(), '.plopdock', 'data', 'system', 'projects.json');
+        try {
+          let projectsData = { metadata: { version: '1.0.0', totalProjects: 0 }, projects: {} };
+          if (fsSync.existsSync(projectsJsonPath)) {
+            projectsData = JSON.parse(fsSync.readFileSync(projectsJsonPath, 'utf8'));
+          }
+          
+          // Update or add project
+          projectsData.projects[args.projectId] = {
+            projectId: args.projectId,
+            name: args.projectId,
+            workspace: project.path,
+            path: project.path,
+            type: project.type || 'node',
+            status: 'running',
+            port: project.port,
+            pid: child.pid,
+            containerId: null,
+            registeredAt: new Date().toISOString(),
+            lastAction: 'start',
+            config: {}
+          };
+          
+          projectsData.metadata.totalProjects = Object.keys(projectsData.projects).length;
+          projectsData.metadata.lastUpdated = new Date().toISOString();
+          projectsData.savedAt = new Date().toISOString();
+          
+          // Ensure directory exists
+          const projectsDir = path.dirname(projectsJsonPath);
+          if (!fsSync.existsSync(projectsDir)) {
+            fsSync.mkdirSync(projectsDir, { recursive: true });
+          }
+          
+          fsSync.writeFileSync(projectsJsonPath, JSON.stringify(projectsData, null, 2));
+        } catch (err) {
+          console.error('Failed to update projects.json:', err);
+        }
 
-        // Capture logs
+        // Capture logs to both memory and file
         const projectInfo = runningProjects.get(args.projectId);
         child.stdout.on('data', (data) => {
-          projectInfo.logs.push({ time: new Date().toISOString(), type: 'stdout', data: data.toString() });
+          const logEntry = { time: new Date().toISOString(), type: 'stdout', data: data.toString() };
+          projectInfo.logs.push(logEntry);
           if (projectInfo.logs.length > 1000) projectInfo.logs.shift(); // Keep last 1000 entries
+          
+          // Write to log file
+          logStream.write(`[${logEntry.time}] ${data.toString()}`);
         });
         child.stderr.on('data', (data) => {
-          projectInfo.logs.push({ time: new Date().toISOString(), type: 'stderr', data: data.toString() });
+          const logEntry = { time: new Date().toISOString(), type: 'stderr', data: data.toString() };
+          projectInfo.logs.push(logEntry);
           if (projectInfo.logs.length > 1000) projectInfo.logs.shift();
+          
+          // Write to log file
+          logStream.write(`[${logEntry.time}] [ERROR] ${data.toString()}`);
         });
 
         child.on('exit', (code) => {
+          logStream.write(`\n=== Process exited with code ${code} at ${new Date().toISOString()} ===\n`);
+          logStream.end();
           runningProjects.delete(args.projectId);
+          
+          // Update backend's projects.json to mark as stopped
+          try {
+            const projectsJsonPath = path.join(os.homedir(), '.plopdock', 'data', 'system', 'projects.json');
+            if (fsSync.existsSync(projectsJsonPath)) {
+              const projectsData = JSON.parse(fsSync.readFileSync(projectsJsonPath, 'utf8'));
+              if (projectsData.projects[args.projectId]) {
+                projectsData.projects[args.projectId].status = 'stopped';
+                projectsData.projects[args.projectId].pid = null;
+                projectsData.projects[args.projectId].lastAction = 'exit';
+                projectsData.metadata.lastUpdated = new Date().toISOString();
+                projectsData.savedAt = new Date().toISOString();
+                fsSync.writeFileSync(projectsJsonPath, JSON.stringify(projectsData, null, 2));
+              }
+            }
+          } catch (err) {
+            console.error('Failed to update projects.json on exit:', err);
+          }
         });
 
         return {
