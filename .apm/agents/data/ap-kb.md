@@ -1,23 +1,23 @@
-# AP Knowledge Base
+# Coherence Knowledge Base
 
 ## INDEX OF TOPICS
 
 - [AP Knowledge Base](#ap-knowledge-base)
   - [INDEX OF TOPICS](#index-of-topics)
-  - [AP MAPPING - CORE PHILOSOPHY](#ap-mapping---core-philosophy)
-  - [AP MAPPING - AGILE METHODOLOGIES OVERVIEW](#ap-mapping---agile-methodologies-overview)
+  - [COHERENCE - CORE PHILOSOPHY](#coherence---core-philosophy)
+  - [COHERENCE - AGILE METHODOLOGIES OVERVIEW](#coherence---agile-methodologies-overview)
     - [CORE PRINCIPLES OF AGILE](#core-principles-of-agile)
     - [KEY PRACTICES IN AGILE](#key-practices-in-agile)
     - [BENEFITS OF AGILE](#benefits-of-agile)
-  - [AP MAPPING - ANALOGIES WITH AGILE PRINCIPLES](#ap-method---analogies-with-agile-principles)
-  - [AP MAPPING - TOOLING AND RESOURCE LOCATIONS](#ap-method---tooling-and-resource-locations)
+  - [COHERENCE - ANALOGIES WITH AGILE PRINCIPLES](#coherence-method---analogies-with-agile-principles)
+  - [COHERENCE - TOOLING AND RESOURCE LOCATIONS](#coherence-method---tooling-and-resource-locations)
     - [Licensing](#licensing)
-  - [AP MAPPING - ETHOS \& BEST PRACTICES](#ap-method---ethos--best-practices)
+  - [COHERENCE - ETHOS \& BEST PRACTICES](#coherence-method---ethos--best-practices)
   - [AGENT ROLES AND RESPONSIBILITIES](#agent-roles-and-responsibilities)
-  - [NAVIGATING THE AP WORKFLOW - INITIAL GUIDANCE](#navigating-the-ap-workflow---initial-guidance)
+  - [NAVIGATING THE COHERENCE WORKFLOW - INITIAL GUIDANCE](#navigating-the-coherence-workflow---initial-guidance)
     - [STARTING YOUR PROJECT - ANALYST OR PM?](#starting-your-project---analyst-or-pm)
     - [UNDERSTANDING EPICS - SINGLE OR MULTIPLE?](#understanding-epics---single-or-multiple)
-  - [GETTING STARTED WITH AP](#getting-started-with-ap)
+  - [GETTING STARTED WITH COHERENCE](#getting-started-with-coherence)
     - [Initial Project Setup](#initial-project-setup)
     - [Document Sharding](#document-sharding)
     - [Utilizing Dedicated IDE Agents (SM and Dev)](#utilizing-dedicated-ide-agents-sm-and-dev)
@@ -32,9 +32,9 @@
     - [PURPOSE OF IDE TASKS](#purpose-of-ide-tasks)
     - [EXAMPLES OF TASK FUNCTIONALITY](#examples-of-task-functionality)
 
-## AP MAPPING - CORE PHILOSOPHY
+## COHERENCE - CORE PHILOSOPHY
 
-**STATEMENT:** "Context Engineering" is about embracing the chaos, thinking like a CTO with unlimited resources and a singular vision, and leveraging AI as your high-powered team to achieve ambitious goals rapidly. The AP Mapping (Agentic Persona Mapping), with the integrated "AP Agent", elevates "Context Coding" to advanced project planning, providing a structured yet flexible framework to plan, execute, and manage software projects using a team of specialized AI agents.
+**STATEMENT:** "Unified Context Engineering" is about embracing the chaos, thinking like a CTO with unlimited resources and a singular vision, and leveraging AI as your high-powered team to achieve ambitious goals rapidly. The Coherence framework, with integrated "Coherence Agent", elevates "Context Coding" to advanced project planning, providing a structured yet flexible framework to plan, execute, and manage software projects using a team of specialized AI agents with orchestrated intelligence.
 
 **DETAILS:**
 
@@ -42,7 +42,7 @@
 - Utilize AI as a force multiplier.
 - Adapt and overcome obstacles with a proactive mindset.
 
-## AP MAPPING - AGILE METHODOLOGIES OVERVIEW
+## COHERENCE - AGILE METHODOLOGIES OVERVIEW
 
 ### CORE PRINCIPLES OF AGILE
 
@@ -61,17 +61,17 @@
 
 ### BENEFITS OF AGILE
 
-- Increased Flexibility: Ability to adapt to changing requirements.
+- Increased Flexibility: Ability to adapt to changing planning-requirements.
 - Faster Time to Market: Quicker delivery of valuable features.
 - Improved Quality: Continuous testing and feedback loops.
 - Enhanced Stakeholder Engagement: Close collaboration with users/clients.
 - Higher Team Morale: Empowered and self-organizing teams.
 
-## AP MAPPING - ANALOGIES WITH AGILE PRINCIPLES
+## COHERENCE - ANALOGIES WITH AGILE PRINCIPLES
 
-The AP Mapping, while distinct in its "Context Engineering" approach with AI, shares foundational parallels with Agile methodologies:
+The Coherence framework, while distinct in its "Unified Context Engineering" approach with AI, shares foundational parallels with Agile methodologies:
 
-- **Individuals and Interactions over Processes and Tools (Agile) vs. Context Engineering & AI Team (AP):**
+- **Individuals and Interactions over Processes and Tools (Agile) vs. Unified Context Engineering & AI Team (Coherence):**
 
   - **Agile:** Emphasizes the importance of skilled individuals and effective communication.
   - **AP:** The "Context Engineer" (you) actively directs and interacts with AI agents, treating them as a high-powered team. The quality of this interaction and clear instruction ("CLEAR_INSTRUCTIONS", "KNOW_YOUR_AGENTS") is paramount, echoing Agile's focus on human elements.
@@ -88,13 +88,13 @@ The AP Mapping, while distinct in its "Context Engineering" approach with AI, sh
 
 - **Responding to Change over Following a Plan (Agile) vs. Embrace Chaos & Adapt (AP):**
 
-  - **Agile:** Values adaptability and responsiveness to new requirements.
+  - **Agile:** Values adaptability and responsiveness to new planning-requirements.
   - **AP:** Explicitly encourages to "EMBRACE_THE_CHAOS," "ADAPT & EXPERIMENT," and acknowledges that "ITERATIVE_REFINEMENT" means it's "not a linear process." This directly mirrors Agile's flexibility.
 
 - **Iterative Development & Incremental Delivery (Agile) vs. Story-based Implementation & Phased Value (AP):**
 
   - **Agile:** Work is broken down into sprints, delivering value incrementally.
-  - **AP:** Projects are broken into Epics and Stories, with "Developer Agents" implementing stories one at a time. Epics represent "significant, deployable increments of value," aligning with incremental delivery.
+  - **AP:** Projects are broken into Epics and Stories, with "Developer Agents" implementing planning-stories one at a time. Epics represent "significant, deployable increments of value," aligning with incremental delivery.
 
 - **Continuous Feedback & Retrospectives (Agile) vs. Iterative Refinement & Quality Control (AP):**
   - **Agile:** Teams regularly reflect and adjust processes.
@@ -111,24 +111,24 @@ Effective use of the AP Mapping relies on understanding where key tools, configu
     - **Configuration (`ide-ap-orchestrator.cfg.md`):** Contains a `Data Resolution` section (defining base paths for assets like personas, tasks) and `Agent Definitions` (Title, Name, Customize, Persona file, Tasks).
     - **Operation:** Loads its config, lists available personas, and upon user request, embodies the chosen agent by loading its persona file and applying customizations.
     - The `ide-ap-orchestrator` file contents can be used as the instructions for a custom agent mode. The agent supports a `/help` command that can help guide the user. The agent relies on the existence in the agents folder being at the root of the project.
-    - The `ide-ap-orchestrator` is not recommended for generating stories or doing development. While it CAN become those agents, its HIGHLY recommended to instead use the dedicated $AP_ROOT/agents/personas/mnt/c/Code/MCPServers/DebugHostMCP/.apm/agents/personas/sm.md as individual dedicated agents. The will use up less context overhead and are going to be used the most frequently.
+    - The `ide-ap-orchestrator` is not recommended for generating planning-stories or doing development. While it CAN become those agents, its HIGHLY recommended to instead use the dedicated $AP_ROOT/agents/personas/mnt/c/Code/plopdock/.apm/agents/personas/sm.md as individual dedicated agents. The will use up less context overhead and are going to be used the most frequently.
 - **Standalone IDE Agents:**
-  - Optimized for IDE environments (e.g., Windsurf, Cursor), often under 6K characters (e.g., optimized versions of `$AP_ROOT/agents/personas/mnt/c/Code/MCPServers/DebugHostMCP/.apm/agents/personas/sm.md`).
+  - Optimized for IDE environments (e.g., Windsurf, Cursor), often under 6K characters (e.g., optimized versions of `$AP_ROOT/agents/personas/mnt/c/Code/plopdock/.apm/agents/personas/sm.md`).
   - Can directly reference and execute tasks.
 - **Agent Configuration Files:**
   - `ide-ap-orchestrator.cfg.md`: Configures the IDE Orchestrator, defining `Data Resolution` paths (e.g., `$AP_ROOT/agents/personas`) and agent definitions with persona file names (e.g., `analyst.md`) and task file names (e.g., `create-prd.md`).
   - `ide-ap-orchestrator.md`: Main prompt/definition of the IDE Orchestrator agent.
 - **Task Files:**
-  - Located in `/` (and sometimes `/` for checklist-like tasks).
-  - Self-contained instruction sets for specific jobs (e.g., `create-prd.md`, `checklist-run-task.md`).
+  - Located in `/` (and sometimes `/` for planning-checklist-like tasks).
+  - Self-contained instruction sets for specific jobs (e.g., `create-prd.md`, `planning-checklist-run-task.md`).
   - Reduce agent bloat and provide on-demand functionality for any capable agent.
 - **Core Agent Definitions (Personas):**
   - Files (typically `.md`) defining core personalities and instructions for different agents.
   - Located in `/` (e.g., `analyst.md`, `pm.md`).
 - **Project Documentation (Outputs):**
 - **Project Briefs:** Generated by the Analyst agent.
-- **Product Requirements Documents (PRDs):** Produced by the PM agent, containing epics and stories.
-- **UX/UI Specifications & Architecture Documents:** Created by Design Architect and Architect agents.
+- **Product Requirements Documents (PRDs):** Produced by the PM agent, containing epics and planning-stories.
+- **UX/UI Specifications & Architecture Documents:** Created by Designer and Architect agents.
 - The **POSM agent** is crucial for organizing and managing these documents.
 - **Templates:** Standardized formats for briefs, PRDs, checklists, etc., likely stored in `/`.
 - **Data Directory (`/`):** Stores persistent data, knowledge bases (like this one), and other key information for the agents.
@@ -173,7 +173,7 @@ Understanding the distinct roles and responsibilities of each agent is key to ef
 
 - **Analyst:**
 
-  - **Function:** Handles research, requirements gathering, brainstorming, and the creation of Project Briefs.
+  - **Function:** Handles research, planning-requirements gathering, planning-brainstorming, and the creation of Project Briefs.
   - **IDE Persona:** `Analyst` with persona `analyst.md`. Similar "know-it-all" customization. Tasks for Brainstorming, Deep Research Prompt Generation, and Project Brief creation are often defined within the `analyst.md` persona itself ("In Analyst Memory Already").
   - **Output:** `Project Brief`.
 
@@ -185,20 +185,20 @@ Understanding the distinct roles and responsibilities of each agent is key to ef
 
 - **Architect:**
 
-  - **Function:** Designs system architecture, handles technical design, and ensures technical feasibility.
-  - **IDE Persona:** `Architect` with persona `architect.md`. Customized to be "Cold, Calculating, Brains behind the agent crew." Generates architecture (`create-architecture.md` task), helps plan stories (`create-next-story-task.md`), and can update PO-level epics/stories (`doc-sharding-task.md`).
+  - **Function:** Designs system planning-architecture, handles technical design, and ensures technical feasibility.
+  - **IDE Persona:** `Architect` with persona `architect.md`. Customized to be "Cold, Calculating, Brains behind the agent crew." Generates planning-architecture (`create-planning-architecture.md` task), helps plan planning-stories (`create-next-story-task.md`), and can update PO-level epics/planning-stories (`documentation-shard-task.md`).
   - **Output:** `Architecture Document`.
 
-- **Design Architect:**
+- **Designer:**
 
-  - **Function:** Focuses on UI/UX specifications, front-end technical architecture, and can generate prompts for AI UI generation services.
-  - **IDE Persona:** `Design Architect` with persona `design-architect.md`. Customized to be "Fun and carefree, but a frontend design master." Helps design web apps, produces UI generation prompts (`create-ai-frontend-prompt.md` task), plans FE architecture (`create-frontend-architecture.md` task), and creates UX/UI specs (`create-uxui-spec.md` task).
+  - **Function:** Focuses on UI/UX specifications, front-end technical planning-architecture, and can generate prompts for AI UI generation services.
+  - **IDE Persona:** `Designer` with persona `designer.md`. Customized to be "Fun and carefree, but a frontend design master." Helps design web apps, produces UI generation prompts (`create-ai-frontend-prompt.md` task), plans FE planning-architecture (`create-frontend-planning-architecture.md` task), and creates UX/UI specs (`create-uxui-spec.md` task).
   - **Output:** `UX/UI Specification`, `Front-end Architecture Plan`, AI UI generation prompts.
 
 - **Product Owner (PO):**
 
-  - **Function:** Agile Product Owner responsible for validating documents, ensuring development sequencing, managing the product backlog, running master checklists, handling mid-sprint re-planning, and drafting user stories.
-  - **IDE Persona:** `Product Owner AKA PO` with persona `po.md`. Described as versatile and multifaceted. Tasks include `create-prd.md`, `create-next-story-task.md`, `doc-sharding-task.md`, and `correct-course.md`.
+  - **Function:** Agile Product Owner responsible for validating documents, ensuring development sequencing, managing the product backlog, running master checklists, handling mid-implementation-sprint re-planning, and drafting user planning-stories.
+  - **IDE Persona:** `Product Owner AKA PO` with persona `po.md`. Described as versatile and multifaceted. Tasks include `create-prd.md`, `create-next-story-task.md`, `documentation-shard-task.md`, and `correct-course.md`.
   - **Output:** User Stories, managed PRD/Backlog.
 
 - **Scrum Master (SM):**
@@ -207,7 +207,7 @@ Understanding the distinct roles and responsibilities of each agent is key to ef
   - **IDE Persona:** `Scrum Master: SM` with persona `$AP_ROOT//sm.md`. Described as "Super Technical and Detail Oriented," specialized in "Next Story Generation" (likely leveraging the SM persona's capabilities).
 
 - **Developer Agents (DEV):**
-  - **Function:** Implement user stories one at a time. Can be generic or specialized.
+  - **Function:** Implement user planning-stories one at a time. Can be generic or specialized.
   - **IDE Personas:** Multiple configurations can exist, using the `$AP_ROOT//dev.md` persona file (optimized for <6K characters for IDEs). Examples:
     - `Frontend Dev`: Specialized in NextJS, React, Typescript, HTML, Tailwind.
     - `Dev`: Master Generalist Expert Senior Full Stack Developer.
@@ -242,13 +242,13 @@ To begin using the AP method and its associated agents in your project, you need
 
 ### Document Sharding
 
-Large documents like PRDs or Architecture Documents can become unwieldy for AI agents to process efficiently, especially in environments with context window limitations. The `doc-sharding-task.md` is designed to break these down:
+Large documents like PRDs or Architecture Documents can become unwieldy for AI agents to process efficiently, especially in environments with context window limitations. The `documentation-shard-task.md` is designed to break these down:
 
-- **Purpose:** The sharding task splits a large document (e.g., PRD, Architecture, Front-End Architecture) into smaller, more granular sections or individual user stories. This makes it easier for subsequent agents, like the SM (Scrum Master) or Dev Agents, to work with specific parts of the document without needing to process the entire thing.
+- **Purpose:** The sharding task splits a large document (e.g., PRD, Architecture, Front-End Architecture) into smaller, more granular sections or individual user planning-stories. This makes it easier for subsequent agents, like the SM (Scrum Master) or Dev Agents, to work with specific parts of the document without needing to process the entire thing.
 - **How to Use:**
-  1. Ensure the large document you want to shard (e.g., `prd.md`, `architecture.md`) exists in your project's `project_documentation` folder.
-  2. Instruct your active IDE agent (e.g., PO, SM, or the AP Orchestrator embodying one of these roles) to run the `doc-sharding-task.md`.
-  3. You will typically specify the _source file_ to be sharded. For example: "Run the `doc-sharding-task.md` against `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/prd.md`."
+  1. Ensure the large document you want to shard (e.g., `prd.md`, `planning-architecture.md`) exists in your project's `project_documentation` folder.
+  2. Instruct your active IDE agent (e.g., PO, SM, or the AP Orchestrator embodying one of these roles) to run the `documentation-shard-task.md`.
+  3. You will typically specify the _source file_ to be sharded. For example: "Run the `documentation-shard-task.md` against `/mnt/c/Code/plopdock/project_docs/base/planning-prd.md`."
   4. The task will guide the agent to break down the document. The output might be new smaller files or instructions on how the document is logically segmented.
 
 ### Utilizing Dedicated IDE Agents (SM and Dev)
@@ -256,7 +256,7 @@ Large documents like PRDs or Architecture Documents can become unwieldy for AI a
 While the AP IDE Orchestrator can embody any persona, for common and intensive tasks like story generation (SM) and code implementation (Dev), it's highly recommended to use dedicated, specialized agents:
 
 - **Why Dedicated Agents?**
-  - **Context Efficiency:** Dedicated agents (e.g., optimized versions of `$AP_ROOT/agents/personas/mnt/c/Code/MCPServers/DebugHostMCP/.apm/agents/personas/dev.md`) are leaner as their persona files are smaller and more focused. This is crucial in IDEs where context window limits can impact performance and output quality.
+  - **Context Efficiency:** Dedicated agents (e.g., optimized versions of `$AP_ROOT/agents/personas/mnt/c/Code/plopdock/.apm/agents/personas/dev.md`) are leaner as their persona files are smaller and more focused. This is crucial in IDEs where context window limits can impact performance and output quality.
   - **Performance:** Less overhead means faster responses and more focused interactions.
 - **Recommendation:**
   - Favor using `$AP_ROOT//sm.md` for Scrum Master tasks (like generating the next story).
@@ -276,8 +276,8 @@ The AP IDE Orchestrator (`ide-ap-orchestrator.md` configured by `ide-ap-orchestr
   - **Unified Experience:** If you prefer to interact with the AP agent system in your IDE using the AP Orchestrator to call upon different specialists, and you are not concerned about context limits or potential costs associated with larger LLM models that can handle the Orchestrator's broader context.
   - **Access to all Personas:** You want quick access to any of the defined agent personas without setting them up as individual IDE modes.
 - **Potentially Unnecessary / Less Optimal Scenarios:**
-  - **Simple Projects / Feature Additions (Caution Advised):** For very simple projects or when adding a small feature to an existing codebase, you _might_ consider a streamlined flow using the Orchestrator to embody the PM, generate a PRD with epics/stories, and then directly move to development, potentially skipping detailed architecture.
-    - In such cases, the PM persona might be prompted to ask more technical questions to ensure generated stories are sufficiently detailed for developers.
+  - **Simple Projects / Feature Additions (Caution Advised):** For very simple projects or when adding a small feature to an existing codebase, you _might_ consider a streamlined flow using the Orchestrator to embody the PM, generate a PRD with epics/planning-stories, and then directly move to development, potentially skipping detailed planning-architecture.
+    - In such cases, the PM persona might be prompted to ask more technical questions to ensure generated planning-stories are sufficiently detailed for developers.
     - **This is generally NOT recommended** as it deviates from the robust AP process and is not yet a fully streamlined or validated path. It risks insufficient planning and lower quality outputs.
   - **Frequent SM/Dev Tasks:** As mentioned above, for regular story creation and development, dedicated SM and Dev agents are more efficient due to smaller context overhead.
 
@@ -288,12 +288,12 @@ Always consider the trade-offs between the Orchestrator's versatility and the ef
 **NOTE:** This is a general guideline. The AP method is iterative; phases/agents might be revisited.
 
 1. **Analyst** - brainstorm and create a project brief.
-2. **PM (Product Manager)** - use the brief to produce a PRD with high level epics and stories.
-3. **Design Architect UX UI Spec for PRD (If project has a UI)** - create the front end UX/UI Specification.
-4. **Architect** - create the architecture and ensure we can meet the prd requirements technically - with enough specification that the dev agents will work consistently.
-5. **Design Architect (If project has a UI)** - create the front end architecture and ensure we can meet the prd requirements technically - with enough specification that the dev agents will work consistently.
-6. **Design Architect (If project has a UI)** - Optionally create a prompt to generate a UI from AI services such as Lovable or V0 from Vercel.
-7. **PO**: Validate documents are aligned, sequencing makes sense, runs a final master checklist. The PO can also help midstream development replan or course correct if major changes occur.
+2. **PM (Product Manager)** - use the brief to produce a PRD with high level epics and planning-stories.
+3. **Designer UX UI Spec for PRD (If project has a UI)** - create the front end UX/UI Specification.
+4. **Architect** - create the planning-architecture and ensure we can meet the prd planning-requirements technically - with enough specification that the dev agents will work consistently.
+5. **Designer (If project has a UI)** - create the front end planning-architecture and ensure we can meet the prd planning-requirements technically - with enough specification that the dev agents will work consistently.
+6. **Designer (If project has a UI)** - Optionally create a prompt to generate a UI from AI services such as Lovable or V0 from Vercel.
+7. **PO**: Validate documents are aligned, sequencing makes sense, runs a final master planning-checklist. The PO can also help midstream development replan or course correct if major changes occur.
 8. **PO or SM**: Generate Stories 1 at a time (or multiple but not recommended) - this is generally done in the IDE after each story is completed by the Developer Agents.
 9. **Developer Agents**: Implement Stories 1 at a time. You can craft different specialized Developer Agents, or use a generic developer agent. It is recommended to create specialized developer agents and configure them in the `ide-ap-orchestrator.cfg`.
 
@@ -301,7 +301,7 @@ Always consider the trade-offs between the Orchestrator's versatility and the ef
 
 Major changes are an inherent part of ambitious projects. The AP Mapping embraces this through its iterative nature and specific agent roles:
 
-- **Iterative by Design:** The entire AP workflow is built on "ITERATIVE_REFINEMENT." Expect to revisit previous steps and agents as new information emerges or requirements evolve. It's "not a linear process."
+- **Iterative by Design:** The entire AP workflow is built on "ITERATIVE_REFINEMENT." Expect to revisit previous steps and agents as new information emerges or planning-requirements evolve. It's "not a linear process."
 - **Embrace and Adapt:** The core ethos includes "EMBRACE_THE_CHAOS" and "ADAPT & EXPERIMENT." Major changes are opportunities to refine the vision and approach.
 - **PO's Role in Re-planning:** The **Product Owner (PO)** is key in managing the impact of significant changes. They can "help midstream development replan or course correct if major changes occur." This involves reassessing priorities, adjusting the backlog, and ensuring alignment with the overall project goals.
 - **Strategic Oversight by Context Engineer:** As the "Context Engineer," your role is to maintain "STRATEGIC_OVERSIGHT." When major changes arise, you guide the necessary pivots, ensuring the project remains aligned with your singular vision.
@@ -309,17 +309,17 @@ Major changes are an inherent part of ambitious projects. The AP Mapping embrace
 
 ## IDE USAGE - GENERAL RECOMMENDATIONS
 
-The AP method is orchestrated through IDE environments for both planning and development. The general recommendation is to use the appropriate agents for document generation including the brief, PRD, Architecture, Design Architecture, and UI Prompts. Also use the PO to run the full final checklist to ensure all documents are aligned with various changes. For example, did the architect discover something that requires an update to a epic or story sequence in the PRD? The PO will help you there. Save these into the project_documentation folder of your project.
+The AP method is orchestrated through IDE environments for both planning and development. The general recommendation is to use the appropriate agents for document generation including the brief, PRD, Architecture, Designerure, and UI Prompts. Also use the PO to run the full final planning-checklist to ensure all documents are aligned with various changes. For example, did the architect discover something that requires an update to a planning-epic or story sequence in the PRD? The PO will help you there. Save these into the project_documentation folder of your project.
 
 ### PLANNING AND TECHNICAL DESIGN
 
 - **Interface:** Managed within the IDE using specialized agents or the IDE Orchestrator.
 - **Agents Involved:**
   - **Analyst:** Brainstorming, research, and initial project brief creation.
-  - **PM (Product Manager):** PRD development, epic and high-level story definition.
-  - **Architect / Design Architect (UI):** Detailed technical design and specification.
+  - **PM (Product Manager):** PRD development, planning-epic and high-level story definition.
+  - **Architect / Designer (UI):** Detailed technical design and specification.
   - **PO:** Checklist runner to make sure all of the documents are aligned.
-- **Activities:** Defining the vision, initial requirements gathering, market analysis, high-level planning.
+- **Activities:** Defining the vision, initial planning-requirements gathering, market analysis, high-level planning.
 
 ### DOCUMENTATION MANAGEMENT & IMPLEMENTATION PHASES
 
@@ -327,8 +327,8 @@ The AP method is orchestrated through IDE environments for both planning and dev
 - **Agents Involved:**
   - "**PO or SM or AP Agent:** Run the doc sharing task to split the large files that have been created (PRD, Architecture etc...) into smaller granular documents that are easier for the SM and Dev Agents to work with.
   - **SM (Scrum Master):** Detailed story generation, backlog refinement, often directly in the IDE or tools integrated with it.
-  - **Developer Agents:** Code implementation for stories, working directly with the codebase in the IDE.
-- **Activities:** Detailed architecture, front-end/back-end design, code development, testing, leveraging IDE tasks (see "LEVERAGING IDE TASKS FOR EFFICIENCY"), using configurations like `ide-ap-orchestrator.cfg.md`.
+  - **Developer Agents:** Code implementation for planning-stories, working directly with the codebase in the IDE.
+- **Activities:** Detailed planning-architecture, front-end/back-end design, code development, testing, leveraging IDE tasks (see "LEVERAGING IDE TASKS FOR EFFICIENCY"), using configurations like `ide-ap-orchestrator.cfg.md`.
 
 ### AP MAPPING FILES
 
@@ -339,7 +339,7 @@ Understanding key files helps in navigating and customizing the AP process:
   - `ide-ap-orchestrator.cfg.md`: Configuration for IDE developer agents.
   - `ide-ap-orchestrator.md`: Definition of the IDE orchestrator agent.
 - **Task Definitions:**
-  - Files in `/` or `/` (e.g., `checklist-run-task.md`): Reusable prompts for specific actions and also used by agents to keep agent persona files lean.
+  - Files in `/` or `/` (e.g., `planning-checklist-run-task.md`): Reusable prompts for specific actions and also used by agents to keep agent persona files lean.
 - **Agent Personas & Templates:**
   - Files in `/`: Define the core behaviors of different agents.
   - Files in `/`: Standard formats for documents like Project Briefs, PRDs that the agents will use to populate instances of these documents.
@@ -355,8 +355,8 @@ Understanding key files helps in navigating and customizing the AP process:
 ### PURPOSE OF IDE TASKS
 
 - **Reduce Agent Bloat:** Avoid adding numerous, rarely used instructions to primary IDE agent modes (Dev Agent, SM Agent) or even the Orchestrator's base prompt. Keeps agents lean, beneficial for IDEs with limits on custom agent complexity/numbers.
-- **On-Demand Functionality:** Instruct an active IDE agent (standalone or an embodied persona within the IDE Orchestrator) to perform a task by providing the content of the relevant task file (e.g., from `/checklist-run-task.md`) as a prompt, or by referencing it if the agent is configured to find it (as with the IDE Orchestrator).
-- **Versatility:** Any sufficiently capable agent can be asked to execute a task. Tasks can handle specific functions like running checklists, creating stories, sharding documents, indexing libraries, etc. They are self-contained instruction sets.
+- **On-Demand Functionality:** Instruct an active IDE agent (standalone or an embodied persona within the IDE Orchestrator) to perform a task by providing the content of the relevant task file (e.g., from `/planning-checklist-run-task.md`) as a prompt, or by referencing it if the agent is configured to find it (as with the IDE Orchestrator).
+- **Versatility:** Any sufficiently capable agent can be asked to execute a task. Tasks can handle specific functions like running checklists, creating planning-stories, sharding documents, indexing libraries, etc. They are self-contained instruction sets.
 
 ### EXAMPLES OF TASK FUNCTIONALITY
 
@@ -366,13 +366,13 @@ Here are some examples of functionalities provided by tasks found in `/`:
 
 - **`create-prd.md`:** Guides the generation of a Product Requirements Document.
 - **`create-next-story-task.md`:** Helps in defining and creating the next user story for development.
-- **`create-architecture.md`:** Assists in outlining the technical architecture for a project.
-- **`create-frontend-architecture.md`:** Focuses specifically on designing the front-end architecture.
+- **`create-planning-architecture.md`:** Assists in outlining the technical planning-architecture for a project.
+- **`create-frontend-planning-architecture.md`:** Focuses specifically on designing the front-end planning-architecture.
 - **`create-uxui-spec.md`:** Facilitates the creation of a UX/UI Specification document.
 - **`create-ai-frontend-prompt.md`:** Helps in drafting a prompt for an AI service to generate UI/frontend elements.
-- **`doc-sharding-task.md`:** Provides a process for breaking down large documents into smaller, manageable parts.
-- **`library-indexing-task.md`:** Assists in creating an index or overview of a code library.
-- **`checklist-run-task.md`:** Executes a predefined checklist (likely using `checklist-mappings.yml`).
+- **`documentation-shard-task.md`:** Provides a process for breaking down large documents into smaller, manageable parts.
+- **`implementation-library-indexing-task.md`:** Assists in creating an index or overview of a code library.
+- **`planning-checklist-run-task.md`:** Executes a predefined planning-checklist (likely using `planning-checklist-mappings.yml`).
 - **`correct-course.md`:** Provides guidance or steps for when a project needs to adjust its direction.
 - **`create-deep-research-prompt.md`:** Helps formulate prompts for conducting in-depth research on a topic.
 

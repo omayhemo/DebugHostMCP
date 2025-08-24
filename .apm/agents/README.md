@@ -1,4 +1,4 @@
-# AP Mapping - Agentic Persona Mapping v3.5.0
+# AP Mapping - Agentic Persona Mapping v4.3.2
 
 ## 🚨 CRITICAL: ALWAYS USE SLASH COMMANDS
 
@@ -32,7 +32,7 @@ The AP (Agentic Persona) Mapping is a revolutionary project-agnostic approach to
 - ✅ **34+ Hours/Week Saved** per development team
 - ✅ **100% Backward Compatibility** maintained
 
-## 🖥️ MCP Plopdock Integration (v3.5.0 - Epic 26)
+## 🖥️ MCP Plopdock Integration (v4.3.2 - Epic 26)
 
 **🚀 MCP Plopdock Integration (Epic 26 - 93% Complete):**
 - **Persistent Development Servers**: Servers survive Claude Code restarts
@@ -72,9 +72,9 @@ Launch the orchestrator with native parallel capabilities:
 /ap
 ```
 
-Launch parallel sprint coordination (NEW in v3.2.0):
+Launch parallel sprint coordination (NEW in v4.3.2):
 ```
-/parallel-sprint
+/parallel-implementation-sprint
 ```
 
 Check for updates:
@@ -115,7 +115,7 @@ The AP Orchestrator serves as the project's technical lead and coordinator:
 The following variables are configured in `.claude/settings.json`:
 
 - `$AP_ROOT` - Path to agents directory
-- `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs` - Path to project documentation
+- `/mnt/c/Code/plopdock/project_docs` - Path to project documentation
 - `$SPEAK_ORCHESTRATOR` - Orchestrator voice script
 - `$SPEAK_DEVELOPER` - Developer voice script
 - `$SPEAK_ARCHITECT` - Architect voice script
@@ -136,20 +136,20 @@ These commands are available in Claude:
 - `/wrap` - Wrap up current session
 - `/session-note-setup` - Set up session structure
 
-### Native Parallel Execution Commands (v3.2.0)
+### Native Parallel Execution Commands (v4.3.2)
 
 #### Revolutionary Multi-Agent Commands
-- **`/parallel-sprint`** - Multi-developer coordination with 4.6x speedup and native sub-agents
+- **`/parallel-implementation-sprint`** - Multi-developer coordination with 4.6x speedup and native sub-agents
 - **`/parallel-qa-framework`** - Comprehensive testing with AI/ML analytics (4x performance)
 - **`/parallel-regression-suite`** - Native parallel regression testing
 
 #### Enhanced Persona Commands
-- **`/groom`** (Product Owner) - 18 native sub-agents for backlog optimization
+- **`/planning-groom`** (Product Owner) - 18 native sub-agents for backlog optimization
 - **`/parallel-review`** (Developer) - Concurrent code analysis across 9 dimensions
 - **`/parallel-test`** (QA) - Multi-framework testing with preserved AI/ML capabilities
-- **`/parallel-architecture`** (Architect) - 6-domain concurrent architecture analysis
+- **`/parallel-planning-architecture`** (Architect) - 6-domain concurrent architecture analysis
 - **`/parallel-prd`** (PM) - 5-domain parallel PRD development
-- **`/parallel-epic`** (PO) - Accelerated epic creation and validation
+- **`/parallel-planning-epic`** (PO) - Accelerated epic creation and validation
 
 #### Real-Time Monitoring Commands
 - **`monitor tests`** - Console-based real-time test monitoring
@@ -183,7 +183,7 @@ These commands are available in Claude:
    - Prioritize backlog items
    - Define acceptance criteria
    - Ensure business value alignment
-   - **v3.2.0 Revolutionary Enhancement**: Use `/groom` with native sub-agent parallelism:
+   - **v4.3.2 Revolutionary Enhancement**: Use `/planning-groom` with native sub-agent parallelism:
      - **18 Native Sub-Agents** analyze documentation simultaneously
      - **4x Faster** epic and story generation with zero CLI crashes
      - **Intelligent Dependency Mapping** with 92% conflict prevention accuracy
@@ -286,12 +286,12 @@ These commands are available in Claude:
 - **Focus**: Business value optimization, stakeholder alignment, backlog intelligence
 - **Key Activities**: Native parallel backlog management, AI-powered requirement validation, ROI optimization
 - **Parallel Commands**:
-  - **`/groom`** - 18 native sub-agents for comprehensive backlog analysis
-  - **`/parallel-epic`** - 70% faster epic development with intelligent validation
-  - **`/parallel-stories`** - 75% faster story creation with dependency mapping
-  - **`/parallel-acceptance-criteria`** - 80% faster criteria definition
+  - **`/planning-groom`** - 18 native sub-agents for comprehensive backlog analysis
+  - **`/parallel-planning-epic`** - 70% faster epic development with intelligent validation
+  - **`/parallel-planning-stories`** - 75% faster story creation with dependency mapping
+  - **`/parallel-qa-acceptance-criteria`** - 80% faster criteria definition
   - **`/parallel-prioritization`** - 65% faster backlog prioritization with ROI analysis
-  - **`/parallel-validation`** - 85% faster requirements validation
+  - **`/parallel-planning-validation`** - 85% faster requirements validation
 - **Outputs**: Optimized requirements, intelligent acceptance criteria, ROI-driven sprint plans
 
 ### Scrum Master
@@ -320,7 +320,7 @@ All voice scripts are located in `/`:
 
 ### Storage Locations
 - **With Obsidian MCP**: Sessions stored in configured vault
-- **Fallback**: Local markdown files at `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/session_notes/`
+- **Fallback**: Local markdown files at `/mnt/c/Code/plopdock/project_docs/session_notes/`
 - **Logs**: Hook activity logs in `$AP_ROOT/hooks/`
 
 ## Troubleshooting
@@ -363,19 +363,19 @@ All voice scripts are located in `/`:
 ### Starting a New Project (Enhanced with Parallel Capabilities)
 ```
 1. /ap                          # Start with Orchestrator (native parallel initialization)
-2. /analyst                     # Research with /parallel-requirements (70% faster)
+2. /analyst                     # Research with /parallel-planning-requirements (70% faster)
 3. Review project brief         # AI-enhanced findings with intelligent analysis
 4. /pm                          # Create PRD with /parallel-prd (70% faster)
-5. /parallel-sprint             # Revolutionary multi-developer coordination (4.6x speedup)
+5. /parallel-implementation-sprint             # Revolutionary multi-developer coordination (4.6x speedup)
 ```
 
 ### Adding a New Feature (Native Parallel Workflow)
 ```
 1. /ap                          # Assess with parallel analysis capabilities
-2. /po                          # Use /parallel-epic for 70% faster feature definition
-3. /architect                   # /parallel-architecture for 75% faster technical design
+2. /po                          # Use /parallel-planning-epic for 70% faster feature definition
+3. /architect                   # /parallel-planning-architecture for 75% faster technical design
 4. /sm                          # /parallel-next-story for 75% faster story breakdown
-5. /parallel-sprint             # Launch multiple developer streams simultaneously
+5. /parallel-implementation-sprint             # Launch multiple developer streams simultaneously
 ```
 
 ### Quality Assurance (Revolutionary AI/ML Integration)
@@ -387,16 +387,16 @@ All voice scripts are located in `/`:
 5. monitor tests                # Real-time monitoring dashboard
 ```
 
-### Epic-Scale Development (NEW in v3.2.0)
+### Epic-Scale Development (NEW in v4.3.2)
 ```
 1. /ap                          # Orchestrator coordination
-2. /po                          # /groom with 18 native sub-agents
-3. /parallel-sprint             # Launch 2-4 developer streams
+2. /po                          # /planning-groom with 18 native sub-agents
+3. /parallel-implementation-sprint             # Launch 2-4 developer streams
 4. /parallel-qa-framework       # Concurrent quality assurance
 5. Real-time coordination       # Live dependency resolution and progress synthesis
 ```
 
-## 🎯 Epic 17 Achievement - Native Sub-Agent Revolution (v3.2.0)
+## 🎯 Epic 17 Achievement - Native Sub-Agent Revolution (v4.3.2)
 
 ### 🚀 Complete Architecture Transformation
 - ✅ **Migration Complete**: From Task-based to native Claude Code sub-agents

@@ -19,107 +19,32 @@ ap
 /help
 ```
 
-**Need more help?** Check [`documentation/01-getting-started/quick-start-guide.md`](documentation/01-getting-started/quick-start-guide.md)
+**Need more help?** Visit our [APM Documentation Wiki](https://wiki.example.com/apm)
 
 ---
 
 ## 📚 Documentation Index
 
 ### Essential Guides
-- [**Quick Start Guide**](documentation/01-getting-started/quick-start-guide.md) - Get running in 5 minutes
-- [**Understanding APM**](documentation/01-getting-started/understanding-apm.md) - Core concepts and philosophy
-- [**Command Quick Reference**](documentation/quick-reference/command-cheatsheet.md) - All commands at a glance
-- [**Troubleshooting Guide**](documentation/troubleshooting/common-issues.md) - Solve problems quickly
+- **Quick Start Guide** - Available on the [documentation wiki](https://wiki.example.com/apm)
+### 📖 Documentation
 
-### Complete Documentation Structure
+**Complete documentation is available on our wiki:**
+**[🌐 Visit the APM Documentation Wiki →](https://wiki.example.com/apm)**
 
-#### 📘 [1. Getting Started](documentation/01-getting-started/)
-- [`quick-start-guide.md`](documentation/01-getting-started/quick-start-guide.md) - Your first 5 minutes with APM
-- [`understanding-apm.md`](documentation/01-getting-started/understanding-apm.md) - Core concepts and mental model
-- [`installation-verification.md`](documentation/01-getting-started/installation-verification.md) - Verify your setup
-- [`first-project-tutorial.md`](documentation/01-getting-started/first-project-tutorial.md) - Complete walkthrough
-- [`getting-help.md`](documentation/01-getting-started/getting-help.md) - Where to find assistance
+The wiki provides comprehensive documentation including:
+- 📘 **Getting Started** - Quick start guides and core concepts
+- 👥 **Agent Personas** - Understanding each specialized agent
+- 🔄 **Workflows** - Best practices and common patterns  
+- 📖 **Command Reference** - Complete documentation for 85+ commands
+- ⚙️ **Configuration** - Customizing your APM installation
+- 🚀 **Advanced Topics** - Power user features and enterprise deployment
+- 🔧 **Troubleshooting** - Problem resolution and debugging
+- 📚 **Reference** - API documentation and technical references
+- ⚡ **Quick Reference** - Cheat sheets and shortcuts
+- 💡 **Examples** - Real-world project walkthroughs
 
-#### 👥 [2. Agent Personas](documentation/02-personas/)
-Learn about each specialized agent and when to use them:
-- [`persona-overview.md`](documentation/02-personas/persona-overview.md) - Understanding the agent system
-- [`persona-selection-guide.md`](documentation/02-personas/persona-selection-guide.md) - **Which agent should I use?**
-- [`analyst-guide.md`](documentation/02-personas/analyst-guide.md) - Research & requirements specialist
-- [`pm-guide.md`](documentation/02-personas/pm-guide.md) - Product management expert
-- [`architect-guide.md`](documentation/02-personas/architect-guide.md) - System design specialist
-- [`design-architect-guide.md`](documentation/02-personas/design-architect-guide.md) - UI/UX expert
-- [`po-guide.md`](documentation/02-personas/po-guide.md) - Backlog management specialist
-- [`sm-guide.md`](documentation/02-personas/sm-guide.md) - Scrum process expert
-- [`developer-guide.md`](documentation/02-personas/developer-guide.md) - Code implementation specialist
-- [`qa-guide.md`](documentation/02-personas/qa-guide.md) - Quality assurance expert
-
-#### 🔄 [3. Workflows](documentation/03-workflows/)
-Common patterns and best practices:
-- [`typical-project-flow.md`](documentation/03-workflows/typical-project-flow.md) - End-to-end project lifecycle
-- [`idea-to-implementation.md`](documentation/03-workflows/idea-to-implementation.md) - From concept to code
-- [`parallel-development.md`](documentation/03-workflows/parallel-development.md) - Using parallel commands for 4-8x speed
-- [`session-management.md`](documentation/03-workflows/session-management.md) - Managing work sessions
-- [`backlog-workflow.md`](documentation/03-workflows/backlog-workflow.md) - Effective backlog management
-- [`team-collaboration.md`](documentation/03-workflows/team-collaboration.md) - Working with teams
-
-#### 📖 [4. Command Reference](documentation/command-reference/)
-Complete command documentation (85+ commands):
-- [`APM-COMMAND-DOCUMENTATION-MASTER.md`](documentation/command-reference/APM-COMMAND-DOCUMENTATION-MASTER.md) - **Master Index** 📌
-- [`APM-COMMANDS-01-ORCHESTRATOR.md`](documentation/command-reference/APM-COMMANDS-01-ORCHESTRATOR.md) - Orchestrator commands
-- [`APM-COMMANDS-02-PERSONAS.md`](documentation/command-reference/APM-COMMANDS-02-PERSONAS.md) - Agent activation commands
-- [`APM-COMMANDS-03-PARALLEL.md`](documentation/command-reference/APM-COMMANDS-03-PARALLEL.md) - Parallel execution (4-8x faster)
-- [`APM-COMMANDS-04-QA-FRAMEWORK.md`](documentation/command-reference/APM-COMMANDS-04-QA-FRAMEWORK.md) - AI-powered testing
-- [`APM-COMMANDS-05-PROJECT-MANAGEMENT.md`](documentation/command-reference/APM-COMMANDS-05-PROJECT-MANAGEMENT.md) - PM commands
-- [`APM-COMMANDS-06-DEVELOPMENT.md`](documentation/command-reference/APM-COMMANDS-06-DEVELOPMENT.md) - Development commands
-- [`APM-COMMANDS-07-DOCUMENTATION.md`](documentation/command-reference/APM-COMMANDS-07-DOCUMENTATION.md) - Documentation management
-- [`APM-COMMANDS-08-UTILITIES.md`](documentation/command-reference/APM-COMMANDS-08-UTILITIES.md) - Utility commands
-- [`APM-COMMANDS-QUICK-REFERENCE.md`](documentation/command-reference/APM-COMMANDS-QUICK-REFERENCE.md) - Quick lookup
-
-#### ⚙️ [5. Configuration](documentation/05-configuration/)
-Customizing your APM installation:
-- [`configuration-overview.md`](documentation/05-configuration/configuration-overview.md) - Configuration system
-- [`settings-reference.md`](documentation/05-configuration/settings-reference.md) - All settings explained
-- [`voice-notifications.md`](documentation/05-configuration/voice-notifications.md) - TTS configuration
-- [`hooks-system.md`](documentation/05-configuration/hooks-system.md) - Customizing behavior
-- [`environment-variables.md`](documentation/05-configuration/environment-variables.md) - Environment setup
-
-#### 🚀 [6. Advanced Topics](documentation/06-advanced/)
-Power user features:
-- [`performance-optimization.md`](documentation/06-advanced/performance-optimization.md) - Maximizing speed
-- [`custom-personas.md`](documentation/06-advanced/custom-personas.md) - Creating custom agents
-- [`mcp-debug-host.md`](documentation/06-advanced/mcp-debug-host.md) - Server management
-- [`ci-cd-integration.md`](documentation/06-advanced/ci-cd-integration.md) - Pipeline integration
-- [`enterprise-deployment.md`](documentation/06-advanced/enterprise-deployment.md) - Large-scale usage
-
-#### 🔧 [7. Troubleshooting](documentation/07-troubleshooting/)
-Problem resolution:
-- [`common-issues.md`](documentation/07-troubleshooting/common-issues.md) - Quick solutions
-- [`installation-problems.md`](documentation/07-troubleshooting/installation-problems.md) - Setup issues
-- [`performance-issues.md`](documentation/07-troubleshooting/performance-issues.md) - Speed problems
-- [`agent-issues.md`](documentation/07-troubleshooting/agent-issues.md) - Persona problems
-- [`debug-guide.md`](documentation/07-troubleshooting/debug-guide.md) - Deep debugging
-
-#### 📚 [8. Reference](documentation/08-reference/)
-Detailed reference materials:
-- [`api-reference.md`](documentation/08-reference/api-reference.md) - Complete API documentation
-- [`template-reference.md`](documentation/08-reference/template-reference.md) - Template system
-- [`task-library.md`](documentation/08-reference/task-library.md) - All available tasks
-- [`glossary.md`](documentation/08-reference/glossary.md) - Terms and definitions
-- [`version-history.md`](documentation/08-reference/version-history.md) - Release notes
-
-#### ⚡ [Quick Reference](documentation/quick-reference/)
-Fast access to key information:
-- [`command-cheatsheet.md`](documentation/quick-reference/command-cheatsheet.md) - All commands on one page
-- [`persona-cheatsheet.md`](documentation/quick-reference/persona-cheatsheet.md) - Agent quick reference
-- [`workflow-cheatsheet.md`](documentation/quick-reference/workflow-cheatsheet.md) - Common patterns
-- [`keyboard-shortcuts.md`](documentation/quick-reference/keyboard-shortcuts.md) - Productivity shortcuts
-
-#### 💡 [Examples](documentation/examples/)
-Real-world usage examples:
-- [`todo-app-project.md`](documentation/examples/todo-app-project.md) - Building a todo application
-- [`api-development.md`](documentation/examples/api-development.md) - Creating a REST API
-- [`frontend-project.md`](documentation/examples/frontend-project.md) - Modern web application
-- [`full-stack-project.md`](documentation/examples/full-stack-project.md) - Complete application
+*Note: Local documentation files have been removed to reduce distribution size. All documentation is maintained on the wiki for better searchability and up-to-date content.*
 
 ---
 
@@ -186,7 +111,7 @@ Execute multiple tasks simultaneously:
 ### Quick Help
 - Type `/help` for command assistance
 - Type `/help [topic]` for specific help
-- Check [`documentation/01-getting-started/getting-help.md`](documentation/01-getting-started/getting-help.md)
+- Check the [Getting Help section](https://wiki.example.com/apm) on our wiki
 
 ### Documentation
 - This README provides the complete index
@@ -202,10 +127,10 @@ Execute multiple tasks simultaneously:
 
 ## 🎯 Next Steps
 
-1. **New to APM?** Start with the [Quick Start Guide](documentation/01-getting-started/quick-start-guide.md)
-2. **Ready to build?** Follow the [First Project Tutorial](documentation/01-getting-started/first-project-tutorial.md)
-3. **Need specific help?** Use the [Persona Selection Guide](documentation/02-personas/persona-selection-guide.md)
-4. **Want to go fast?** Learn about [Parallel Development](documentation/03-workflows/parallel-development.md)
+1. **New to APM?** Start with the [Quick Start Guide](https://wiki.example.com/apm) on our wiki
+2. **Ready to build?** Follow the [First Project Tutorial](https://wiki.example.com/apm) on our wiki
+3. **Need specific help?** Use the [Persona Selection Guide](https://wiki.example.com/apm) on our wiki
+4. **Want to go fast?** Learn about [Parallel Development](https://wiki.example.com/apm) on our wiki
 
 ---
 
@@ -224,9 +149,9 @@ APM delivers measurable improvements:
 - **Current Version**: {{APM_VERSION}}
 - **Installation Date**: {{INSTALL_DATE}}
 - **Installation Path**: {{APM_DIR}}
-- **Project Root**: /mnt/c/Code/MCPServers/DebugHostMCP
+- **Project Root**: /mnt/c/Code/plopdock
 
-For version history and updates, see [`documentation/08-reference/version-history.md`](documentation/08-reference/version-history.md)
+For version history and updates, see the [Version History](https://wiki.example.com/apm) section of our wiki
 
 ---
 

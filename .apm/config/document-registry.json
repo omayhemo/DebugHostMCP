@@ -9,7 +9,7 @@
   },
   "document_types": {
     "backlog": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/backlog.md",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning/backlog.md",
       "type": "singleton",
       "naming": "fixed",
       "detection": {
@@ -19,7 +19,7 @@
       }
     },
     "story": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/stories/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning/planning-stories/",
       "type": "collection",
       "naming": {
         "pattern": "STORY-{id}-{title}.md",
@@ -34,7 +34,7 @@
       }
     },
     "epic": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/epics/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning/epics/",
       "type": "collection",
       "naming": {
         "pattern": "EPIC-{id}-{title}.md",
@@ -49,7 +49,7 @@
       }
     },
     "test_plan": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/test-plans/",
+      "location": "/mnt/c/Code/plopdock/project_docs/qa/test-plans/",
       "type": "collection",
       "naming": {
         "pattern": "TEST-PLAN-{date}-{seq}.md",
@@ -64,7 +64,7 @@
       }
     },
     "test_result": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/test-results/",
+      "location": "/mnt/c/Code/plopdock/project_docs/qa/test-results/",
       "type": "collection",
       "naming": {
         "pattern": "TEST-RESULT-{date}-{seq}.md",
@@ -79,7 +79,7 @@
       }
     },
     "architecture_decision": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/architecture/decisions/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning-architecture/decisions/",
       "type": "collection",
       "naming": {
         "pattern": "ADR-{seq}-{title}.md",
@@ -94,7 +94,7 @@
       }
     },
     "specification": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/architecture/specifications/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning-architecture/specifications/",
       "type": "collection",
       "naming": {
         "pattern": "{component}-SPEC.md",
@@ -108,7 +108,7 @@
       }
     },
     "report": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/reports/",
+      "location": "/mnt/c/Code/plopdock/project_docs/reports/",
       "type": "collection",
       "naming": {
         "pattern": "{date}-{title}.md",
@@ -117,13 +117,13 @@
       },
       "allow_subfolders": true,
       "detection": {
-        "filename_patterns": ["report", "analysis", "summary", "findings"],
-        "content_markers": ["Executive Summary", "Findings", "Recommendations", "Analysis", "Conclusion"],
-        "agent_hints": ["Analyst", "QA", "PM"]
+        "filename_patterns": ["report", "analysis", "summary", "findings", "proposal", "integration-proposal", "research"],
+        "content_markers": ["Executive Summary", "Findings", "Recommendations", "Analysis", "Conclusion", "Proposal", "## Summary", "Investment Required", "Cost Analysis", "Implementation", "Technical Architecture"],
+        "agent_hints": ["Analyst", "QA", "PM", "Architect"]
       }
     },
     "session_note": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/.apm/session_notes/",
+      "location": "/mnt/c/Code/plopdock/.apm/session_notes/",
       "type": "collection",
       "naming": {
         "pattern": "{timestamp}-{description}.md",
@@ -137,8 +137,38 @@
         "agent_hints": ["*"]
       }
     },
+    "transition_note": {
+      "location": "/mnt/c/Code/plopdock/.apm/session_notes/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{timestamp}-{title}-transition.md",
+        "timestamp_format": "YYYY-MM-DD-HH-mm-ss",
+        "title_format": "kebab-case"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["transition", "handoff", "transfer", "notes", "complete", "broken"],
+        "content_markers": ["Transition Notes", "Handoff Summary", "Transfer", "Critical Context", "From:", "To:", "Status:", "Priority:", "Executive Summary"],
+        "agent_hints": ["*"]
+      }
+    },
+    "handoff_note": {
+      "location": "/mnt/c/Code/plopdock/.apm/session_notes/",
+      "type": "collection",
+      "naming": {
+        "pattern": "{timestamp}-handoff-{description}.md",
+        "timestamp_format": "YYYY-MM-DD-HH-mm-ss",
+        "description_format": "kebab-case"
+      },
+      "allow_subfolders": false,
+      "detection": {
+        "filename_patterns": ["handoff", "transition", "transfer", "context", "notes"],
+        "content_markers": ["Handoff", "Transfer", "Context", "Transition", "Critical Context", "From Agent", "To Agent", "Work Completed", "Key Decisions"],
+        "agent_hints": ["*"]
+      }
+    },
     "defect": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/qa/defects/",
+      "location": "/mnt/c/Code/plopdock/project_docs/qa/defects/",
       "type": "collection",
       "naming": {
         "pattern": "DEFECT-{id}-{title}.md",
@@ -153,7 +183,7 @@
       }
     },
     "meeting_note": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/meetings/",
+      "location": "/mnt/c/Code/plopdock/project_docs/meetings/",
       "type": "collection",
       "naming": {
         "pattern": "{date}-{title}.md",
@@ -168,7 +198,7 @@
       }
     },
     "retrospective": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/retrospectives/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning/retrospectives/",
       "type": "collection",
       "naming": {
         "pattern": "RETRO-{date}-SPRINT-{sprint}.md",
@@ -183,7 +213,7 @@
       }
     },
     "roadmap": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/planning/roadmaps/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning/roadmaps/",
       "type": "collection",
       "naming": {
         "pattern": "ROADMAP-{year}-{quarter}.md",
@@ -198,7 +228,7 @@
       }
     },
     "product_brief": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/requirements/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning-requirements/",
       "type": "collection",
       "naming": {
         "pattern": "{title}-product-brief.md",
@@ -206,13 +236,13 @@
       },
       "allow_subfolders": false,
       "detection": {
-        "filename_patterns": ["brief", "product-brief", "project-brief", "product_brief"],
+        "filename_patterns": ["brief", "product-brief", "planning-project-brief", "product_brief"],
         "content_markers": ["Product Brief", "Project Brief", "Product Vision", "Problem Statement", "Target Audience", "Objectives"],
         "agent_hints": ["Analyst", "PM", "Product Manager"]
       }
     },
     "prd": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/requirements/",
+      "location": "/mnt/c/Code/plopdock/project_docs/planning-requirements/",
       "type": "collection",
       "naming": {
         "pattern": "{title}-PRD.md",
@@ -226,7 +256,7 @@
       }
     },
     "api_documentation": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/api/",
+      "location": "/mnt/c/Code/plopdock/project_docs/api/",
       "type": "collection",
       "naming": {
         "pattern": "{service}-API.md",
@@ -240,7 +270,7 @@
       }
     },
     "deployment_guide": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/deployment/",
+      "location": "/mnt/c/Code/plopdock/project_docs/deployment/",
       "type": "collection",
       "naming": {
         "pattern": "DEPLOY-{environment}-{version}.md",
@@ -255,7 +285,7 @@
       }
     },
     "changelog": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/changelogs/",
+      "location": "/mnt/c/Code/plopdock/project_docs/changelogs/",
       "type": "collection",
       "naming": {
         "pattern": "CHANGELOG-{version}.md",
@@ -269,7 +299,7 @@
       }
     },
     "release_notes": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/release-notes/",
+      "location": "/mnt/c/Code/plopdock/project_docs/distribution-release-notes/",
       "type": "collection",
       "naming": {
         "pattern": "RELEASE-NOTES-{version}.md",
@@ -283,7 +313,7 @@
       }
     },
     "script": {
-      "location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/scripts/",
+      "location": "/mnt/c/Code/plopdock/project_docs/scripts/",
       "type": "collection",
       "naming": {
         "pattern": "{name}.{ext}",
@@ -299,7 +329,7 @@
       },
       "enforcement": {
         "level": "strict",
-        "message": "Scripts must be placed in /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/scripts/ or subdirectories",
+        "message": "Scripts must be placed in /mnt/c/Code/plopdock/project_docs/scripts/ or subdirectories",
         "exceptions": ["package.json", "tsconfig.json", ".eslintrc.js", "webpack.config.js", "jest.config.js"],
         "block_placement_outside": true
       }
@@ -324,10 +354,10 @@
       {"key": "13", "type": "script", "label": "Script/Automation File"},
       {"key": "14", "type": "general", "label": "General Documentation"}
     ],
-    "default_location": "/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/general/"
+    "default_location": "/mnt/c/Code/plopdock/project_docs/general/"
   },
   "override_audit": {
-    "log_file": "/mnt/c/Code/MCPServers/DebugHostMCP/.apm/logs/location-overrides.json",
+    "log_file": "/mnt/c/Code/plopdock/.apm/logs/location-overrides.json",
     "required_fields": ["timestamp", "agent", "original_path", "override_path", "justification"],
     "retention_days": 90,
     "alert_threshold": 5,
@@ -357,7 +387,7 @@
   },
   "file_placement_rules": {
     "scripts": {
-      "rule": "Scripts (*.sh, *.bash, *.py, *.js, *.ts, *.rb, *.pl, *.ps1) MUST be placed in /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/scripts/ or its subdirectories",
+      "rule": "Scripts (*.sh, *.bash, *.py, *.js, *.ts, *.rb, *.pl, *.ps1) MUST be placed in /mnt/c/Code/plopdock/project_docs/scripts/ or its subdirectories",
       "enforcement": "strict",
       "violations_action": "block",
       "allowed_exceptions": [

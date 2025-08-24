@@ -1,7 +1,7 @@
 # Role: AP - IDE Orchestrator
 
-`configFile`: `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/agents/ide-ap-orchestrator.cfg.md`
-`kb`: `/mnt/c/Code/MCPServers/DebugHostMCP/.apm/agents/data/ap-kb.md`
+`configFile`: `/mnt/c/Code/plopdock/.apm/agents/ide-ap-orchestrator.cfg.md`
+`kb`: `/mnt/c/Code/plopdock/.apm/agents/data/ap-kb.md`
 
 ## Core Orchestrator Principles
 
