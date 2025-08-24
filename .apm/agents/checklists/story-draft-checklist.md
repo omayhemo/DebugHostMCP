@@ -24,7 +24,7 @@ The Scrum Master should use this checklist to validate that each story contains 
 - [ ] References to external documents point to specific relevant sections
 - [ ] Critical information from previous stories is summarized (not just referenced)
 - [ ] Context is provided for why references are relevant
-- [ ] References use consistent format (e.g., `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/filename.md#section`)
+- [ ] References use consistent format (e.g., `/mnt/c/Code/plopdock/project_docs/base/filename.md#section`)
 
 ## 4. SELF-CONTAINMENT ASSESSMENT
 

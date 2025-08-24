@@ -12,7 +12,7 @@
 
 ## Business Objective
 
-[Describe the business goal this epic aims to achieve. What value does it deliver to users and the organization?]
+[Describe the business goal this planning-epic aims to achieve. What value does it deliver to users and the organization?]
 
 ## User Value
 
@@ -62,7 +62,7 @@ As a [user type], I want [capability] so that [benefit/value].
 
 ### Architecture Overview
 ```typescript
-// High-level architecture or key interfaces
+// High-level planning-architecture or key interfaces
 interface ExampleStructure {
   // Key data structures or API contracts
 }
@@ -89,29 +89,29 @@ interface ExampleStructure {
 - [Business requirement or approval needed]
 - [External system or service]
 - [Third-party integration]
-- [Data or content requirements]
+- [Data or content planning-requirements]
 
 ## User Stories
 
 ### Priority 1 (Must Have)
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
 
 ### Priority 2 (Should Have)
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
 
 ### Priority 3 (Nice to Have)
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
-- [ ] [STORY-XXX](../stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
+- [ ] [STORY-XXX](../planning-stories/STORY-XXX-[story-name].md): [Story title]
 
 ## Risks & Mitigations
 
@@ -129,7 +129,7 @@ interface ExampleStructure {
 
 ## Definition of Done
 
-- [ ] All Priority 1 stories completed
+- [ ] All Priority 1 planning-stories completed
 - [ ] Acceptance criteria verified
 - [ ] Performance targets met
 - [ ] Security review passed
@@ -191,9 +191,9 @@ interface ExampleStructure {
 - [Assumption being made in planning]
 
 ### Out of Scope
-- [Explicitly not included in this epic]
-- [Explicitly not included in this epic]
-- [Explicitly not included in this epic]
+- [Explicitly not included in this planning-epic]
+- [Explicitly not included in this planning-epic]
+- [Explicitly not included in this planning-epic]
 
 ### Future Considerations
 - [Potential future enhancement]

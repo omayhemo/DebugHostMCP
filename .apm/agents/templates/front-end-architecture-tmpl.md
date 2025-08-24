@@ -4,7 +4,7 @@
 
 { Update this if sections and subsections are added or removed }
 
-- [{Project Name} Frontend Architecture Document](#project-name-frontend-architecture-document)
+- [{Project Name} Frontend Architecture Document](#project-name-frontend-planning-architecture-document)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Overall Frontend Philosophy \& Patterns](#overall-frontend-philosophy--patterns)
@@ -43,16 +43,16 @@
 
 ## Introduction
 
-{ This document details the technical architecture specifically for the frontend of {Project Name}. It complements the main {Project Name} Architecture Document and the UI/UX Specification. This document details the frontend architecture and **builds upon the foundational decisions** (e.g., overall tech stack, CI/CD, primary testing tools) defined in the main {Project Name} Architecture Document (`/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/architecture.md` or linked equivalent). **Frontend-specific elaborations or deviations from general patterns must be explicitly noted here.** The goal is to provide a clear blueprint for frontend development, ensuring consistency, maintainability, and alignment with the overall system design and user experience goals. }
+{ This document details the technical planning-architecture specifically for the frontend of {Project Name}. It complements the main {Project Name} Architecture Document and the UI/UX Specification. This document details the frontend planning-architecture and **builds upon the foundational decisions** (e.g., overall tech stack, CI/CD, primary testing tools) defined in the main {Project Name} Architecture Document (`/mnt/c/Code/plopdock/project_docs/base/planning-architecture.md` or linked equivalent). **Frontend-specific elaborations or deviations from general patterns must be explicitly noted here.** The goal is to provide a clear blueprint for frontend development, ensuring consistency, maintainability, and alignment with the overall system design and user experience goals. }
 
-- **Link to Main Architecture Document (REQUIRED):** {e.g., `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/architecture.md`}
-- **Link to UI/UX Specification (REQUIRED if exists):** {e.g., `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/front-end-spec.md`}
+- **Link to Main Architecture Document (REQUIRED):** {e.g., `/mnt/c/Code/plopdock/project_docs/base/planning-architecture.md`}
+- **Link to UI/UX Specification (REQUIRED if exists):** {e.g., `/mnt/c/Code/plopdock/project_docs/base/front-end-spec.md`}
 - **Link to Primary Design Files (Figma, Sketch, etc.) (REQUIRED if exists):** {From UI/UX Spec}
 - **Link to Deployed Storybook / Component Showcase (if applicable):** {URL}
 
 ## Overall Frontend Philosophy & Patterns
 
-{ Describe the core architectural decisions and patterns chosen for the frontend. This should align with the "Definitive Tech Stack Selections" in the main architecture document and consider implications from the overall system architecture (e.g., monorepo vs. polyrepo, backend service structure). }
+{ Describe the core architectural decisions and patterns chosen for the frontend. This should align with the "Definitive Tech Stack Selections" in the main planning-architecture document and consider implications from the overall system planning-architecture (e.g., monorepo vs. polyrepo, backend service structure). }
 
 - **Framework & Core Libraries:** {e.g., React 18.x with Next.js 13.x, Angular 16.x, Vue 3.x with Nuxt.js}. **These are derived from the 'Definitive Tech Stack Selections' in the main Architecture Document.** This section elaborates on *how* these choices are applied specifically to the frontend.
 - **Component Architecture:** {e.g., Atomic Design principles, Presentational vs. Container components, use of specific component libraries like Material UI, Tailwind CSS for styling approach. Specify chosen approach and any key libraries.}
@@ -63,7 +63,7 @@
 
 ## Detailed Frontend Directory Structure
 
-{ Provide an ASCII diagram representing the frontend application\'s specific folder structure (e.g., within `src/` or `app/` or a dedicated `frontend/` root directory if part of a monorepo). This should elaborate on the frontend part of the main project structure outlined in the architecture document. Highlight conventions for organizing components, pages/views, services, state, styles, assets, etc. For each key directory, provide a one-sentence mandatory description of its purpose.}
+{ Provide an ASCII diagram representing the frontend application\'s specific folder structure (e.g., within `src/` or `app/` or a dedicated `frontend/` root directory if part of a monorepo). This should elaborate on the frontend part of the main project structure outlined in the planning-architecture document. Highlight conventions for organizing components, pages/views, services, state, styles, assets, etc. For each key directory, provide a one-sentence mandatory description of its purpose.}
 
 ### EXAMPLE - Not Prescriptive (for a React/Next.js app)
 
@@ -114,7 +114,7 @@ src/
 
 ## Component Breakdown & Implementation Details
 
-{ This section outlines the conventions and templates for defining UI components. Detailed specification for most feature-specific components will emerge as user stories are implemented. The AI agent MUST follow the "Template for Component Specification" below whenever a new component is identified for development. }
+{ This section outlines the conventions and templates for defining UI components. Detailed specification for most feature-specific components will emerge as user planning-stories are implemented. The AI agent MUST follow the "Template for Component Specification" below whenever a new component is identified for development. }
 
 ### Component Naming & Organization
 
@@ -170,7 +170,7 @@ src/
 - **Styling Notes:**
   - {MUST reference specific Design System component names (e.g., "Uses `<Button variant='primary'>` from UI library") OR specify Tailwind CSS classes / CSS module class names to be applied (e.g., "Container uses `p-4 bg-white rounded-lg shadow-md`. Title uses `text-xl font-semibold`.") OR specify SCSS custom component classes to be applied (e.g., "Container uses `@apply p-4 bg-white rounded-lg shadow-md`. Title uses `@apply text-xl font-semibold`."). Any dynamic styling logic based on props or state MUST be described. If Tailwind CSS is used, list primary utility classes or `@apply` directives for custom component classes. AI Agent should prioritize direct utility class usage for simple cases and propose reusable component classes/React components for complex styling patterns.}
 - **Accessibility Notes:**
-  - {MUST list specific ARIA attributes and their values (e.g., `aria-label="User profile card"`, `role="article"`), required keyboard navigation behavior (e.g., "Tab navigates to avatar, name, email, then edit button. Edit button is focusable and activated by Enter/Space."), and any focus management requirements (e.g., "If this component opens a modal, focus MUST be trapped inside. On modal close, focus returns to the trigger element.").}
+  - {MUST list specific ARIA attributes and their values (e.g., `aria-label="User profile card"`, `role="article"`), required keyboard navigation behavior (e.g., "Tab navigates to avatar, name, email, then edit button. Edit button is focusable and activated by Enter/Space."), and any focus management planning-requirements (e.g., "If this component opens a modal, focus MUST be trapped inside. On modal close, focus returns to the trigger element.").}
 
 ---
 
@@ -292,7 +292,7 @@ src/
 
 ## Build, Bundling, and Deployment
 
-{ Details specific to the frontend build and deployment process, complementing the "Infrastructure and Deployment Overview" in the main architecture document. }
+{ Details specific to the frontend build and deployment process, complementing the "Infrastructure and Deployment Overview" in the main planning-architecture document. }
 
 ### Build Process & Scripts
 
@@ -314,9 +314,9 @@ src/
 
 ## Frontend Testing Strategy
 
-{ This section elaborates on the "Testing Strategy" from the main architecture document, focusing on frontend-specific aspects. **Refer to the main Architecture Document for definitive choices of testing tools.** }
+{ This section elaborates on the "Testing Strategy" from the main planning-architecture document, focusing on frontend-specific aspects. **Refer to the main Architecture Document for definitive choices of testing tools.** }
 
-- **Link to Main Overall Testing Strategy:** {Reference the main `docs/architecture.md#overall-testing-strategy` or equivalent.}
+- **Link to Main Overall Testing Strategy:** {Reference the main `docs/planning-architecture.md#overall-testing-strategy` or equivalent.}
 
 ### Component Testing
 
@@ -327,7 +327,7 @@ src/
 
 ### Feature/Flow Testing (UI Integration)
 
-- **Scope:** {Testing how multiple components interact to fulfill a small user flow or feature within a page, potentially mocking API calls or global state management. e.g., testing a complete form submission within a feature, including validation and interaction with a mocked service layer.}
+- **Scope:** {Testing how multiple components interact to fulfill a small user flow or feature within a page, potentially mocking API calls or global state management. e.g., testing a complete form submission within a feature, including planning-validation and interaction with a mocked service layer.}
 - **Tools:** {Same as component testing (e.g., React Testing Library with Jest/Vitest), but with more complex setups involving mock providers for routing, state, API calls.}
 - **Focus:** {Data flow between components, conditional rendering based on interactions, navigation within a feature, integration with mocked services/state.}
 
@@ -339,7 +339,7 @@ src/
 
 ## Accessibility (AX) Implementation Details
 
-{ Based on the AX requirements in the UI/UX Specification, detail how these will be technically implemented. }
+{ Based on the AX planning-requirements in the UI/UX Specification, detail how these will be technically implemented. }
 
 - **Semantic HTML:** {Emphasis on using correct HTML5 elements. **AI Agent MUST prioritize semantic elements (e.g., `<nav>`, `<button>`, `<article>`) over generic `<div>`/`<span>` with ARIA roles where a native element with the correct semantics exists.**}
 - **ARIA Implementation:** {Specify common custom components and their required ARIA patterns (e.g., "Custom select dropdown MUST follow ARIA Combobox pattern including `aria-expanded`, `aria-controls`, `role='combobox'`, etc. Custom Tabs MUST follow ARIA Tabbed Interface pattern."). Link to ARIA Authoring Practices Guide (APG) for reference.}
@@ -408,8 +408,8 @@ src/
   - Policy: {e.g., "All third-party scripts (analytics, ads, widgets) MUST be vetted for necessity and security. Load scripts asynchronously (`async/defer`)."}
   - Subresource Integrity (SRI): {e.g., "SRI hashes MUST be used for all external scripts and stylesheets loaded from CDNs where the resource is stable."}
 - **Client-Side Data Validation:**
-  - Purpose: {e.g., "Client-side validation is for UX improvement (immediate feedback) ONLY. **All critical data validation MUST occur server-side** (as defined in the main Architecture Document)."}
-  - Implementation: {e.g., "Use {form_library_name like Formik/React Hook Form} for form validation. Rules should mirror server-side validation where appropriate."}
+  - Purpose: {e.g., "Client-side planning-validation is for UX improvement (immediate feedback) ONLY. **All critical data planning-validation MUST occur server-side** (as defined in the main Architecture Document)."}
+  - Implementation: {e.g., "Use {form_library_name like Formik/React Hook Form} for form planning-validation. Rules should mirror server-side planning-validation where appropriate."}
 - **Preventing Clickjacking:**
   - Mechanism: {e.g., "Primary defense is `X-Frame-Options` or `frame-ancestors` CSP directive, set by backend/CDN. Frontend code should not rely on frame-busting scripts."}
 - **API Key Exposure (for client-side consumed services):**

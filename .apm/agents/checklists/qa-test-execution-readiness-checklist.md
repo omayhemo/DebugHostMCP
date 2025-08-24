@@ -17,7 +17,7 @@ Complete this checklist before beginning test execution for any epic, feature, o
 ### 1.1 Test Planning Completeness
 
 - [ ] Test strategy document approved and accessible to team
-- [ ] Test plan completed for current scope (epic/feature/release)
+- [ ] Test plan completed for current scope (epic/feature/distribution-release)
 - [ ] Test cases written and reviewed for all requirements
 - [ ] Test case traceability to requirements verified
 - [ ] Test data requirements identified and documented

@@ -54,7 +54,7 @@ If the project includes a significant user interface, a separate Frontend Archit
 │   └── settings.json
 ├── build/                      # Compiled output (if applicable, often git-ignored)
 ├── config/                     # Static configuration files (if any)
-├── /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/              # Project documentation (PRD, Arch, etc.)
+├── /mnt/c/Code/plopdock/project_docs/              # Project documentation (PRD, Arch, etc.)
 │   ├── index.md
 │   └── ... (other .md files)
 ├── infra/                      # Infrastructure as Code (e.g., CDK, Terraform)
@@ -91,7 +91,7 @@ If the project includes a significant user interface, a separate Frontend Archit
 
 ### Key Directory Descriptions
 
-- /mnt/c/Code/MCPServers/DebugHostMCP/project_docs/: Contains all project planning and reference documentation.
+- /mnt/c/Code/plopdock/project_docs/: Contains all project planning and reference documentation.
 - infra/: Holds the Infrastructure as Code definitions (e.g., AWS CDK, Terraform).
 - src/: Contains the main application source code. May be subdivided (e.g., `backend/`, `frontend/`, `shared/`) depending on project complexity and whether a separate frontend architecture document is in use.
 - src/backend/core/ / src/core/ / src/domain/: Core business logic, entities, use cases, independent of frameworks/external services.
@@ -115,15 +115,15 @@ If the project includes a significant user interface, a separate Frontend Archit
 - **Base URL(s):**
   - Production: `{URL}`
   - Staging/Dev: `{URL}`
-- **Authentication:** {Describe method - e.g., API Key in Header (Header Name: `X-API-Key`), OAuth 2.0 Client Credentials, Basic Auth. Reference `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/environment-vars.md` for key names.}
+- **Authentication:** {Describe method - e.g., API Key in Header (Header Name: `X-API-Key`), OAuth 2.0 Client Credentials, Basic Auth. Reference `/mnt/c/Code/plopdock/project_docs/base/environment-vars.md` for key names.}
 - **Key Endpoints Used:**
   - **`{HTTP Method} {/path/to/endpoint}`:**
     - Description: {What does this endpoint do?}
     - Request Parameters: {Query params, path params}
-    - Request Body Schema: {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if the schema is exceptionally large or complex.}
+    - Request Body Schema: {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if the schema is exceptionally large or complex.}
     - Example Request: `{Code block}`
-    - Success Response Schema (Code: `200 OK`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if very complex.}
-    - Error Response Schema(s) (Codes: `4xx`, `5xx`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if very complex.}
+    - Success Response Schema (Code: `200 OK`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if very complex.}
+    - Error Response Schema(s) (Codes: `4xx`, `5xx`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if very complex.}
     - Example Response: `{Code block}`
   - **`{HTTP Method} {/another/endpoint}`:** {...}
 - **Rate Limits:** {If known}
@@ -142,9 +142,9 @@ If the project includes a significant user interface, a separate Frontend Archit
   - **`{HTTP Method} {/path/to/endpoint}`:**
     - Description: {What does this endpoint do?}
     - Request Parameters: {...}
-    - Request Body Schema: {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if very complex.}
-    - Success Response Schema (Code: `200 OK`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if very complex.}
-    - Error Response Schema(s) (Codes: `4xx`, `5xx`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/data-models.md` only if very complex.}
+    - Request Body Schema: {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if very complex.}
+    - Success Response Schema (Code: `200 OK`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if very complex.}
+    - Error Response Schema(s) (Codes: `4xx`, `5xx`): {Provide JSON schema inline, or link to a detailed definition in `/mnt/c/Code/plopdock/project_docs/base/data-models.md` only if very complex.}
   - **`{HTTP Method} {/another/endpoint}`:** {...}
 
 ## Data Models
@@ -358,7 +358,7 @@ Must be definitive selections; do not list open-ended choices (e.g., for web scr
 
 - **Input Sanitization/Validation:** {Specify library/method for ALL external inputs (API requests, user-provided data, file uploads). E.g., 'Use class-validator with NestJS DTOs for all API inputs; all validation rules must be defined in DTOs.' For other languages, 'Use {validation_library} for all external inputs; define schemas and constraints.' Validation must occur at the boundary before processing.}
 - **Output Encoding:** {Specify where and how output encoding should be performed to prevent XSS and other injection attacks. E.g., 'All dynamic data rendered in HTML templates must be contextually auto-escaped by the template engine (specify engine and confirm default behavior). If generating HTML/XML/JSON manually, use approved encoding libraries like {encoder_library_name}.'}
-- **Secrets Management:** {Reference `/mnt/c/Code/MCPServers/DebugHostMCP/project_docs/base/environment-vars.md` regarding storage for different environments. In code, access secrets _only_ through a designated configuration module/service. Never hardcode secrets, include them in source control, or log them. Use specific tools for local development if applicable (e.g., Doppler, .env files NOT committed).}
+- **Secrets Management:** {Reference `/mnt/c/Code/plopdock/project_docs/base/environment-vars.md` regarding storage for different environments. In code, access secrets _only_ through a designated configuration module/service. Never hardcode secrets, include them in source control, or log them. Use specific tools for local development if applicable (e.g., Doppler, .env files NOT committed).}
 - **Dependency Security:** {Policy on checking for vulnerable dependencies. E.g., 'Run automated vulnerability scans (e.g., `npm audit`, `pip-audit`, Snyk, Dependabot alerts) as part of CI. Update vulnerable dependencies promptly based on severity.' Policy on adding new dependencies (vetting process).}
 - **Authentication/Authorization Checks:** {Where and how should these be enforced? E.g., 'All API endpoints (except explicitly public ones) must enforce authentication using the central auth module/middleware. Authorization (permission/role checks) must be performed at the service layer or entry point for protected resources.' Define patterns for implementing these checks.}
 - **Principle of Least Privilege (Implementation):** {e.g., 'Database connection users must have only the necessary permissions (SELECT, INSERT, UPDATE, DELETE) for the specific tables/schemas they access. IAM roles for cloud services must be narrowly scoped to the required actions and resources.'}

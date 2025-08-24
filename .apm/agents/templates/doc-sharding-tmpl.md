@@ -11,15 +11,15 @@ This plan directs the agent on how to break down large source documents into sma
 ### 1.1. Epic Granulation
 
 - **Instruction:** For each Epic identified within the PRD:
-- **Source Section(s) to Copy:** The complete text for the Epic, including its main description, goals, and all associated user stories or detailed requirements under that Epic. Ensure to capture content starting from a heading like "**Epic X:**" up to the next such heading or end of the "Epic Overview" section.
-- **Target File Pattern:** `product_documentation/references/epic-<id>.md`
+- **Source Section(s) to Copy:** The complete text for the Epic, including its main description, goals, and all associated user planning-stories or detailed planning-requirements under that Epic. Ensure to capture content starting from a heading like "**Epic X:**" up to the next such heading or end of the "Epic Overview" section.
+- **Target File Pattern:** `product_documentation/references/planning-epic-<id>.md`
   - _Agent Note: `<id>` should correspond to the Epic number._
 
 ---
 
 ## 2. Source Document: Main Architecture Document
 
-- **Note to Agent:** Confirm the exact filename with the user (e.g., `architecture.md`, `SystemArchitecture.md`).
+- **Note to Agent:** Confirm the exact filename with the user (e.g., `planning-architecture.md`, `SystemArchitecture.md`).
 
 ### 2.1. Core Architecture Granules
 
@@ -65,7 +65,7 @@ This plan directs the agent on how to break down large source documents into sma
 
 ## 3. Source Document(s): Front-End Specific Documentation
 
-- **Note to Agent:** Confirm filenames with the user (e.g., `front-end-architecture.md`, `front-end-spec.md`, `ui-guidelines.md`). Multiple FE documents might exist.
+- **Note to Agent:** Confirm filenames with the user (e.g., `front-end-planning-architecture.md`, `front-end-spec.md`, `ui-guidelines.md`). Multiple FE documents might exist.
 
 ### 3.1. Front-End Granules
 
@@ -75,7 +75,7 @@ This plan directs the agent on how to break down large source documents into sma
 - **Source Section(s) to Copy:** Section(s) detailing "UI Style Guide", "Brand Guidelines", "Visual Design Specifications", or "Styling Approach".
 - **Target File:** `product_documentation/references/front-end-style-guide.md`
 
-  - _Agent Note: This section might be a sub-section or refer to other documents (e.g., `ui-ux-spec.txt`). Extract the core styling philosophy and approach defined within the frontend architecture document itself._
+  - _Agent Note: This section might be a sub-section or refer to other documents (e.g., `ui-planning-ux-spec.txt`). Extract the core styling philosophy and approach defined within the frontend planning-architecture document itself._
 
 - **Source Section(s) to Copy:** Section(s) detailing "Component Library", "Reusable UI Components Guide", "Atomic Design Elements", or "Component Breakdown & Implementation Details".
 - **Target File:** `product_documentation/references/front-end-component-guide.md`
@@ -83,7 +83,7 @@ This plan directs the agent on how to break down large source documents into sma
 - **Source Section(s) to Copy:** Section(s) detailing "Front-End Coding Standards" (specifically for UI development, e.g., JavaScript/TypeScript style, CSS naming conventions, accessibility best practices for FE).
 - **Target File:** `product_documentation/references/front-end-coding-standards.md`
 
-  - _Agent Note: A dedicated top-level section for this might not exist. If not found, this shard might be empty or require cross-referencing with the main architecture's coding standards. Extract any front-end-specific coding conventions mentioned._
+  - _Agent Note: A dedicated top-level section for this might not exist. If not found, this shard might be empty or require cross-referencing with the main planning-architecture's coding standards. Extract any front-end-specific coding conventions mentioned._
 
 - **Source Section(s) to Copy:** Section(s) titled "State Management In-Depth".
 - **Target File:** `product_documentation/references/front-end-state-management.md`

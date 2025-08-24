@@ -1,7 +1,7 @@
-==================== START: run-qa-checklist ====================
+==================== START: run-qa-planning-checklist ====================
 # Run QA Checklist Task
 
-> **Note: QA checklist execution and tracking are now automated by Claude Code hooks.** Hooks automatically run appropriate checklists, track completion status, and generate reports. This task now focuses on interpreting results and strategic quality decisions.
+> **Note: QA planning-checklist execution and tracking are now automated by Claude Code hooks.** Hooks automatically run appropriate checklists, track completion status, and generate reports. This task now focuses on interpreting results and strategic quality decisions.
 
 ## Automated Support
 This task benefits from automated:
@@ -14,34 +14,34 @@ This task benefits from automated:
 
 ## Purpose
 
-To execute comprehensive quality assurance checklists at various project milestones to ensure deliverables meet quality standards before progression to the next phase. This task provides systematic validation using predefined quality criteria.
+To execute comprehensive quality assurance checklists at various project milestones to ensure deliverables meet quality standards before progression to the next phase. This task provides systematic planning-validation using predefined quality criteria.
 
 ## Inputs for this Task
 
-- Specific checklist to execute (pre-deployment, story completion, epic sign-off, etc.)
+- Specific planning-checklist to execute (pre-deployment, story completion, planning-epic sign-off, etc.)
 - Artifacts or deliverables to be validated
 - Quality standards and acceptance criteria
-- Previous checklist results (if applicable)
-- Stakeholder requirements and expectations
+- Previous planning-checklist results (if applicable)
+- Stakeholder planning-requirements and expectations
 
 ## Task Execution Instructions
 
 ### 1. Select and Prepare Checklist
 
 - **Identify Appropriate Checklist:**
-  - Pre-development readiness checklist
-  - Story completion and DoD (Definition of Done) checklist
-  - Epic completion and acceptance checklist
-  - Pre-deployment readiness checklist
-  - Production release readiness checklist
-  - Security and compliance checklist
+  - Pre-development readiness planning-checklist
+  - Story completion and DoD (Definition of Done) planning-checklist
+  - Epic completion and acceptance planning-checklist
+  - Pre-deployment readiness planning-checklist
+  - Production release readiness planning-checklist
+  - Security and compliance planning-checklist
 - **Gather Required Materials:**
   - Current versions of all artifacts to be validated
   - Relevant test results and quality metrics
   - Documentation and specifications
-  - Previous checklist results and resolved issues
+  - Previous planning-checklist results and resolved issues
 - **Set Execution Context:**
-  - Understand checklist objectives and scope
+  - Understand planning-checklist objectives and scope
   - Identify stakeholders who need results
   - Determine success criteria and quality gates
   - Plan execution timeline and resources
@@ -50,7 +50,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 
 **Requirements & Planning Validation:**
 - [ ] PRD is complete, approved, and accessible to team
-- [ ] All user stories have complete acceptance criteria
+- [ ] All user planning-stories have complete acceptance criteria
 - [ ] Epic goals are clearly defined and measurable
 - [ ] Requirements are testable and verifiable
 - [ ] Dependencies and constraints are identified
@@ -59,21 +59,21 @@ To execute comprehensive quality assurance checklists at various project milesto
 **Technical Design Validation:**
 - [ ] Architecture document is complete and approved
 - [ ] Technical stack decisions are finalized
-- [ ] Database design supports all requirements
+- [ ] Database design supports all planning-requirements
 - [ ] API specifications are documented
-- [ ] Security requirements are addressed
-- [ ] Performance requirements are specified
+- [ ] Security planning-requirements are addressed
+- [ ] Performance planning-requirements are specified
 
 **Test Strategy Validation:**
 - [ ] Test strategy is documented and approved
 - [ ] Test environments are planned and available
-- [ ] Test data requirements are identified
+- [ ] Test data planning-requirements are identified
 - [ ] Automation strategy is defined
 - [ ] Quality gates and criteria are established
 - [ ] Risk assessment is complete
 
 **Team Readiness:**
-- [ ] Development team understands requirements
+- [ ] Development team understands planning-requirements
 - [ ] Technical setup and tooling is complete
 - [ ] Access to required systems and services
 - [ ] Code repositories and CI/CD pipelines ready
@@ -84,7 +84,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 
 **Functional Completion:**
 - [ ] All acceptance criteria are met and verified
-- [ ] Feature works as specified in requirements
+- [ ] Feature works as specified in planning-requirements
 - [ ] Integration with existing components successful
 - [ ] Error handling is implemented and tested
 - [ ] Edge cases and boundary conditions addressed
@@ -96,7 +96,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 - [ ] Integration tests completed successfully
 - [ ] Code review completed and approved
 - [ ] Performance benchmarks met
-- [ ] Security requirements implemented
+- [ ] Security planning-requirements implemented
 
 **Documentation & Communication:**
 - [ ] Code is properly documented (comments, API docs)
@@ -109,15 +109,15 @@ To execute comprehensive quality assurance checklists at various project milesto
 ### 4. Execute Epic Completion Checklist
 
 **Epic Goal Achievement:**
-- [ ] All epic objectives are met and verified
+- [ ] All planning-epic objectives are met and verified
 - [ ] User value is delivered as specified
 - [ ] Business goals and success metrics achieved
 - [ ] End-to-end user journeys work correctly
-- [ ] Integration across all epic stories successful
-- [ ] Performance at epic scale meets requirements
+- [ ] Integration across all planning-epic planning-stories successful
+- [ ] Performance at planning-epic scale meets planning-requirements
 
 **Quality Assurance:**
-- [ ] Comprehensive testing completed across epic scope
+- [ ] Comprehensive testing completed across planning-epic scope
 - [ ] Regression testing confirms no negative impact
 - [ ] Security testing validates protection mechanisms
 - [ ] Accessibility testing meets compliance standards
@@ -161,7 +161,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 **Compliance & Security:**
 - [ ] Security review completed and signed off
 - [ ] Accessibility compliance verified
-- [ ] Data privacy requirements met
+- [ ] Data privacy planning-requirements met
 - [ ] Regulatory compliance validated (if applicable)
 - [ ] Third-party integrations tested
 - [ ] API rate limits and security configured
@@ -217,7 +217,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 - Real-time issue status updates
 - Progress dashboards
 - Historical trend analysis
-- Automated re-validation triggers
+- Automated re-planning-validation triggers
 
 **Your value-add:**
 - **Stakeholder Communication:**
@@ -243,7 +243,7 @@ To execute comprehensive quality assurance checklists at various project milesto
 - **Objective Verification:** Provide measurable evidence where possible
 - **Documentation:** Link to relevant documents, test results, or artifacts
 - **Screenshots/Logs:** Include visual evidence for UI or system verification
-- **Test Results:** Reference specific test cases or validation procedures
+- **Test Results:** Reference specific test cases or planning-validation procedures
 
 ### Risk-Based Prioritization
 - **Critical:** Must be resolved before progression (blocking issues)
@@ -253,8 +253,8 @@ To execute comprehensive quality assurance checklists at various project milesto
 ## Automated Reports & Locations
 
 **Hooks automatically generate:**
-- Checklist execution reports: `$AP_ROOT/hooks/task-hooks/checklist-report-*.md`
-- Completion tracking: `$AP_ROOT/hooks/task-hooks/checklist-tracking.json`
+- Checklist execution reports: `$AP_ROOT/hooks/task-hooks/planning-checklist-report-*.md`
+- Completion tracking: `$AP_ROOT/hooks/task-hooks/planning-checklist-tracking.json`
 - Quality metrics: Task workspace directories
 - Session activity logs with all validations
 
@@ -281,13 +281,13 @@ To execute comprehensive quality assurance checklists at various project milesto
 
 ## Success Criteria
 
-The QA checklist execution is complete when:
+The QA planning-checklist execution is complete when:
 
-1. All applicable checklist items have been evaluated with evidence
+1. All applicable planning-checklist items have been evaluated with evidence
 2. Issues are documented with clear categorization and ownership
 3. Quality gate decision is made with stakeholder agreement
 4. Action plan exists for resolving critical and major issues
 5. Follow-up schedule established for tracking resolution progress
 6. Results are communicated to all relevant stakeholders
 
-==================== END: run-qa-checklist ====================
+==================== END: run-qa-planning-checklist ====================
