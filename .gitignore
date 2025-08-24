@@ -138,11 +138,7 @@ server.state
 rollback/
 
 # APM framework files (these are installer/templates, not source)
-.apm/.installer/
-.apm/session_notes/
-.apm/rules/
-.apm/CLAUDE.md
-./apm
+.apm/
 harmonization.log
 
 
@@ -187,13 +183,6 @@ data/system/*.json
 # Docker volumes for persistent dependencies
 volumes/
 
-# Session notes (APM infrastructure)
-.apm/session_notes/
-.apm/rules/
-
-# AP Mapping generated files
-.apm/CLAUDE.md
-harmonization.log
 
 # Piper TTS installation (project-local)
 .piper/
