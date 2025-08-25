@@ -13,10 +13,12 @@ import Layout from './components/layout/Layout';
 
 // Pages
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
 import ServersPage from './pages/ServersPage';
 import LogsPage from './pages/LogsPage';
 import MetricsPage from './pages/MetricsPage';
+
+// Multi-Tech Dashboard
+import MultiTechDashboard from './components/multi-tech';
 
 // Additional placeholder pages
 const MonitoringPage = () => (
@@ -104,7 +106,7 @@ const AppContent: React.FC = () => {
             }
           >
             <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="dashboard" element={<MultiTechDashboard />} />
             <Route path="servers" element={<ServersPage />} />
             <Route path="logs" element={<LogsPage />} />
             <Route path="projects/:id/metrics" element={<MetricsPage />} />

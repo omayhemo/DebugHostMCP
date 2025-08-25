@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "timestamp": "2025-08-25T01:17:29.429Z",
+    "story": "Story 3.4 - Core Engine Integration Testing",
+    "storyPoints": 6,
+    "sprint": "Sprint 5",
+    "phase": "Phase 1 Core Engine Development",
+    "duration": 29272,
+    "environment": {
+      "platform": "linux",
+      "nodeVersion": "v22.16.0",
+      "workingDirectory": "/mnt/c/Code/plopdock"
+    }
+  },
+  "summary": {
+    "overallSuccess": false,
+    "totalTests": 13,
+    "passedTests": 7,
+    "failedTests": 6,
+    "warnings": 0,
+    "successRate": 53.84615384615385,
+    "productionReady": false
+  },
+  "phases": {
+    "Component Initialization": {
+      "name": "Component Initialization",
+      "startTime": 1756084620158,
+      "tests": [
+        {
+          "name": "Initialize Enhanced Port Registry",
+          "success": true,
+          "duration": 1068
+        },
+        {
+          "name": "Initialize Discovery Engine",
+          "success": true,
+          "duration": 43
+        }
+      ],
+      "passed": 2,
+      "failed": 0,
+      "success": true,
+      "duration": 1111
+    },
+    "Multi-Technology Integration": {
+      "name": "Multi-Technology Integration",
+      "startTime": 1756084621269,
+      "tests": [
+        {
+          "name": "Execute simultaneous multi-technology detection",
+          "success": false,
+          "duration": 2004,
+          "error": "Operation timed out after 2000ms"
+        },
+        {
+          "name": "Validate technology stack detector availability",
+          "success": true,
+          "duration": 1
+        }
+      ],
+      "passed": 1,
+      "failed": 1,
+      "success": false,
+      "duration": 2005
+    },
+    "Performance Validation": {
+      "name": "Performance Validation",
+      "startTime": 1756084623274,
+      "tests": [
+        {
+          "name": "Validate scan time requirements",
+          "success": false,
+          "duration": 2003,
+          "error": "Operation timed out after 2000ms"
+        },
+        {
+          "name": "Validate resource usage",
+          "success": false,
+          "duration": 2103,
+          "error": "Operation timed out after 2000ms"
+        }
+      ],
+      "passed": 0,
+      "failed": 2,
+      "success": false,
+      "duration": 4106
+    },
+    "Enhanced Registry Validation": {
+      "name": "Enhanced Registry Validation",
+      "startTime": 1756084627380,
+      "tests": [
+        {
+          "name": "Validate unified process categorization",
+          "success": true,
+          "duration": 0
+        },
+        {
+          "name": "Validate real-time refresh cycles",
+          "success": true,
+          "duration": 3000
+        }
+      ],
+      "passed": 2,
+      "failed": 0,
+      "success": true,
+      "duration": 3000
+    },
+    "Error Handling Validation": {
+      "name": "Error Handling Validation",
+      "startTime": 1756084630380,
+      "tests": [
+        {
+          "name": "Test graceful degradation",
+          "success": false,
+          "duration": 2003,
+          "error": "Operation timed out after 2000ms"
+        },
+        {
+          "name": "Test timeout handling",
+          "success": true,
+          "duration": 5020
+        }
+      ],
+      "passed": 1,
+      "failed": 1,
+      "success": false,
+      "duration": 7024
+    },
+    "Continuous Stability": {
+      "name": "Continuous Stability",
+      "startTime": 1756084637404,
+      "tests": [
+        {
+          "name": "Execute continuous scanning stability test",
+          "success": true,
+          "duration": 10019
+        }
+      ],
+      "passed": 1,
+      "failed": 0,
+      "success": true,
+      "duration": 10020
+    },
+    "Final System Validation": {
+      "name": "Final System Validation",
+      "startTime": 1756084647424,
+      "tests": [
+        {
+          "name": "Validate overall system health",
+          "success": false,
+          "duration": 2004,
+          "error": "Operation timed out after 2000ms"
+        },
+        {
+          "name": "Verify production readiness criteria",
+          "success": false,
+          "duration": 1,
+          "error": "Expected true, but got false"
+        }
+      ],
+      "passed": 0,
+      "failed": 2,
+      "success": false,
+      "duration": 2005
+    }
+  },
+  "acceptanceCriteria": {
+    "multiTechnologyIntegration": false,
+    "performanceRequirements": false,
+    "enhancedRegistryIntegration": true,
+    "errorHandling": false,
+    "continuousStability": true,
+    "systemValidation": false
+  }
+}

@@ -6,6 +6,7 @@ import serversSlice from './slices/serversSlice';
 import logsSlice from './slices/logsSlice';
 import metricsSlice from './slices/metricsSlice';
 import projectControlsSlice from './slices/projectControlsSlice';
+import multiTechDashboardSlice from './slices/multiTechDashboardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     logs: logsSlice,
     metrics: metricsSlice,
     projectControls: projectControlsSlice,
+    multiTechDashboard: multiTechDashboardSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

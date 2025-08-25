@@ -1,163 +1,213 @@
-# Plop-a-Dock Platform - Product Backlog (formerly MCP Debug Host)
+# PlopDock v2.1 - Product Backlog (Multi-Tech Stack Process Discovery)
 
-**Created**: January 5, 2025  
-**Last Updated**: August 7, 2025  
+**Created**: August 25, 2025  
+**Last Updated**: August 25, 2025  
 **Product Owner**: User  
-**Scrum Master**: SM Agent  
+**Scrum Master**: AP Orchestrator  
+**Current Version**: v2.0.0 (Production) → v2.1.0 (In Development)
 
-## Overview
+## 🚀 **Current Strategic Focus**
 
-This product backlog contains all user stories for the **Plop-a-Dock Platform** (formerly MCP Debug Host Platform) implementation, organized by phase according to the approved architecture specification.
+**Epic 3: Multi-Tech Stack Process Discovery (v2.1)** - Transforming PlopDock from a static registry system into a comprehensive, intelligent development process management platform.
 
-**REBRANDING IN PROGRESS**: The platform is being rebranded from "MCP Debug Host" to "Plop-a-Dock" - see Phase 5 for rebranding stories.
+### **Critical Problem Being Solved**
+**Agent Productivity Crisis**: 95% of Claude Code agent development issues involve port conflicts or orphaned processes that the current static port registry cannot discover or manage.
 
-## Backlog Structure
+### **Business Impact**
+- **95% Reduction** in agent process management issues
+- **Real-time visibility** into actual vs. registered system state  
+- **Automated cleanup** of orphaned development servers
+- **Foundation for enterprise-grade** development platform
 
-### Phase 1: Core Infrastructure (Week 1) - 21 Story Points ✅ COMPLETE
-- [x] Story 1.1: Build Docker Base Images (8 points) - **DONE**
-- [x] Story 1.2: Implement MCP HTTP Server Foundation (5 points) - **DONE**
-- [x] Story 1.3: Create Docker Manager Module (5 points) - **DONE**
-- [x] Story 1.4: Develop Port Registry System (3 points) - **DONE**
+---
 
-### Phase 2: Project Management (Week 2) - 21 Story Points ✅ COMPLETE
-- [x] Story 2.1: Project Registration System (8 points) - **DONE**
-- [x] Story 2.2: Container Lifecycle Management (5 points) - **DONE**  
-- [x] Story 2.3: Log Management System (5 points) - **DONE**
-- [x] Story 2.4: Error Handling Framework (3 points) - **DONE**
+## 📋 **Active Sprint Backlog**
 
-### Phase 3: User Interface (Week 3-4) - Sprint Execution
-- [x] Story 3.1: React Dashboard Scaffolding (8 points) - **DONE** (Sprint 3)
-- [x] Story 3.2: Real-time Log Viewer Component (13 points) - **DONE** (Sprint 3)
-- [x] Story 3.3: Container Metrics Visualization (17 points) - **DONE** (Sprint 4 - Completed 2025-08-10)
-- [x] Story 3.4: Advanced Project Controls (13 points) - **DONE** (Sprint 4 - Completed 2025-08-10)
-- [ ] Story 3.5: System Health Dashboard (TBD points) - Pending Analysis
+### **Epic 3: Multi-Tech Stack Process Discovery (v2.1)**
+**Total Points**: 120 story points  
+**Timeline**: 12 weeks (4 phases)  
+**Status**: Ready for Sprint 5 execution  
 
-### Phase 4: Testing & Hardening (Week 4) - Pending Breakdown
-- [ ] Integration test suite
-- [ ] Load testing
-- [ ] Error recovery testing
-- [ ] Documentation completion
+### **Phase 1: Core Engine Development (4 weeks - 40 points)** ❌ **SIGNIFICANT FUNCTIONAL ISSUES**
+**Sprint 5 Status**: Async cleanup fixed, but core functionality broken - **MAJOR FUNCTIONAL PROBLEMS REMAIN**
 
-### Phase 5: REBRANDING - Plop-a-Dock Initiative - 21 Story Points
-**[2025-08-13 - AP Orchestrator]**: New epic added for complete platform rebranding
-- [ ] Story 5.1: Core Package & Configuration Rebranding (5 points) - **READY**
-  - Update package.json, README.md, and all configuration files
-  - Update Docker image names and tags
-  - Update global installation paths and references
-- [ ] Story 5.2: Documentation Rebranding (8 points) - **READY**
-  - Update all project_docs/ references (361 files identified)
-  - Update architecture documentation
-  - Update API documentation
-- [ ] Story 5.3: UI/Dashboard Rebranding (5 points) - **READY**
-  - Update dashboard components with new branding
-  - Update login page and headers
-  - Update browser titles and meta tags
-- [ ] Story 5.4: Script & Infrastructure Updates (3 points) - **READY**
-  - Update all shell scripts with new names
-  - Update service configurations
-  - Update CI/CD pipelines if applicable
+**Honest Assessment**: Stories 3.1-3.4 have substantial integration and performance issues. 75% pass rates are not acceptable. Phase 1 is **NOT COMPLETE** until all tests pass and functionality works properly.
 
-## Velocity Tracking
+- [ ] **Story 3.1**: Multi-Tech Process Discovery Engine (13 points) ⚠️ **PARTIALLY WORKING**
+  - **Status**: ⚠️ Core detection works but integration issues (9/12 tests passing - 75%)
+  - **Priority**: Critical - Foundation for all other capabilities
+  - **Scope**: Comprehensive detection across Node.js, PHP, Python, Static Sites, Docker
+  - **Issues**: Load testing failing (20% vs 80% requirement), integration problems with enhanced registry
 
-- **Sprint Duration**: 1 week
-- **Target Velocity**: 20-25 story points per sprint
-- **Team Capacity**: Single developer agent with SM coordination
+- [ ] **Story 3.2**: Technology Stack Detectors Implementation (13 points) ⚠️ **PARTIALLY WORKING**
+  - **Status**: ⚠️ All 5 detectors functional but integration issues (9/12 tests passing - 75%)
+  - **Priority**: Critical - Technology-specific intelligence  
+  - **Scope**: 5 specialized detectors with framework recognition
+  - **Issues**: Same test failures as Story 3.1 - load testing and registry integration problems
 
-### Actual Velocity
-- **Sprint 1 (Phase 1)**: 21/21 points (100% success rate)
-- **Sprint 2 (Phase 2)**: 21/21 points (100% success rate)
-- **Sprint 3 (Phase 3)**: 21/21 points (100% success rate) - **COMPLETED**
-- **Sprint 4 (Phase 3)**: 30/30 points delivered (Story 3.3: 17pts, Story 3.4: 13pts) - **COMPLETED**
-- **Average Velocity**: 23.25 points per sprint
-- **Success Rate**: 93/93 total points delivered (100%)
+- [ ] **Story 3.3**: Enhanced Dynamic Port Registry (8 points) ⚠️ **FUNCTIONAL ISSUES REMAIN**
+  - **Status**: ⚠️ Unit tests work (12/12 pass), async cleanup fixed, but 3 integration failures remain
+  - **Priority**: High - Unified static + dynamic registry
+  - **Scope**: Process categorization (registered/discovered/rogue/orphaned)
+  - **Issues**: Response structure missing "dynamicProcesses" property, refresh cycles not working, need functional fixes
 
-## Definition of Ready
+- [ ] **Story 3.4**: Core Engine Integration Testing (6 points) ❌ **BROKEN** 
+  - **Status**: ❌ BROKEN - Only 9/12 tests passing (75% pass rate is not acceptable)
+  - **Priority**: High - Quality assurance for foundation
+  - **Scope**: Comprehensive multi-tech testing with performance validation
+  - **Issues**: 3 failing tests, enhanced registry response issues, refresh timing problems, load test failures
 
-All stories must meet these criteria before entering a sprint:
-- [ ] User story format complete
-- [ ] Acceptance criteria defined
-- [ ] Technical requirements documented
-- [ ] Dependencies identified
-- [ ] Story pointed
-- [ ] No blocking dependencies
+### **Phase 2: MCP Enhancement (3 weeks - 30 points)**
+**Sprint 6 Target**: Agent tools and safety framework
 
-## Story Dependencies
+- [ ] **Story 3.5**: New MCP Tools Implementation (20 points)
+  - **Status**: Ready for Development
+  - **Priority**: Critical - 15 new agent tools
+  - **Scope**: Process discovery, management, monitoring, and automation tools
 
-### Phase 3 Dependencies Matrix
+- [ ] **Story 3.6**: Agent Safety Framework (10 points)
+  - **Status**: Ready for Development
+  - **Priority**: Critical - Context-aware safety controls
+  - **Scope**: Workspace correlation, graduated safety rules, audit logging
 
-| Story | Prerequisites | Dependent Stories | Risk Level |
-|-------|---------------|------------------|------------|
-| Story 3.1 | Stories 1.2, 2.1 | Story 3.2, 3.3, 3.4, 3.5 | Low |
-| Story 3.2 | Story 3.1, Story 2.3 | Story 3.5 | Medium |
-| Story 3.3 | Story 3.1, Story 2.2 | Story 3.4, 3.5 | Medium |
-| Story 3.4 | Story 3.1, Story 2.2 | Story 3.5 | Medium |
+### **Phase 3: UI Integration (3 weeks - 30 points)**
+**Sprint 7 Target**: Multi-tech dashboard and user experience
 
-**Critical Path**: Story 3.1 → Story 3.2 → Story 3.3/3.4 → Story 3.5
+- [ ] **Story 3.7**: Multi-Tech Dashboard Core (15 points)
+  - **Status**: Ready for Development
+  - **Priority**: High - Technology-specific dashboard tabs
+  - **Scope**: Real-time monitoring with process categorization UI
 
-### Story 3.2 Definition of Ready ✅
+- [ ] **Story 3.8**: Real-time Process Monitoring UI (10 points)
+  - **Status**: Ready for Development
+  - **Priority**: Medium - Live process activity streams
+  - **Scope**: 5-second refresh cycle with change detection
+
+- [ ] **Story 3.9**: Bulk Operations & Safety Controls (5 points)
+  - **Status**: Ready for Development
+  - **Priority**: Medium - Multi-process management UI
+  - **Scope**: Batch operations with integrated safety confirmations
+
+### **Phase 4: Production Deployment (2 weeks - 20 points)**
+**Sprint 8 Target**: Performance optimization and production rollout
+
+- [ ] **Story 3.10**: Performance Optimization & Load Testing (8 points)
+  - **Status**: Ready for Development
+  - **Priority**: High - Performance benchmarks validation
+  - **Scope**: < 2s discovery, < 5% CPU, load testing with 50+ processes
+
+- [ ] **Story 3.11**: Production Rollout & Migration (8 points)
+  - **Status**: Ready for Development
+  - **Priority**: High - Zero-downtime deployment
+  - **Scope**: Blue-green deployment with phased feature activation
+
+- [ ] **Story 3.12**: User Documentation & Training (4 points)
+  - **Status**: Ready for Development
+  - **Priority**: Medium - User adoption support
+  - **Scope**: Comprehensive documentation and training materials
+
+---
+
+## 📊 **Sprint Planning**
+
+### **Sprint Capacity & Velocity**
+- **Sprint Duration**: 3-4 weeks per phase
+- **Target Velocity**: 25-35 story points per sprint
+- **Team Capacity**: AP Orchestrator + specialized agents (parallel development)
+- **Historical Velocity**: 23.25 points/sprint (v2.0 baseline)
+
+### **Sprint 5 Plan (Phase 1 - Weeks 1-4)**
+**Points**: 40 points  
+**Focus**: Core discovery engine foundation  
+**Success Criteria**: < 2 second system scan, 95% detection accuracy  
+
+### **Sprint 6 Plan (Phase 2 - Weeks 5-7)**
+**Points**: 30 points  
+**Focus**: Agent tools and safety framework  
+**Success Criteria**: 15 new MCP tools, context-aware safety controls  
+
+### **Sprint 7 Plan (Phase 3 - Weeks 8-10)**  
+**Points**: 30 points
+**Focus**: Multi-tech dashboard and UI integration  
+**Success Criteria**: Real-time multi-tech monitoring interface  
+
+### **Sprint 8 Plan (Phase 4 - Weeks 11-12)**
+**Points**: 20 points  
+**Focus**: Production deployment and user adoption  
+**Success Criteria**: Zero-downtime v2.1 production deployment  
+
+---
+
+## ⚡ **Performance Requirements**
+
+### **Technical Benchmarks**
+- **System Scan Time**: < 2 seconds for full multi-tech discovery
+- **Real-time Updates**: 5-second refresh cycle  
+- **Memory Footprint**: < 50MB additional overhead
+- **CPU Impact**: < 5% during active scanning
+- **Agent Response Time**: < 500ms for all MCP tool calls
+
+### **Business Metrics**
+- **Agent Productivity**: 95% reduction in process-related blocking issues
+- **Detection Accuracy**: > 95% process identification rate
+- **System Reliability**: 99.9% uptime during process discovery
+- **User Satisfaction**: > 90% positive feedback on process management
+
+---
+
+## 🔄 **Definition of Ready**
+
+All stories must meet these criteria before sprint inclusion:
 - [x] User story format complete (As a/I want/So that)
-- [x] Acceptance criteria defined (30 detailed Given-When-Then criteria)
-- [x] Technical requirements documented (SSE, React, API integration)
-- [x] Dependencies identified (Story 3.1, Story 2.3)
-- [x] Story pointed (13 points - high complexity real-time streaming)
-- [x] No blocking dependencies (Prerequisites ready/complete)
-- [x] Performance requirements specified (<500ms latency, <100MB memory)
-- [x] Security considerations documented (XSS prevention, data sanitization)
+- [x] Acceptance criteria defined (detailed Given-When-Then scenarios)
+- [x] Technical requirements documented
+- [x] Dependencies identified and resolved
+- [x] Story pointed using Fibonacci sequence
+- [x] No blocking dependencies
+- [x] Integration points defined
+- [x] Performance requirements specified
 
-### Story 3.3 Definition of Ready ✅
-- [x] User story format complete (As a/I want/So that)
-- [x] Acceptance criteria defined (36 detailed Given-When-Then criteria)
-- [x] Technical requirements documented (Chart.js, WebSocket, Docker API)
-- [x] Dependencies identified (Story 3.1, Story 2.2)
-- [x] Story pointed (17 points - high complexity metrics visualization)
-- [x] No blocking dependencies (Prerequisites complete/in progress)
-- [x] Performance requirements specified (<100ms latency, <200MB memory)
-- [x] Risk assessment completed (Docker API performance, browser optimization)
-
-### Story 3.4 Definition of Ready ✅
-- [x] User story format complete (As a/I want/So that)
-- [x] Acceptance criteria defined (40 detailed Given-When-Then criteria)
-- [x] Technical requirements documented (Redux, Material-UI, WebSocket)
-- [x] Dependencies identified (Story 3.1, Story 2.2)
-- [x] Story pointed (13 points - complex UI controls and state management)
-- [x] No blocking dependencies (Prerequisites complete)
-- [x] Performance requirements specified (<100ms feedback, <2s operations)
-- [x] Risk assessment completed (State sync, batch operations, validation)
-
-## Definition of Done
+## ✅ **Definition of Done**
 
 All stories must meet these criteria for completion:
-- [ ] All acceptance criteria met
-- [ ] Code written and functioning
-- [ ] Unit tests passing
-- [ ] Integration tests passing (where applicable)
+- [ ] All acceptance criteria met with validation
+- [ ] Code implemented and functionally tested
+- [ ] Performance requirements met (< 2s scan, < 5% CPU)
+- [ ] Integration tests passing
+- [ ] Security validation completed
 - [ ] Documentation updated
-- [ ] Code reviewed (self-review for single developer)
-- [ ] Deployed to development environment
-- [ ] No known defects
+- [ ] Code review completed
+- [ ] No known critical defects
 
-## Notes
+---
 
-- Phase 1 focuses on foundational infrastructure without which no other components can function
-- Each phase builds upon the previous phase's deliverables
-- Stories are sized using Fibonacci sequence (1, 2, 3, 5, 8, 13)
-- Complex stories (8+ points) should be considered for breakdown
+## 📚 **Archived Content**
 
-## Change Log
+### **Successfully Completed (v2.0)**
+All Phase 1-3 v2.0 stories have been **successfully completed** and moved to `/archive/v2.0-completed/`:
+- ✅ Sprint 1: Core Infrastructure (21/21 points - 100% success)
+- ✅ Sprint 2: Project Management (21/21 points - 100% success)  
+- ✅ Sprint 3: User Interface Foundation (21/21 points - 100% success)
+- ✅ Sprint 4: Advanced UI Features (30/30 points - 100% success)
+- **Total v2.0 Success**: 93/93 points delivered (100% success rate)
 
-| Date | Change | Author |
-|------|--------|--------|
-| 2025-01-05 | Initial backlog creation with Phase 1 stories | SM Agent |
-| 2025-01-06 | Phase 1 Complete - All 4 stories (21 points) successfully implemented | Developer Agent |
-| 2025-01-06 | Phase 2 Progress: Stories 2.1, 2.2, 2.4 complete (16/21 points) | Developer Agent |
-| 2025-01-06 | Updated velocity tracking with actual sprint performance data | Developer Agent |
-| 2025-01-07 | Phase 2 Complete - Story 2.3 Log Management System implemented (21/21 points) | Developer Agent |
-| 2025-01-07 | Phase 3 Planning - Story 3.1 React Dashboard Scaffolding planned (8 points) | SM Agent |
-| 2025-01-08 | Story 3.1 React Dashboard Scaffolding documentation created - Foundation story with 25 acceptance criteria, Vite+React setup, Redux state management, component architecture. Critical dependency for all Phase 3 UI stories. | SM Agent |
-| 2025-01-07 | Story 3.2 Real-time Log Viewer integrated into backlog (13 points) - Sprint 3 capacity at 21 points. Comprehensive acceptance criteria completed with 30 testable scenarios. Dependencies validated against Stories 3.1 and 2.3. Performance requirements defined. | SM Agent - Parallel Story Generation |
-| 2025-01-08 | Story 3.3 Container Metrics Visualization created (17 points) - Sprint 4 recommendation. Parallel generation with 5 specialized streams: Business Value Analysis, Technical Requirements, Acceptance Criteria (36 items), Testing Strategy, and Integration Planning. Comprehensive risk assessment completed. | SM Agent - Parallel Story Generation |
-| 2025-01-08 | Story 3.4 Advanced Project Controls created (13 points) - Sprint 4 addition. Sequential methodology with 40 comprehensive acceptance criteria covering lifecycle management, configuration, UI/UX, and performance. Enables full container control from dashboard UI. Sprint 4 extended to 30 points for both 3.3 and 3.4. | SM Agent - Sequential Story Generation |
-| 2025-08-09 | Sprint 3 Complete - Stories 3.1 (React Dashboard) and 3.2 (Log Viewer) implemented via parallel development using 4 native sub-agents. 21/21 points delivered with comprehensive React dashboard and real-time log streaming capabilities. | Scrum Master - Parallel Sprint Orchestrator |
-| 2025-08-10 | Sprint 4 Started - Story 3.3 Container Metrics Visualization (17 points) moved to IN PROGRESS. Extended sprint capacity of 30 points targeting both Story 3.3 and 3.4. | AP Orchestrator |
-| 2025-08-10 | Story 3.3 Complete - Container Metrics Visualization (17 points) delivered via parallel development with 4 specialized agents. All 36 acceptance criteria met. Backend metrics infrastructure, React visualization components, performance optimization, and user features fully implemented. | AP Orchestrator - Parallel Development |
-| 2025-08-10 | Story 3.4 Complete - Advanced Project Controls (13 points) delivered. All 40 acceptance criteria met. Comprehensive UI controls for container lifecycle, configuration management, batch operations, and operation history. Full backend API integration with 11 new endpoints. | Developer Agent |
+### **Future Enhancements Deferred**
+Future epics (Authentication, Multi-User, Templates, Monitoring) have been moved to `/archive/future-epics-deferred/` to maintain strategic focus on the critical v2.1 process discovery enhancement.
+
+---
+
+## 🎯 **Success Criteria Summary**
+
+**Epic 3 Success Defined As**:
+1. **< 2-second system scan** across all technology stacks
+2. **95% process detection accuracy** in real-world scenarios
+3. **15 new MCP tools** fully operational for agent automation
+4. **Real-time dashboard** with technology-specific process management
+5. **Zero-downtime production deployment** with full backward compatibility
+6. **95% reduction** in agent process management issues (measured post-deployment)
+
+**Next Action**: Begin Sprint 5 execution with Story 3.1 (Multi-Tech Process Discovery Engine)
+
+---
+
+**This backlog represents laser focus on solving the most critical agent productivity issues through intelligent, multi-technology process discovery and management capabilities.**

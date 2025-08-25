@@ -10,6 +10,13 @@ const { ContainerLifecycle } = require('./services/container-lifecycle');
 const { getLogStreamer } = require('./services/log-streamer');
 const { getLogSearch } = require('./services/log-search');
 
+// Import the new 15 process management tools
+const { 
+  PROCESS_MANAGEMENT_TOOL_DEFINITIONS,
+  PROCESS_MANAGEMENT_TOOL_HANDLERS,
+  initializeProcessManagementServices
+} = require('./mcp-process-management-tools');
+
 // Global instances
 let projectRegistry = null;
 let containerLifecycle = null;
@@ -42,6 +49,9 @@ async function initializeServices() {
     logSearch = getLogSearch();
     await logSearch.initialize();
   }
+  
+  // Initialize the new process management services
+  await initializeProcessManagementServices();
 }
 
 // Ensure services are initialized before tool execution
@@ -61,8 +71,11 @@ function ensureErrorHandler() {
 
 /**
  * Tool definitions with JSON schemas for validation
+ * Combines existing tools with the new 15 process management tools
  */
 const TOOL_DEFINITIONS = [
+  // Existing tools
+  ...PROCESS_MANAGEMENT_TOOL_DEFINITIONS, // Add the 15 new process management tools first
   {
     name: 'host.register',
     description: 'Register a new project with the debug host',
@@ -368,8 +381,13 @@ const TOOL_DEFINITIONS = [
 /**
  * Tool handlers with full service implementations
  * Story 2.1 & 2.4: Registration system with error handling
+ * Combined with the new 15 process management tool handlers
  */
 const TOOL_HANDLERS = {
+  // New process management tools (15 tools)
+  ...PROCESS_MANAGEMENT_TOOL_HANDLERS,
+  
+  // Existing tools
   'host.register': async (params) => {
     try {
       await ensureServicesInitialized();

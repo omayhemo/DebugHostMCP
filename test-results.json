@@ -1,0 +1,116 @@
+{
+  "total": 19,
+  "passed": 16,
+  "failed": 3,
+  "skipped": 0,
+  "startTime": "2025-08-25T03:33:37.974Z",
+  "endTime": null,
+  "tests": [
+    {
+      "name": "Feature Flag Initialization",
+      "status": "passed",
+      "duration": 2
+    },
+    {
+      "name": "Feature Flag Activation",
+      "status": "passed",
+      "duration": 14
+    },
+    {
+      "name": "Feature Flag Phase Activation",
+      "status": "failed",
+      "error": "Phase activation failed: 1/2 features enabled",
+      "duration": 7
+    },
+    {
+      "name": "Feature Flag Rollback",
+      "status": "passed",
+      "duration": 4
+    },
+    {
+      "name": "Migration Manager Initialization",
+      "status": "passed",
+      "duration": 6
+    },
+    {
+      "name": "Registry Migration (Dry Run)",
+      "status": "failed",
+      "error": "Migration failed: Post-migration validation failed: Enhanced registry not found",
+      "duration": 18
+    },
+    {
+      "name": "Migration Validation",
+      "status": "failed",
+      "error": "Migration validation failed: Post-migration validation failed: Enhanced registry not found",
+      "duration": 10
+    },
+    {
+      "name": "Validator Initialization",
+      "status": "passed",
+      "duration": 0
+    },
+    {
+      "name": "System Health Validation",
+      "status": "passed",
+      "duration": 64
+    },
+    {
+      "name": "Performance Validation",
+      "status": "passed",
+      "duration": 217
+    },
+    {
+      "name": "Monitor Initialization",
+      "status": "passed",
+      "duration": 13
+    },
+    {
+      "name": "Health Check System",
+      "status": "passed",
+      "duration": 25
+    },
+    {
+      "name": "Performance Metrics Collection",
+      "status": "passed",
+      "duration": 11
+    },
+    {
+      "name": "Alert Generation",
+      "status": "passed",
+      "duration": 19
+    },
+    {
+      "name": "Feature Flags + Migration Integration",
+      "status": "passed",
+      "duration": 18
+    },
+    {
+      "name": "Monitoring + Validation Integration",
+      "status": "passed",
+      "duration": 1866
+    },
+    {
+      "name": "Script Existence and Permissions",
+      "status": "passed",
+      "duration": 3
+    },
+    {
+      "name": "Script Help Output",
+      "status": "passed",
+      "duration": 45
+    },
+    {
+      "name": "Script Dry Run Execution",
+      "status": "passed",
+      "duration": 36
+    }
+  ],
+  "summary": {
+    "totalTests": 19,
+    "passed": 16,
+    "failed": 3,
+    "successRate": 84.21052631578947,
+    "duration": -1756092817974,
+    "timestamp": "2025-08-25T03:33:40.371Z"
+  }
+}

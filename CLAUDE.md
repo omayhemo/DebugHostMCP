@@ -35,6 +35,9 @@ cp -r /mnt/c/Code/plopdock/* ~/.plopdock/
 - Restart bug: Fixed in process-manager.js - now properly stops before restarting
 - System processes monitoring: Added ability to view all processes by environment (npm, node, etc.)
 
+
+# Coherence Claude.md Template
+
 <BEGIN-APM-CLAUDE-MERGE>
 
 ## 🎭 COHERENCE - AGENTIC PERSONA MAPPING
