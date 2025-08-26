@@ -102,7 +102,7 @@ const LifecycleControls: React.FC<LifecycleControlsProps> = ({
       }
     } catch (error) {
       console.error('Delete error:', error);
-      alert('Failed to delete server: ' + error.message);
+      alert('Failed to delete server: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setActionInProgress(null);
     }
@@ -188,7 +188,7 @@ const LifecycleControls: React.FC<LifecycleControlsProps> = ({
           </div>
         </div>
         
-        {currentProject?.status === 'error' && (
+        {currentProject?.status === 'failed' && (
           <button
             onClick={() => handleAction('force-stop')}
             className="flex items-center px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"

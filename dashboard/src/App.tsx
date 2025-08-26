@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
 import { store, useAppDispatch, useAppSelector } from './store';
-import { setUser, loginStart, loginFailure } from './store/slices/authSlice';
-import { authService } from './services/authService';
 
 // Components
 import ErrorBoundary from './components/common/ErrorBoundary';
-import NotificationToast from './components/common/NotificationToast';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/layout/Layout';
 
@@ -18,7 +16,7 @@ import LogsPage from './pages/LogsPage';
 import MetricsPage from './pages/MetricsPage';
 
 // Multi-Tech Dashboard
-import MultiTechDashboard from './components/multi-tech';
+import { MultiTechDashboard } from './components/multi-tech';
 
 // Additional placeholder pages
 const MonitoringPage = () => (
@@ -119,7 +117,29 @@ const AppContent: React.FC = () => {
         </Routes>
       </Router>
       
-      <NotificationToast />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 10000, // 10 seconds as requested
+          style: {
+            background: 'hsl(var(--background))',
+            color: 'hsl(var(--foreground))',
+            border: '1px solid hsl(var(--border))',
+          },
+          success: {
+            iconTheme: {
+              primary: 'hsl(var(--success))',
+              secondary: 'white',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: 'hsl(var(--error))',
+              secondary: 'white',
+            },
+          },
+        }}
+      />
     </>
   );
 };

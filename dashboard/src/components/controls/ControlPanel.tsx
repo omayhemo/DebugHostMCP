@@ -89,7 +89,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ projectId, className = '' }
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentProject, dispatch]);
 
-  const handleLifecycleAction = async (action: 'start' | 'stop' | 'restart', targetProjectId: string) => {
+  const handleLifecycleAction = async (action: 'start' | 'stop' | 'restart' | 'pause' | 'health', targetProjectId: string) => {
     const operation = {
       id: `op-${Date.now()}`,
       projectId: targetProjectId,
@@ -126,7 +126,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ projectId, className = '' }
             });
             
             if (nativeResponse.ok) {
-              const result = await nativeResponse.json();
+              const _result = await nativeResponse.json();
               dispatch(completeOperation({ 
                 projectId: targetProjectId, 
                 status: 'completed' 
@@ -199,6 +199,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ projectId, className = '' }
     { id: 'history', label: 'History', icon: History }
   ];
 
+  // Wrapper to match LifecycleControls interface (void return type)
+  const handleLifecycleActionWrapper = (action: 'start' | 'stop' | 'restart' | 'pause' | 'health', projectId: string) => {
+    handleLifecycleAction(action, projectId);
+  };
+
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg ${className}`}>
       {isOfflineMode && (
@@ -243,7 +248,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ projectId, className = '' }
         {activeTab === 'lifecycle' && (
           <LifecycleControls
             projectId={projectId}
-            onAction={handleLifecycleAction}
+            onAction={handleLifecycleActionWrapper}
             isLoading={!!projectId && !!activeOperations[projectId]}
           />
         )}

@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, notifications } = useAppSelector((state) => state.ui);
+  const { theme } = useAppSelector((state) => state.ui);
   const { user } = useAppSelector((state) => state.auth);
 
   // Get page title based on current route
@@ -53,8 +53,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
     }
   };
 
-  const unreadNotifications = notifications.length;
-
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4">
@@ -91,17 +89,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, sidebarOpen }) => {
             )}
           </button>
 
-          {/* Notifications */}
+          {/* Notifications - Future enhancement */}
           <button
             className="relative inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             title="Notifications"
           >
             <Bell className="h-5 w-5" />
-            {unreadNotifications > 0 && (
-              <span className="absolute top-1 right-1 h-4 w-4 text-xs bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
-                {unreadNotifications > 9 ? '9+' : unreadNotifications}
-              </span>
-            )}
           </button>
 
           {/* User menu */}

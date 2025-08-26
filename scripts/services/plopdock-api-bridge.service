@@ -1,0 +1,30 @@
+[Unit]
+Description=PlopDock API Bridge Server
+Documentation=https://github.com/your-org/plopdock
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/mnt/c/Code/plopdock
+Environment=NODE_ENV=production
+Environment=API_PORT=2602
+ExecStart=/usr/bin/node src/api-bridge.js
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=5
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/mnt/c/Code/plopdock
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

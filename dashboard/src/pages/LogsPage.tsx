@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '../store';
 import LogViewer from '../components/logs/LogViewer';
 import LogViewerErrorBoundary from '../components/logs/LogViewerErrorBoundary';
-import { Server, X, Plus, ChevronDown } from 'lucide-react';
-import { serverService } from '../services/serverService';
+import { Server, Plus, ChevronDown } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 interface ServerOption {

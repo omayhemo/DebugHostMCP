@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requireAuth = true 
+  requireAuth: _requireAuth = true 
 }) => {
   // BYPASS AUTH - This is a local dev tool, no auth needed
   // Simply return children without any auth checks

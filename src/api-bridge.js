@@ -84,6 +84,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// API Health check (with /api prefix for consistency)
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    service: 'api-bridge',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Get all servers/projects - maps to containers for the dashboard
 app.get('/api/servers', async (req, res) => {
   try {
@@ -241,6 +250,231 @@ app.get('/api/servers/:id/logs', async (req, res) => {
       error: error.message,
       logs: [],
       hasMore: false
+    });
+  }
+});
+
+// **NEW MULTI-TECH PROCESS DISCOVERY ENDPOINTS**
+
+// Discover processes across all technology stacks
+app.post('/api/processes/discovery', async (req, res) => {
+  try {
+    // Import the multi-tech process discovery engine
+    const { MultiTechProcessDiscoveryEngine } = await import('./services/multi-tech-process-discovery-engine.js');
+    
+    const engine = new MultiTechProcessDiscoveryEngine({
+      performanceMonitoring: true,
+      scanTimeout: req.body.timeout || 2000,
+      parallelScanning: true
+    });
+    
+    await engine.initialize();
+    
+    const scanResults = await engine.scanSystemProcesses({
+      includeCorrelation: req.body.includeCorrelation !== false,
+      techStacks: req.body.techStacks,
+      forceRefresh: req.body.forceRefresh || false
+    });
+    
+    await engine.shutdown();
+    
+    res.json(scanResults);
+  } catch (error) {
+    console.error('Multi-tech process discovery failed:', error);
+    res.status(500).json({
+      error: error.message,
+      success: false
+    });
+  }
+});
+
+// Get system health metrics
+app.get('/api/processes/system-health', async (req, res) => {
+  try {
+    // Calculate system health metrics from current process state
+    const { MultiTechProcessDiscoveryEngine } = await import('./services/multi-tech-process-discovery-engine.js');
+    
+    const engine = new MultiTechProcessDiscoveryEngine({ performanceMonitoring: true });
+    await engine.initialize();
+    
+    const scanResults = await engine.scanSystemProcesses();
+    const status = engine.getStatus();
+    
+    await engine.shutdown();
+    
+    // Calculate health metrics
+    const totalProcesses = scanResults.totalProcesses || 0;
+    const rogueCount = scanResults.correlation?.rogueProcesses?.length || 0;
+    const orphanedCount = scanResults.correlation?.orphanedProcesses?.length || 0;
+    
+    const systemHealth = {
+      cpu: status.performance?.cpuUsage || 0,
+      memory: status.performance?.memoryUsage || 0,
+      diskSpace: 0, // TODO: Implement disk usage calculation
+      totalProcesses,
+      rogueProcesses: rogueCount,
+      portUtilization: Math.round((totalProcesses / 100) * 100), // Simple port utilization estimate
+      lastUpdate: new Date().toISOString(),
+      status: rogueCount > 0 || orphanedCount > 0 ? 'warning' : 'healthy'
+    };
+    
+    res.json(systemHealth);
+  } catch (error) {
+    console.error('System health check failed:', error);
+    res.status(500).json({
+      error: error.message,
+      cpu: 0,
+      memory: 0,
+      diskSpace: 0,
+      totalProcesses: 0,
+      rogueProcesses: 0,
+      portUtilization: 0,
+      lastUpdate: new Date().toISOString(),
+      status: 'error'
+    });
+  }
+});
+
+// Execute bulk actions on processes
+app.post('/api/processes/bulk-action', async (req, res) => {
+  try {
+    const { action, processIds, options = {} } = req.body;
+    
+    console.log(`Executing bulk action: ${action} on ${processIds.length} processes`);
+    
+    // For now, simulate bulk action execution
+    // In a real implementation, this would use the Agent Safety Framework
+    // and call appropriate MCP tools for process management
+    
+    const results = processIds.map(processId => ({
+      processId,
+      success: true,
+      message: `${action} completed for process ${processId}`
+    }));
+    
+    const bulkResult = {
+      success: true,
+      processedCount: processIds.length,
+      failedCount: 0,
+      results,
+      summary: `Bulk ${action} completed successfully for ${processIds.length} processes`
+    };
+    
+    res.json(bulkResult);
+  } catch (error) {
+    console.error('Bulk action failed:', error);
+    res.status(500).json({
+      success: false,
+      processedCount: 0,
+      failedCount: req.body.processIds?.length || 0,
+      error: error.message
+    });
+  }
+});
+
+// Real-time process updates via Server-Sent Events
+app.get('/api/processes/realtime', (req, res) => {
+  // Set up SSE headers
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control'
+  });
+  
+  // Send initial connection event
+  res.write(`data: ${JSON.stringify({
+    type: 'connected',
+    timestamp: new Date().toISOString(),
+    message: 'Real-time process monitoring connected'
+  })}\n\n`);
+  
+  // TODO: Implement actual real-time process monitoring
+  // For now, send periodic health checks
+  const interval = setInterval(() => {
+    res.write(`data: ${JSON.stringify({
+      type: 'heartbeat',
+      timestamp: new Date().toISOString(),
+      message: 'System monitoring active'
+    })}\n\n`);
+  }, 30000); // 30-second heartbeat
+  
+  // Clean up on client disconnect
+  req.on('close', () => {
+    clearInterval(interval);
+    console.log('Real-time connection closed');
+  });
+});
+
+// Individual process actions
+app.post('/api/processes/:processId/terminate', async (req, res) => {
+  try {
+    const { processId } = req.params;
+    const { force = false, reason = 'User requested' } = req.body;
+    
+    console.log(`Terminating process ${processId} (force: ${force}, reason: ${reason})`);
+    
+    // TODO: Implement actual process termination with safety framework
+    // For now, simulate successful termination
+    
+    res.json({
+      success: true,
+      message: `Process ${processId} terminated successfully`
+    });
+  } catch (error) {
+    console.error('Process termination failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Associate rogue process with workspace
+app.post('/api/processes/:processId/associate', async (req, res) => {
+  try {
+    const { processId } = req.params;
+    const { workspace } = req.body;
+    
+    console.log(`Associating process ${processId} with workspace ${workspace}`);
+    
+    // TODO: Implement actual process-workspace association
+    // This would update the port registry and correlation engine
+    
+    res.json({
+      success: true,
+      message: `Process ${processId} associated with workspace ${workspace}`
+    });
+  } catch (error) {
+    console.error('Process association failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Clean up orphaned processes
+app.post('/api/processes/cleanup-orphaned', async (req, res) => {
+  try {
+    const { processIds } = req.body;
+    
+    console.log(`Cleaning up ${processIds.length} orphaned processes`);
+    
+    // TODO: Implement actual orphaned process cleanup
+    // This would remove entries from the port registry
+    
+    res.json({
+      success: true,
+      cleanedCount: processIds.length
+    });
+  } catch (error) {
+    console.error('Orphaned process cleanup failed:', error);
+    res.status(500).json({
+      success: false,
+      cleanedCount: 0,
+      error: error.message
     });
   }
 });

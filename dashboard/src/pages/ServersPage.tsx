@@ -153,7 +153,7 @@ const ServersPage: React.FC = () => {
               <div className="flex justify-between">
                 <span className="text-gray-500 dark:text-gray-400">Errors</span>
                 <span className="font-medium text-red-600">
-                  {servers.filter(s => s.status === 'error').length}
+                  {servers.filter(s => s.status === 'failed').length}
                 </span>
               </div>
             </div>

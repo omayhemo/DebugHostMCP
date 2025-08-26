@@ -96,7 +96,7 @@ class MultiTechService {
    */
   createRealTimeConnection(): EventSource {
     try {
-      const baseUrl = apiService['client'].defaults.baseURL || 'http://localhost:2601/api';
+      const baseUrl = apiService['client'].defaults.baseURL || 'http://localhost:2602/api';
       const url = `${baseUrl}/processes/realtime`;
       return new EventSource(url);
     } catch (error) {
@@ -313,13 +313,13 @@ class MultiTechService {
           lastEventId: '',
           origin: '',
           ports: []
-        } as MessageEvent;
+        } as unknown as MessageEvent;
         
         mockEventSource.onmessage(mockEvent);
       }
     }, 10000);
 
-    return mockEventSource as EventSource;
+    return mockEventSource as unknown as EventSource;
   }
 }
 

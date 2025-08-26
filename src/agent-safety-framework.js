@@ -530,6 +530,45 @@ class AgentSafetyFramework extends EventEmitter {
   }
 
   /**
+   * Get audit history with optional filtering
+   * 
+   * @param {Object} options - Filter options
+   * @param {number} options.limit - Maximum number of entries to return
+   * @param {string} options.operation - Filter by operation type
+   * @param {string} options.startDate - Filter entries after this date
+   * @param {string} options.endDate - Filter entries before this date
+   * @returns {Array} Filtered audit log entries
+   */
+  getAuditHistory(options = {}) {
+    let entries = [...this.auditLogEntries]; // Copy array to avoid mutation
+    
+    // Apply filters
+    if (options.operation) {
+      entries = entries.filter(entry => entry.operation === options.operation);
+    }
+    
+    if (options.startDate) {
+      const startTime = new Date(options.startDate).getTime();
+      entries = entries.filter(entry => new Date(entry.timestamp).getTime() >= startTime);
+    }
+    
+    if (options.endDate) {
+      const endTime = new Date(options.endDate).getTime();
+      entries = entries.filter(entry => new Date(entry.timestamp).getTime() <= endTime);
+    }
+    
+    // Sort by timestamp (newest first)
+    entries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    
+    // Apply limit
+    if (options.limit) {
+      entries = entries.slice(0, options.limit);
+    }
+    
+    return entries;
+  }
+
+  /**
    * Update safety rules configuration
    * 
    * @param {Object} newRules - New safety rules

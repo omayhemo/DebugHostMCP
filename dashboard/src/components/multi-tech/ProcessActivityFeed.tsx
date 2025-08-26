@@ -10,6 +10,7 @@
  */
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { ProcessUpdateEvent, TechStack, DiscoveredProcess, ProcessCategory, ConnectionStatus } from '../../types';
 import { 
@@ -17,7 +18,6 @@ import {
   updateConnectionStatus,
   discoverAllProcesses 
 } from '../../store/slices/multiTechDashboardSlice';
-import { addNotification } from '../../store/slices/uiSlice';
 import { cn } from '../../utils/cn';
 import { ProcessEventItem } from './ProcessEventItem';
 import { ChangeDetectionIndicator } from './ChangeDetectionIndicator';
@@ -278,11 +278,9 @@ export const ProcessActivityFeed: React.FC<ProcessActivityFeedProps> = ({
         
         eventSource.onopen = () => {
           dispatch(updateConnectionStatus('connected'));
-          dispatch(addNotification({
-            type: 'success',
-            title: 'Real-time Connection Established',
-            message: 'Process activity feed is now live'
-          }));
+          toast.success('Real-time Connection Established', {
+            id: 'connection-success',
+          });
         };
         
         eventSource.onmessage = (event) => {
@@ -330,11 +328,7 @@ export const ProcessActivityFeed: React.FC<ProcessActivityFeedProps> = ({
             
           } catch (error) {
             console.error('Failed to parse SSE message:', error);
-            dispatch(addNotification({
-              type: 'error',
-              title: 'Event Processing Error',
-              message: 'Failed to process real-time update'
-            }));
+            toast.error('Event Processing Error: Failed to process real-time update');
           }
         };
         
@@ -342,11 +336,7 @@ export const ProcessActivityFeed: React.FC<ProcessActivityFeedProps> = ({
           dispatch(updateConnectionStatus('error'));
           eventSource.close();
           
-          dispatch(addNotification({
-            type: 'error',
-            title: 'Connection Lost',
-            message: 'Attempting to reconnect in 5 seconds...'
-          }));
+          toast.error('Connection Lost: Attempting to reconnect in 5 seconds...');
           
           // Attempt to reconnect after 5 seconds
           setTimeout(connectSSE, 5000);
@@ -356,11 +346,7 @@ export const ProcessActivityFeed: React.FC<ProcessActivityFeedProps> = ({
       } catch (error) {
         console.error('Failed to establish SSE connection:', error);
         dispatch(updateConnectionStatus('error'));
-        dispatch(addNotification({
-          type: 'error',
-          title: 'Connection Failed',
-          message: 'Could not establish real-time connection'
-        }));
+        toast.error('Connection Failed: Could not establish real-time connection');
       }
     };
     

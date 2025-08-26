@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../store';
 import { setServers, setLoading } from '../store/slices/serversSlice';
 import { serverService } from '../services/serverService';
-import { addNotification } from '../store/slices/uiSlice';
+import toast from 'react-hot-toast';
 
 const DashboardPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -19,11 +19,7 @@ const DashboardPage: React.FC = () => {
       const serverList = await serverService.listServers();
       dispatch(setServers(serverList));
     } catch (error: any) {
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Failed to Load Servers',
-        message: error.message,
-      }));
+      toast.error(`Failed to Load Servers: ${error.message}`);
     } finally {
       dispatch(setLoading(false));
     }

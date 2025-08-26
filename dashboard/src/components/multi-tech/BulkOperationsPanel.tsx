@@ -16,6 +16,7 @@
  */
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { 
   DiscoveredProcess, 
@@ -25,8 +26,8 @@ import {
   BulkSafetyEvaluation,
   ImpactAssessment 
 } from '../../types';
-import { addNotification } from '../../store/slices/uiSlice';
 import { cn } from '../../utils/cn';
+import { SafetyConfirmationDialog } from './SafetyConfirmationDialog';
 
 /**
  * Bulk Operation Types
@@ -259,11 +260,7 @@ export const BulkOperationsPanel: React.FC<BulkOperationsPanelProps> = ({
    */
   const handleBulkOperation = useCallback(async (operation: BulkOperationType) => {
     if (filteredSelectedProcesses.length === 0) {
-      dispatch(addNotification({
-        type: 'warning',
-        title: 'No Processes Selected',
-        message: 'Please select processes to perform bulk operations.'
-      }));
+      toast.error('No Processes Selected: Please select processes to perform bulk operations.');
       return;
     }
 
@@ -304,11 +301,7 @@ export const BulkOperationsPanel: React.FC<BulkOperationsPanelProps> = ({
 
     } catch (error: any) {
       console.error('Bulk operation assessment failed:', error);
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Operation Assessment Failed',
-        message: error.message || 'Failed to assess operation safety'
-      }));
+      toast.error(`Operation Assessment Failed: ${error.message || 'Failed to assess operation safety'}`);
       setOperationStatus('error');
     }
   }, [filteredSelectedProcesses, processesByCategory, user, dispatch]);
@@ -348,11 +341,7 @@ export const BulkOperationsPanel: React.FC<BulkOperationsPanelProps> = ({
 
       setOperationStatus('completed');
 
-      dispatch(addNotification({
-        type: 'success',
-        title: 'Bulk Operation Complete',
-        message: `Successfully completed ${operation} on ${targetProcesses.length} processes`
-      }));
+      toast.success(`Bulk Operation Complete: Successfully completed ${operation} on ${targetProcesses.length} processes`);
 
       // Auto-close after success
       setTimeout(() => {
@@ -363,11 +352,7 @@ export const BulkOperationsPanel: React.FC<BulkOperationsPanelProps> = ({
 
     } catch (error: any) {
       console.error('Bulk operation execution failed:', error);
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Bulk Operation Failed',
-        message: error.message || 'Operation failed to complete'
-      }));
+      toast.error(`Bulk Operation Failed: ${error.message || 'Operation failed to complete'}`);
       setOperationStatus('error');
     }
   }, [onBulkAction, safetyEvaluation, impactAssessment, emergencyOverrideMode, user, dispatch, onClearSelection]);

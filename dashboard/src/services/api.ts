@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:2601/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:2602/api';
 const API_TIMEOUT = 30000; // 30 seconds
 
 export interface ApiResponse<T = any> {
@@ -92,8 +92,8 @@ class ApiService {
     return response.data;
   }
 
-  async post<T>(url: string, data?: any): Promise<T> {
-    const response = await this.client.post<T>(url, data);
+  async post<T>(url: string, data?: any, config?: any): Promise<T> {
+    const response = await this.client.post<T>(url, data, config);
     return response.data;
   }
 

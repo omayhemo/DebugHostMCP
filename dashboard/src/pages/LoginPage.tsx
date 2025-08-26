@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store';
 import { loginStart, loginSuccess, loginFailure } from '../store/slices/authSlice';
 import { authService } from '../services/authService';
-import { addNotification } from '../store/slices/uiSlice';
+import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,11 +19,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     
     if (!email || !password) {
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Validation Error',
-        message: 'Please enter both email and password',
-      }));
+      toast.error('Validation Error: Please enter both email and password');
       return;
     }
 
@@ -36,21 +32,12 @@ const LoginPage: React.FC = () => {
         token: response.token,
       }));
 
-      dispatch(addNotification({
-        type: 'success',
-        title: 'Login Successful',
-        message: `Welcome back, ${response.user.name}!`,
-        autoClose: true,
-      }));
+      toast.success(`Login Successful: Welcome back, ${response.user.name}!`);
 
       navigate(from, { replace: true });
     } catch (error: any) {
       dispatch(loginFailure(error.message));
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Login Failed',
-        message: error.message,
-      }));
+      toast.error(`Login Failed: ${error.message}`);
     }
   };
 

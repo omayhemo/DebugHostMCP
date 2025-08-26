@@ -69,6 +69,12 @@ const PROCESS_CATEGORIES: {
     label: 'Orphaned Processes',
     description: 'Static allocations with no running process',
     priority: 4
+  },
+  {
+    category: 'containers',
+    label: 'Container Processes',
+    description: 'Docker containers and containerized applications',
+    priority: 5
   }
 ];
 
@@ -518,7 +524,7 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
   className
 }) => {
   const [expandedGroups, setExpandedGroups] = useState<Set<ProcessCategory>>(
-    new Set(['registered', 'discovered', 'rogue', 'orphaned'])
+    new Set(['registered', 'discovered', 'rogue', 'orphaned', 'containers'])
   );
   
   // Group and sort processes

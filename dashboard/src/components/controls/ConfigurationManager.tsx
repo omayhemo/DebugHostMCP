@@ -5,7 +5,7 @@ import {
   validateConfigChange, 
   clearConfigChange 
 } from '../../store/slices/projectControlsSlice';
-import { Save, X, Plus, Trash2, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
+import { Save, Plus, Trash2, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface ConfigurationManagerProps {
   projectId: string;
@@ -57,7 +57,7 @@ const ConfigurationManager: React.FC<ConfigurationManagerProps> = ({ projectId }
   const validateConfiguration = () => {
     const errors: string[] = [];
 
-    Object.entries(envVars).forEach(([key, value]) => {
+    Object.entries(envVars).forEach(([key, _value]) => {
       if (!key.match(/^[A-Z_][A-Z0-9_]*$/)) {
         errors.push(`Invalid environment variable name: ${key}`);
       }

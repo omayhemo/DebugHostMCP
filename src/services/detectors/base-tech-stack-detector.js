@@ -46,8 +46,8 @@ class BaseTechStackDetector extends EventEmitter {
     this.techStack = techStack;
     this.options = {
       enabled: options.enabled !== false,
-      timeout: options.timeout || 5000,
-      retries: options.retries || 2,
+      timeout: options.timeout || 500, // **PERFORMANCE FIX**: Reduced from 5000ms to 500ms for system commands
+      retries: options.retries !== undefined ? options.retries : 1, // **PERFORMANCE FIX**: Reduced from 2 to 1 retry
       portRange: options.portRange || { start: 3000, end: 3999 },
       cacheTimeout: options.cacheTimeout || 5000,
       ...options
@@ -234,8 +234,8 @@ class BaseTechStackDetector extends EventEmitter {
         }
         
         if (attempt < retries) {
-          // Wait before retry
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // **PERFORMANCE FIX**: Reduced retry delay from 1000ms to 100ms
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
     }

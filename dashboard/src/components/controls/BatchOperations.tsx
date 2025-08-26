@@ -8,7 +8,7 @@ import {
   updateBatchOperation,
   completeBatchOperation
 } from '../../store/slices/projectControlsSlice';
-import { Play, Square, RotateCw, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Play, Square, RotateCw, CheckCircle, Loader2 } from 'lucide-react';
 
 interface BatchOperationsProps {
   selectedProjects: string[];
@@ -17,7 +17,7 @@ interface BatchOperationsProps {
 
 const BatchOperations: React.FC<BatchOperationsProps> = ({ 
   selectedProjects, 
-  onExecute 
+  onExecute: _onExecute 
 }) => {
   const dispatch = useAppDispatch();
   const [executing, setExecuting] = useState(false);

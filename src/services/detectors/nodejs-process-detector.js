@@ -331,13 +331,15 @@ class NodeJSProcessDetector extends BaseTechStackDetector {
       let result;
       try {
         result = await this._executeCommand(
-          `netstat -tulpn 2>/dev/null | grep -E ":(${start}|${start+1}|${start+2}|${start+3}|${start+4}|${start+5}|${start+6}|${start+7}|${start+8}|${start+9})" | head -20`
+          `netstat -tulpn 2>/dev/null | grep -E ":(${start}|${start+1}|${start+2}|${start+3}|${start+4}|${start+5}|${start+6}|${start+7}|${start+8}|${start+9})" | head -20`,
+          { timeout: 300 }
         );
       } catch (netstatError) {
         try {
           // Fallback to ss command (more modern alternative)
           result = await this._executeCommand(
-            `ss -tulpn | grep -E ":(${start}|${start+1}|${start+2}|${start+3}|${start+4}|${start+5}|${start+6}|${start+7}|${start+8}|${start+9})" | head -20`
+            `ss -tulpn | grep -E ":(${start}|${start+1}|${start+2}|${start+3}|${start+4}|${start+5}|${start+6}|${start+7}|${start+8}|${start+9})" | head -20`,
+            { timeout: 300 }
           );
         } catch (ssError) {
           console.warn('Neither netstat nor ss available for port scanning:', netstatError.message);
@@ -410,7 +412,7 @@ class NodeJSProcessDetector extends BaseTechStackDetector {
       // Get process details using ps - timeout must be shorter than scan method timeout
       const result = await this._executeCommand(
         `ps -p ${pid} -o pid,ppid,cmd,etime --no-headers 2>/dev/null`,
-        { timeout: 600 }
+        { timeout: 200 }
       );
       
       if (!result.success || !result.stdout.trim()) {
@@ -598,7 +600,7 @@ class NodeJSProcessDetector extends BaseTechStackDetector {
     
     try {
       // Look for processes running in this directory
-      const result = await this._executeCommand(`pgrep -f "${workspacePath}"`);
+      const result = await this._executeCommand(`pgrep -f "${workspacePath}"`, { timeout: 200 });
       
       if (result.success && result.stdout.trim()) {
         const pids = result.stdout.trim().split('\n').filter(Boolean);
@@ -626,7 +628,7 @@ class NodeJSProcessDetector extends BaseTechStackDetector {
    */
   async _getProcessWorkingDir(pid) {
     try {
-      const result = await this._executeCommand(`pwdx ${pid} 2>/dev/null`);
+      const result = await this._executeCommand(`pwdx ${pid} 2>/dev/null`, { timeout: 200 });
       if (result.success && result.stdout.trim()) {
         const match = result.stdout.match(/^\d+:\s*(.+)$/);
         if (match) {

@@ -9,7 +9,8 @@
  * - Bulk operations with safety framework
  */
 
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../../store';
 import {
   discoverAllProcesses,
@@ -24,7 +25,6 @@ import {
   updateConnectionStatus,
   addProcessUpdateEvent
 } from '../../store/slices/multiTechDashboardSlice';
-import { addNotification } from '../../store/slices/uiSlice';
 import { TechStack, ProcessUpdateEvent, DiscoveredProcess, ProcessCategory, BulkOperationType } from '../../types';
 import { TechStackTabs } from './TechStackTabs';
 import { ProcessTable } from './ProcessTable';
@@ -179,17 +179,9 @@ const RealTimeStatus: React.FC<RealTimeStatusProps> = ({ className }) => {
   const handleRefresh = useCallback(async () => {
     try {
       await dispatch(discoverAllProcesses({ forceRefresh: true })).unwrap();
-      dispatch(addNotification({
-        type: 'success',
-        title: 'Processes Updated',
-        message: 'Process discovery completed successfully'
-      }));
+      toast.success('Processes Updated: Process discovery completed successfully');
     } catch (error: any) {
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Refresh Failed',
-        message: error.message || 'Failed to refresh processes'
-      }));
+      toast.error(`Refresh Failed: ${error.message || 'Failed to refresh processes'}`);
     }
   }, [dispatch]);
   
@@ -274,12 +266,27 @@ export const MultiTechDashboard: React.FC = () => {
   const [monitoringView, setMonitoringView] = useState<'feed' | 'timeline' | 'metrics'>('feed');
   const [showAuditTrail, setShowAuditTrail] = useState(false);
   
+  // Ref to track reconnection timeout to prevent memory leaks
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   // Get processes for current tab
   const currentProcesses = useMemo(() => {
     if (ui.activeTab === 'all') {
       return Object.values(processesByTechStack).flat();
     }
-    return processesByTechStack[ui.activeTab] || [];
+    
+    // FIX: The issue is that processesByTechStack might be empty even when techStackSummaries has counts
+    // This suggests the data is being stored differently than expected
+    // Let's check if the tech stack key exists and has processes
+    const techStackProcesses = processesByTechStack[ui.activeTab];
+    
+    if (!techStackProcesses || techStackProcesses.length === 0) {
+      // Fallback: search through all processes to find ones matching the tech stack
+      const allProcesses = Object.values(processesByTechStack).flat();
+      return allProcesses.filter(process => process.techStack === ui.activeTab);
+    }
+    
+    return techStackProcesses;
   }, [processesByTechStack, ui.activeTab]);
   
   // Initial data loading
@@ -292,11 +299,7 @@ export const MultiTechDashboard: React.FC = () => {
           dispatch(fetchSystemHealth()).unwrap()
         ]);
       } catch (error: any) {
-        dispatch(addNotification({
-          type: 'error',
-          title: 'Dashboard Load Failed',
-          message: error.message || 'Failed to initialize dashboard'
-        }));
+        toast.error(`Dashboard Load Failed: ${error.message || 'Failed to initialize dashboard'}`);
       }
     };
     
@@ -335,8 +338,13 @@ export const MultiTechDashboard: React.FC = () => {
           dispatch(updateConnectionStatus('error'));
           eventSource.close();
           
+          // Clear any existing reconnect timeout
+          if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+          }
+          
           // Attempt to reconnect after 5 seconds
-          setTimeout(connectSSE, 5000);
+          reconnectTimeoutRef.current = setTimeout(connectSSE, 5000);
         };
         
         setSseConnection(eventSource);
@@ -349,6 +357,13 @@ export const MultiTechDashboard: React.FC = () => {
     connectSSE();
     
     return () => {
+      // Clear any pending reconnect timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      
+      // Close SSE connection
       if (sseConnection) {
         sseConnection.close();
         setSseConnection(null);
@@ -384,42 +399,26 @@ export const MultiTechDashboard: React.FC = () => {
     // TODO: Implement individual process actions with safety framework
     console.log('Process action:', action, process);
     
-    dispatch(addNotification({
-      type: 'info',
-      title: 'Action Requested',
-      message: `${action} requested for process ${process.pid}`
-    }));
+    toast(`Action Requested: ${action} requested for process ${process.pid}`);
   }, [dispatch]);
   
   const handleBulkAction = useCallback(async (operation: BulkOperationType, processIds: string[], options?: any) => {
     try {
-      dispatch(addNotification({
-        type: 'info',
-        title: 'Bulk Operation Started',
-        message: `${operation} initiated for ${processIds.length} processes`
-      }));
+      toast(`Bulk Operation Started: ${operation} initiated for ${processIds.length} processes`);
 
       // Simulate bulk operation execution with safety framework integration
       // In a real implementation, this would call the actual multiTechService
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Mock success
-      dispatch(addNotification({
-        type: 'success',
-        title: 'Bulk Operation Complete',
-        message: `${operation} completed successfully for ${processIds.length} processes`
-      }));
+      toast.success(`Bulk Operation Complete: ${operation} completed successfully for ${processIds.length} processes`);
 
       // Refresh processes to reflect changes
       dispatch(discoverAllProcesses());
       
     } catch (error: any) {
       console.error('Bulk action failed:', error);
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Bulk Operation Failed',
-        message: error.message || 'Failed to execute bulk operation'
-      }));
+      toast.error(`Bulk Operation Failed: ${error.message || 'Failed to execute bulk operation'}`);
     }
   }, [dispatch]);
   
@@ -603,7 +602,7 @@ export const MultiTechDashboard: React.FC = () => {
       />
 
       {/* Process Selection Toolbar */}
-      {processes.length > 0 && (
+      {currentProcesses.length > 0 && (
         <ProcessSelectionToolbar
           processes={currentProcesses}
           selectedProcesses={ui.selectedProcesses}

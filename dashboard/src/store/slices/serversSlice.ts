@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Server {
+  id: string;
   sessionId: string;
   name: string;
   command: string;
@@ -10,6 +11,21 @@ export interface Server {
   pid?: number;
   startedAt?: string;
   env?: Record<string, string>;
+  config?: {
+    port?: number;
+    ports?: string[];
+    environment?: string;
+    restartPolicy?: string;
+    memory?: string;
+    cpu?: string;
+    volumes?: string[];
+    network?: string;
+  };
+  containerId?: string;
+  image?: string;
+  lastAction?: string;
+  uptime?: number;
+  type?: string;
 }
 
 export interface ServersState {

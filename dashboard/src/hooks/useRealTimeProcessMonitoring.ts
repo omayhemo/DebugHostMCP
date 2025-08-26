@@ -20,7 +20,7 @@ import {
   resetReconnectAttempts,
   setRefreshStatus
 } from '../store/slices/multiTechDashboardSlice';
-import { addNotification } from '../store/slices/uiSlice';
+import toast from 'react-hot-toast';
 import { DiscoveredProcess, ProcessUpdateEvent } from '../types';
 
 interface UseRealTimeProcessMonitoringOptions {
@@ -199,19 +199,11 @@ export const useRealTimeProcessMonitoring = ({
     const terminatedProcessCount = changes.filter(c => c.type === 'removed').length;
     
     if (newProcessCount > 0) {
-      dispatch(addNotification({
-        type: 'info',
-        title: 'New Processes Detected',
-        message: `${newProcessCount} new ${newProcessCount === 1 ? 'process' : 'processes'} discovered`
-      }));
+      toast.success(`New Processes Detected: ${newProcessCount} new ${newProcessCount === 1 ? 'process' : 'processes'} discovered`);
     }
     
     if (terminatedProcessCount > 0) {
-      dispatch(addNotification({
-        type: 'info',
-        title: 'Processes Terminated',
-        message: `${terminatedProcessCount} ${terminatedProcessCount === 1 ? 'process' : 'processes'} terminated`
-      }));
+      toast.success(`Processes Terminated: ${terminatedProcessCount} ${terminatedProcessCount === 1 ? 'process' : 'processes'} terminated`);
     }
   }, [dispatch, onProcessChange]);
   
@@ -252,11 +244,7 @@ export const useRealTimeProcessMonitoring = ({
     } catch (error: any) {
       console.error('Process refresh failed:', error);
       dispatch(setRefreshStatus('error'));
-      dispatch(addNotification({
-        type: 'error',
-        title: 'Refresh Failed',
-        message: error.message || 'Failed to refresh process data'
-      }));
+      toast.error(`Refresh Failed: ${error.message || 'Failed to refresh process data'}`);
     }
   }, [dispatch, processesByTechStack, createProcessMap, detectProcessChanges, handleProcessChanges]);
   
@@ -315,11 +303,7 @@ export const useRealTimeProcessMonitoring = ({
           }, delay);
         } else {
           console.error('Max reconnection attempts reached');
-          dispatch(addNotification({
-            type: 'error',
-            title: 'Connection Lost',
-            message: 'Real-time connection could not be established after multiple attempts'
-          }));
+          toast.error('Connection Lost: Real-time connection could not be established after multiple attempts');
         }
       };
       

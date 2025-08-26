@@ -23,4 +23,4 @@ export { BulkOperationProgress } from './BulkOperationProgress';
 export { ProcessSelectionToolbar } from './ProcessSelectionToolbar';
 export { AuditTrailDisplay } from './AuditTrailDisplay';
 
-export default MultiTechDashboard;
+export { MultiTechDashboard as default } from './MultiTechDashboard';

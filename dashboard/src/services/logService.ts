@@ -208,7 +208,7 @@ class LogService {
       }
 
       // Get base URL from API service
-      const baseURL = apiService['client'].defaults.baseURL || 'http://127.0.0.1:2601';
+      const baseURL = apiService['client'].defaults.baseURL || 'http://127.0.0.1:2602';
       const token = localStorage.getItem('token');
       if (token) {
         params.append('token', token);
@@ -377,7 +377,7 @@ class LogService {
 
   // WebSocket fallback implementation
   private createWebSocketConnection(options: LogStreamOptions): WebSocket {
-    const baseURL = apiService['client'].defaults.baseURL?.replace(/^http/, 'ws') || 'ws://127.0.0.1:2601';
+    const baseURL = apiService['client'].defaults.baseURL?.replace(/^http/, 'ws') || 'ws://127.0.0.1:2602';
     const token = localStorage.getItem('token');
     
     const params = new URLSearchParams();
