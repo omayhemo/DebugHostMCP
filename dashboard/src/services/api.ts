@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:2602/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:2603/api';
 const API_TIMEOUT = 30000; // 30 seconds
 
 export interface ApiResponse<T = any> {

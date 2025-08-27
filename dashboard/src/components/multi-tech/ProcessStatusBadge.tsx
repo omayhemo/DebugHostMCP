@@ -180,8 +180,15 @@ interface StatusBadgeProps {
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size, showTooltip }) => {
-  const config = STATUS_CONFIG[status];
+  // Default to 'running' if status is undefined or invalid
+  const validStatus = (status && STATUS_CONFIG[status]) ? status : 'running';
+  const config = STATUS_CONFIG[validStatus];
   const sizeConfig = SIZE_CONFIG[size];
+  
+  // Safety check - if config is still undefined, return a safe fallback
+  if (!config) {
+    return <span className="text-gray-500">?</span>;
+  }
   
   return (
     <span

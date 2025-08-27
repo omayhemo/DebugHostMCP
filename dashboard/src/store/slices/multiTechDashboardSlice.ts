@@ -201,7 +201,9 @@ const initialState: MultiTechDashboardState = {
 // Discover all processes across technology stacks
 export const discoverAllProcesses = createAsyncThunk(
   'multiTechDashboard/discoverAllProcesses',
-  async (options?: { techStacks?: TechStack[]; forceRefresh?: boolean }) => {
+  async (options?: { techStacks?: TechStack[]; forceRefresh?: boolean }, { getState, rejectWithValue }) => {
+    console.log('🔄 [DEBUG] discoverAllProcesses - ALWAYS EXECUTING (race condition prevention temporarily disabled)');
+    
     const { multiTechService } = await import('../../services/multiTechService');
     return multiTechService.discoverProcesses({
       techStacks: options?.techStacks || ['nodejs', 'php', 'python', 'static', 'docker'],
@@ -450,24 +452,91 @@ const multiTechDashboardSlice = createSlice({
     // Discover All Processes
     builder
       .addCase(discoverAllProcesses.pending, (state) => {
+        console.log('🔄 [DEBUG] discoverAllProcesses.pending - setting loading = true');
         state.loading = true;
         state.refreshStatus = 'refreshing';
         state.error = null;
       })
       .addCase(discoverAllProcesses.fulfilled, (state, action) => {
+        console.log('✅ [DEBUG] discoverAllProcesses.fulfilled - setting loading = false', action.payload);
+        console.log('🔍 [DEBUG] API Response Structure:');
+        console.log('  - techStackResults:', action.payload.techStackResults);
+        console.log('  - processesFound:', action.payload.processesFound);
+        console.log('  - correlation:', action.payload.correlation);
+        
         state.loading = false;
         state.refreshStatus = 'success';
         state.lastRefresh = new Date().toISOString();
         
-        const { techStackResults, correlation, systemHealth } = action.payload;
+        const { techStackResults, correlation, systemHealth, processesFound } = action.payload;
         
-        // Update processes by tech stack
+        // Helper function to map correlationStatus to category and ensure all required fields
+        const mapCorrelationStatusToCategory = (process: any) => {
+          let category = 'discovered';
+          
+          if (process.correlationStatus === 'registered') {
+            category = 'registered';
+          } else if (process.correlationStatus === 'rogue') {
+            category = 'rogue';
+          } else if (process.correlationStatus === 'orphaned') {
+            category = 'orphaned';
+          } else if (process.correlationStatus === 'unknown') {
+            category = 'discovered';
+          }
+          
+          // Ensure all required fields for ProcessStatusBadge
+          return { 
+            ...process, 
+            category,
+            // Default status to 'running' if not provided
+            status: process.status || 'running',
+            // Ensure health field exists
+            health: process.health || undefined
+          };
+        };
+        
+        // Update processes by tech stack with category mapping
         if (techStackResults) {
+          console.log('🔄 [DEBUG] Processing techStackResults...');
           Object.entries(techStackResults).forEach(([techStack, result]) => {
+            console.log(`🔄 [DEBUG] Processing ${techStack}:`, result);
+            console.log(`🔄 [DEBUG] ${techStack} success:`, result.success);
+            console.log(`🔄 [DEBUG] ${techStack} processes:`, result.processes);
+            
             if (result.success && result.processes) {
-              state.processesByTechStack[techStack as TechStack] = result.processes;
+              console.log(`🔄 [DEBUG] ${techStack} processes length:`, result.processes.length);
+              console.log(`🔄 [DEBUG] ${techStack} first process before mapping:`, result.processes[0]);
+              
+              // Map processes to include category field
+              const processesWithCategory = result.processes.map(mapCorrelationStatusToCategory);
+              console.log(`🔄 [DEBUG] ${techStack} first process after mapping:`, processesWithCategory[0]);
+              
+              state.processesByTechStack[techStack as TechStack] = processesWithCategory;
               state.techStackSummaries[techStack as TechStack] = 
-                calculateTechStackSummary(result.processes, techStack as TechStack);
+                calculateTechStackSummary(processesWithCategory, techStack as TechStack);
+                
+              console.log(`🔄 [DEBUG] ${techStack} final state count:`, state.processesByTechStack[techStack as TechStack].length);
+            } else {
+              console.log(`🔄 [DEBUG] ${techStack} skipped - success: ${result.success}, processes: ${result.processes?.length || 0}`);
+            }
+          });
+        } else {
+          console.log('❌ [DEBUG] techStackResults is null/undefined');
+        }
+        
+        // Also handle correlation data if present
+        if (correlation && correlation.unknownProcesses) {
+          correlation.unknownProcesses.forEach((process: any) => {
+            const processWithCategory = mapCorrelationStatusToCategory(process);
+            const techStack = process.techStack;
+            if (techStack && state.processesByTechStack[techStack as TechStack]) {
+              // Ensure the process is in the tech stack array with category
+              const existingIndex = state.processesByTechStack[techStack as TechStack].findIndex(p => p.pid === process.pid);
+              if (existingIndex >= 0) {
+                state.processesByTechStack[techStack as TechStack][existingIndex] = processWithCategory;
+              } else {
+                state.processesByTechStack[techStack as TechStack].push(processWithCategory);
+              }
             }
           });
         }
@@ -483,6 +552,8 @@ const multiTechDashboardSlice = createSlice({
         }
       })
       .addCase(discoverAllProcesses.rejected, (state, action) => {
+        console.log('❌ [DEBUG] discoverAllProcesses.rejected - setting loading = false');
+        console.log('❌ [DEBUG] discoverAllProcesses.rejected - error:', action.error);
         state.loading = false;
         state.refreshStatus = 'error';
         state.error = action.error.message || 'Failed to discover processes';

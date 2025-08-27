@@ -523,15 +523,24 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
   enableVirtualization = true,
   className
 }) => {
+  console.log('🚨 ProcessTable CONSTRUCTOR - Received processes:', processes);
+  console.log('🚨 ProcessTable CONSTRUCTOR - Processes length:', processes?.length || 0);
+  console.log('🚨 ProcessTable CONSTRUCTOR - First process:', processes?.[0] || null);
   const [expandedGroups, setExpandedGroups] = useState<Set<ProcessCategory>>(
     new Set(['registered', 'discovered', 'rogue', 'orphaned', 'containers'])
   );
   
   // Group and sort processes
   const processGroups = useMemo(() => {
+    console.log('🔍 ProcessTable DEBUG - Input processes:', processes);
+    console.log('🔍 ProcessTable DEBUG - Processes count:', processes.length);
+    console.log('🔍 ProcessTable DEBUG - First process category:', processes[0]?.category);
+    console.log('🔍 ProcessTable DEBUG - Available categories:', PROCESS_CATEGORIES.map(c => c.category));
+    
     // Group processes by category
     const grouped = PROCESS_CATEGORIES.map(categoryConfig => {
       const categoryProcesses = processes.filter(p => p.category === categoryConfig.category);
+      console.log(`🔍 ProcessTable DEBUG - Category ${categoryConfig.category}: ${categoryProcesses.length} processes`);
       
       // Sort processes within the group
       const sorted = [...categoryProcesses].sort((a, b) => {
@@ -552,6 +561,9 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
         selectedCount: sorted.filter(p => selectedProcesses.includes(`${p.pid}`)).length
       };
     }).filter(group => group.processes.length > 0);
+    
+    console.log('🔍 ProcessTable DEBUG - Final processGroups:', grouped);
+    console.log('🔍 ProcessTable DEBUG - Groups count:', grouped.length);
     
     return grouped;
   }, [processes, sort, selectedProcesses]);
@@ -619,7 +631,11 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
       
       {/* Process Groups */}
       <div className="flex-1 overflow-auto">
-        {processGroups.map(group => (
+        {console.log('🔍 ProcessTable RENDER - expandedGroups:', Array.from(expandedGroups))}
+        {console.log('🔍 ProcessTable RENDER - processGroups to render:', processGroups.length)}
+        {processGroups.map(group => {
+          console.log(`🔍 ProcessTable RENDER - Group ${group.category}: ${group.processes.length} processes, expanded: ${expandedGroups.has(group.category)}`);
+          return (
           <div key={group.category}>
             {/* Group Header */}
             <ProcessGroupHeader
@@ -636,6 +652,7 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
             {/* Group Processes */}
             {expandedGroups.has(group.category) && (
               <div>
+                {console.log(`🔍 ProcessTable RENDER - Rendering ${group.processes.length} process rows for ${group.category}`)}
                 {enableVirtualization && group.processes.length > 20 ? (
                   <List
                     height={Math.min(600, group.processes.length * 70)}
@@ -651,7 +668,9 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
                     {VirtualRow}
                   </List>
                 ) : (
-                  group.processes.map(process => (
+                  group.processes.map(process => {
+                    console.log(`🔍 ProcessTable RENDER - Rendering process row:`, process.pid, process.command?.slice(0, 50));
+                    return (
                     <ProcessRow
                       key={process.pid}
                       process={process}
@@ -659,12 +678,12 @@ export const ProcessTable: React.FC<ProcessTableProps> = ({
                       onSelect={onProcessSelect}
                       onAction={onProcessAction}
                     />
-                  ))
+                  )})
                 )}
               </div>
             )}
           </div>
-        ))}
+        )})}
       </div>
     </div>
   );

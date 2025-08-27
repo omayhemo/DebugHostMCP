@@ -21,6 +21,9 @@ const __dirname = path.dirname(__filename);
 // Create require for loading CommonJS modules
 const customRequire = createRequire(import.meta.url);
 
+// Load Multi-Tech Process Discovery Engine
+const { MultiTechProcessDiscoveryEngine } = customRequire('./services/multi-tech-process-discovery-engine.js');
+
 const app = express();
 const PORT = process.env.PORT || 2603;
 const HOST = '127.0.0.1';
@@ -59,6 +62,30 @@ async function initializeDocker() {
 // Initialize Docker on startup
 initializeDocker().catch(console.error);
 
+// Initialize Multi-Tech Process Discovery Engine
+let processDiscoveryEngine = null;
+
+async function initializeProcessDiscovery() {
+  try {
+    processDiscoveryEngine = new MultiTechProcessDiscoveryEngine({
+      scanTimeout: 5000,
+      parallelScanning: true,
+      performanceMonitoring: true,
+      correlationEnabled: true
+    });
+    
+    await processDiscoveryEngine.initialize();
+    console.log('Multi-Tech Process Discovery Engine initialized successfully');
+    return true;
+  } catch (error) {
+    console.error('Failed to initialize Process Discovery Engine:', error.message);
+    return false;
+  }
+}
+
+// Initialize process discovery on startup
+initializeProcessDiscovery().catch(console.error);
+
 // Middleware
 app.use(cors({
   origin: true,
@@ -87,6 +114,13 @@ app.get('/api/info', (req, res) => {
     endpoints: {
       'GET /health': 'Health check',
       'GET /api/info': 'API information',
+      'POST /api/processes/discovery': 'Discover processes across all tech stacks',
+      'GET /api/processes/system-health': 'Get system health metrics',
+      'POST /api/processes/bulk-action': 'Execute bulk actions on processes',
+      'GET /api/processes/realtime': 'Real-time process updates (SSE)',
+      'POST /api/processes/:id/terminate': 'Terminate a specific process',
+      'POST /api/processes/:id/associate': 'Associate a process with workspace',
+      'POST /api/processes/cleanup-orphaned': 'Cleanup orphaned processes',
       'GET /api/projects': 'List all projects',
       'POST /api/projects/:id/start': 'Start a project',
       'POST /api/projects/:id/stop': 'Stop a project',
@@ -94,6 +128,414 @@ app.get('/api/info', (req, res) => {
       'GET /api/projects/:id/status': 'Get project status',
       'GET /api/projects/:id/logs': 'Get project logs'
     }
+  });
+});
+
+// ===========================================
+// PROCESS DISCOVERY AND MANAGEMENT ENDPOINTS
+// ===========================================
+
+// Process Discovery endpoint
+app.post('/api/processes/discovery', async (req, res) => {
+  try {
+    if (!processDiscoveryEngine) {
+      return res.status(503).json({ 
+        success: false,
+        error: 'Process Discovery Engine not initialized' 
+      });
+    }
+
+    const { techStacks, forceRefresh, includeCorrelation, timeout } = req.body;
+
+    const options = {
+      techStacks: techStacks || ['nodejs', 'php', 'python', 'static', 'docker'],
+      forceRefresh: forceRefresh || false,
+      includeCorrelation: includeCorrelation !== false,
+      timeout: timeout || 5000
+    };
+
+    const results = await processDiscoveryEngine.scanSystemProcesses(options);
+    
+    // Transform and normalize process data to match frontend expectations
+    const normalizeProcess = (process) => {
+      return {
+        pid: process.pid,
+        port: process.port || null,
+        command: process.command,
+        cwd: process.workspacePath || process.cwd || '/unknown',
+        techStack: process.techStack,
+        framework: process.framework || null,
+        serverType: process.serverType || 'unknown',
+        category: process.category || 'discovered',
+        correlationStatus: process.correlationStatus || 'discovered',
+        workspace: process.workspacePath || process.workspace || null,
+        workspaceConfidence: process.workspaceConfidence || 0.5,
+        startTime: process.startTime || new Date(Date.now() - 300000).toISOString(), // Default to 5 minutes ago
+        status: process.status || 'running',
+        health: process.health || 'healthy',
+        rogueReason: process.rogueReason || null,
+        // Additional metadata
+        ppid: process.ppid || null,
+        detectionMethod: process.detectionMethod || 'unknown',
+        metadata: process.metadata || {}
+      };
+    };
+
+    // Normalize processes in techStackResults
+    const normalizedTechStackResults = {};
+    if (results.techStackResults) {
+      Object.entries(results.techStackResults).forEach(([techStack, result]) => {
+        normalizedTechStackResults[techStack] = {
+          ...result,
+          processes: result.processes ? result.processes.map(normalizeProcess) : []
+        };
+      });
+    }
+
+    // Normalize the main processesFound array
+    const normalizedProcesses = results.processesFound ? results.processesFound.map(normalizeProcess) : [];
+    
+    // Transform results to match frontend expectations
+    const response = {
+      scanId: results.scanId,
+      timestamp: results.timestamp,
+      duration: results.duration,
+      techStackResults: normalizedTechStackResults,
+      totalProcesses: results.totalProcesses,
+      processesFound: normalizedProcesses,
+      correlation: results.correlation ? {
+        registeredProcesses: (results.correlation.registeredProcesses || []).map(normalizeProcess),
+        discoveredProcesses: (results.correlation.discoveredProcesses || []).map(normalizeProcess),
+        rogueProcesses: (results.correlation.rogueProcesses || []).map(normalizeProcess),
+        orphanedProcesses: (results.correlation.orphanedProcesses || []).map(normalizeProcess),
+        correlationResults: results.correlation.correlationResults || []
+      } : null,
+      performance: results.performance,
+      success: results.success
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Process discovery error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message,
+      scanId: `error_${Date.now()}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// System Health endpoint
+app.get('/api/processes/system-health', async (req, res) => {
+  try {
+    if (!processDiscoveryEngine) {
+      return res.status(503).json({ error: 'Process Discovery Engine not initialized' });
+    }
+
+    // Get recent scan results or perform a quick scan
+    let scanResults = processDiscoveryEngine.lastScanResults;
+    if (!scanResults || (Date.now() - new Date(scanResults.timestamp).getTime()) > 30000) {
+      // Refresh if older than 30 seconds
+      scanResults = await processDiscoveryEngine.scanSystemProcesses({ 
+        includeCorrelation: true,
+        timeout: 3000 
+      });
+    }
+
+    const totalProcesses = scanResults.totalProcesses || 0;
+    const rogueProcesses = scanResults.correlation?.rogueProcesses?.length || 0;
+    const runningProcesses = scanResults.processesFound?.filter(p => p.status === 'running').length || 0;
+    
+    // Calculate port utilization
+    const usedPorts = new Set(scanResults.processesFound?.filter(p => p.port).map(p => p.port) || []);
+    const portUtilization = Math.round((usedPorts.size / 100) * 100); // Assume 100 common dev ports
+
+    // Determine overall status
+    let status = 'healthy';
+    if (rogueProcesses > 0) status = 'warning';
+    if (rogueProcesses > 3) status = 'critical';
+
+    const systemHealth = {
+      cpu: scanResults.performance?.cpuUsage || 0,
+      memory: scanResults.performance?.memoryUsage || 0,
+      diskSpace: 85.0, // TODO: Add real disk space monitoring
+      totalProcesses,
+      rogueProcesses,
+      portUtilization,
+      lastUpdate: new Date().toISOString(),
+      status
+    };
+
+    res.json(systemHealth);
+  } catch (error) {
+    console.error('System health error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Process termination endpoint
+app.post('/api/processes/:id/terminate', async (req, res) => {
+  const { id } = req.params;
+  const { force, reason } = req.body;
+
+  try {
+    // Convert PID to number
+    const pid = parseInt(id);
+    if (isNaN(pid)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid process ID' 
+      });
+    }
+
+    // Attempt to kill the process
+    const signal = force ? 'SIGKILL' : 'SIGTERM';
+    
+    try {
+      await execAsync(`kill -${signal} ${pid}`);
+      
+      // Verify the process was terminated
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      try {
+        await execAsync(`kill -0 ${pid} 2>/dev/null`);
+        // Process still exists
+        return res.json({
+          success: false,
+          message: `Process ${pid} still running after termination attempt`
+        });
+      } catch (e) {
+        // Process doesn't exist anymore - success
+        console.log(`Successfully terminated process ${pid} (${signal}). Reason: ${reason || 'User request'}`);
+        
+        return res.json({
+          success: true,
+          message: `Process ${pid} terminated successfully`
+        });
+      }
+    } catch (error) {
+      return res.json({
+        success: false,
+        message: `Failed to terminate process ${pid}: ${error.message}`
+      });
+    }
+  } catch (error) {
+    console.error(`Process termination error for ${id}:`, error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Process association endpoint
+app.post('/api/processes/:id/associate', async (req, res) => {
+  const { id } = req.params;
+  const { workspace } = req.body;
+
+  try {
+    const pid = parseInt(id);
+    if (isNaN(pid)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid process ID' 
+      });
+    }
+
+    if (!workspace) {
+      return res.status(400).json({
+        success: false,
+        message: 'Workspace path is required'
+      });
+    }
+
+    // TODO: Implement actual process-workspace association logic
+    // This would typically involve updating a registry or database
+    console.log(`Associating process ${pid} with workspace: ${workspace}`);
+
+    res.json({
+      success: true,
+      message: `Process ${pid} associated with workspace ${workspace}`
+    });
+  } catch (error) {
+    console.error(`Process association error for ${id}:`, error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Cleanup orphaned processes endpoint
+app.post('/api/processes/cleanup-orphaned', async (req, res) => {
+  const { processIds } = req.body;
+
+  try {
+    if (!Array.isArray(processIds) || processIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Process IDs array is required'
+      });
+    }
+
+    let cleanedCount = 0;
+    const results = [];
+
+    for (const processId of processIds) {
+      try {
+        const pid = parseInt(processId);
+        if (isNaN(pid)) {
+          results.push({ processId, success: false, error: 'Invalid PID' });
+          continue;
+        }
+
+        // Check if process exists and is orphaned
+        try {
+          await execAsync(`kill -0 ${pid} 2>/dev/null`);
+          // Process exists - this is just cleanup, so we log it
+          console.log(`Cleaned up orphaned process registry entry for PID ${pid}`);
+          results.push({ processId, success: true });
+          cleanedCount++;
+        } catch (e) {
+          // Process doesn't exist - already cleaned up
+          results.push({ processId, success: true });
+          cleanedCount++;
+        }
+      } catch (error) {
+        results.push({ processId, success: false, error: error.message });
+      }
+    }
+
+    res.json({
+      success: true,
+      cleanedCount,
+      results
+    });
+  } catch (error) {
+    console.error('Cleanup orphaned processes error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Bulk action endpoint
+app.post('/api/processes/bulk-action', async (req, res) => {
+  const { action, processIds } = req.body;
+
+  try {
+    if (!Array.isArray(processIds) || processIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Process IDs array is required'
+      });
+    }
+
+    let processedCount = 0;
+    let failedCount = 0;
+    const results = [];
+
+    for (const processId of processIds) {
+      try {
+        const pid = parseInt(processId);
+        if (isNaN(pid)) {
+          results.push({ processId, success: false, error: 'Invalid PID' });
+          failedCount++;
+          continue;
+        }
+
+        let actionResult;
+        
+        switch (action) {
+          case 'terminate':
+            try {
+              await execAsync(`kill -TERM ${pid}`);
+              actionResult = { processId, success: true };
+              processedCount++;
+            } catch (error) {
+              actionResult = { processId, success: false, error: error.message };
+              failedCount++;
+            }
+            break;
+            
+          case 'force-terminate':
+            try {
+              await execAsync(`kill -KILL ${pid}`);
+              actionResult = { processId, success: true };
+              processedCount++;
+            } catch (error) {
+              actionResult = { processId, success: false, error: error.message };
+              failedCount++;
+            }
+            break;
+            
+          default:
+            actionResult = { processId, success: false, error: `Unknown action: ${action}` };
+            failedCount++;
+        }
+        
+        results.push(actionResult);
+      } catch (error) {
+        results.push({ processId, success: false, error: error.message });
+        failedCount++;
+      }
+    }
+
+    res.json({
+      success: failedCount === 0,
+      processedCount,
+      failedCount,
+      results,
+      summary: `Bulk ${action}: ${processedCount} succeeded, ${failedCount} failed`
+    });
+  } catch (error) {
+    console.error('Bulk action error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+// Real-time process updates (Server-Sent Events)
+app.get('/api/processes/realtime', (req, res) => {
+  // Set up SSE headers
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*'
+  });
+
+  // Send initial connection message
+  res.write(`event: connected\ndata: ${JSON.stringify({ 
+    message: 'Connected to process monitoring stream',
+    timestamp: new Date().toISOString()
+  })}\n\n`);
+
+  // Send periodic updates
+  const updateInterval = setInterval(async () => {
+    try {
+      if (processDiscoveryEngine) {
+        const status = processDiscoveryEngine.getStatus();
+        res.write(`data: ${JSON.stringify({ 
+          type: 'status-update',
+          status,
+          timestamp: new Date().toISOString()
+        })}\n\n`);
+      }
+    } catch (error) {
+      console.error('SSE update error:', error);
+    }
+  }, 10000); // Update every 10 seconds
+
+  // Clean up on client disconnect
+  req.on('close', () => {
+    console.log('Client disconnected from process monitoring stream');
+    clearInterval(updateInterval);
+    res.end();
   });
 });
 

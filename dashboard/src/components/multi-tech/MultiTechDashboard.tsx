@@ -271,19 +271,28 @@ export const MultiTechDashboard: React.FC = () => {
   
   // Get processes for current tab
   const currentProcesses = useMemo(() => {
+    console.log('🚨 MultiTechDashboard currentProcesses - activeTab:', ui.activeTab);
+    console.log('🚨 MultiTechDashboard currentProcesses - processesByTechStack:', processesByTechStack);
+    console.log('🚨 MultiTechDashboard currentProcesses - processesByTechStack keys:', Object.keys(processesByTechStack));
+    
     if (ui.activeTab === 'all') {
-      return Object.values(processesByTechStack).flat();
+      const allProcesses = Object.values(processesByTechStack).flat();
+      console.log('🚨 MultiTechDashboard currentProcesses - ALL tab, returning:', allProcesses.length, 'processes');
+      return allProcesses;
     }
     
     // FIX: The issue is that processesByTechStack might be empty even when techStackSummaries has counts
     // This suggests the data is being stored differently than expected
     // Let's check if the tech stack key exists and has processes
     const techStackProcesses = processesByTechStack[ui.activeTab];
+    console.log('🚨 MultiTechDashboard currentProcesses - techStackProcesses for', ui.activeTab + ':', techStackProcesses?.length || 0);
     
     if (!techStackProcesses || techStackProcesses.length === 0) {
       // Fallback: search through all processes to find ones matching the tech stack
       const allProcesses = Object.values(processesByTechStack).flat();
-      return allProcesses.filter(process => process.techStack === ui.activeTab);
+      const filtered = allProcesses.filter(process => process.techStack === ui.activeTab);
+      console.log('🚨 MultiTechDashboard currentProcesses - fallback filtered:', filtered.length, 'processes');
+      return filtered;
     }
     
     return techStackProcesses;
@@ -295,7 +304,7 @@ export const MultiTechDashboard: React.FC = () => {
       try {
         dispatch(setRefreshStatus('refreshing'));
         await Promise.all([
-          dispatch(discoverAllProcesses()).unwrap(),
+          dispatch(discoverAllProcesses({ forceRefresh: true })).unwrap(),
           dispatch(fetchSystemHealth()).unwrap()
         ]);
       } catch (error: any) {
@@ -396,10 +405,94 @@ export const MultiTechDashboard: React.FC = () => {
   }, [dispatch]);
   
   const handleProcessAction = useCallback(async (action: string, process: DiscoveredProcess) => {
-    // TODO: Implement individual process actions with safety framework
-    console.log('Process action:', action, process);
-    
-    toast(`Action Requested: ${action} requested for process ${process.pid}`);
+    try {
+      const { multiTechService } = await import('../../services/multiTechService');
+      
+      switch (action) {
+        case 'view-details':
+          // TODO: Implement process details modal/dialog
+          toast(`Process Details: PID ${process.pid} - ${process.command}`);
+          console.log('Process details:', process);
+          break;
+          
+        case 'terminate':
+          const terminateResult = await multiTechService.terminateProcess(`${process.pid}`, {
+            force: false,
+            reason: 'User requested termination'
+          });
+          
+          if (terminateResult.success) {
+            toast.success(`Process ${process.pid} terminated successfully`);
+            // Refresh processes to reflect changes
+            dispatch(discoverAllProcesses());
+          } else {
+            toast.error(`Failed to terminate process: ${terminateResult.message}`);
+          }
+          break;
+          
+        case 'restart':
+          // For restart, we could implement a service method or simulate it
+          toast(`Restart requested for process ${process.pid}. This feature is not yet fully implemented.`);
+          console.log('Restart process:', process);
+          break;
+          
+        case 'stop':
+          // Similar to terminate but with stop intent
+          const stopResult = await multiTechService.terminateProcess(`${process.pid}`, {
+            force: false,
+            reason: 'User requested stop'
+          });
+          
+          if (stopResult.success) {
+            toast.success(`Process ${process.pid} stopped successfully`);
+            dispatch(discoverAllProcesses());
+          } else {
+            toast.error(`Failed to stop process: ${stopResult.message}`);
+          }
+          break;
+          
+        case 'associate':
+          // For rogue processes, associate with workspace
+          if (process.category === 'rogue' && process.workspace) {
+            const associateResult = await multiTechService.associateProcess(
+              `${process.pid}`, 
+              process.workspace
+            );
+            
+            if (associateResult.success) {
+              toast.success(`Process ${process.pid} associated with workspace`);
+              dispatch(discoverAllProcesses());
+            } else {
+              toast.error(`Failed to associate process: ${associateResult.message}`);
+            }
+          } else {
+            toast.error('Cannot associate process: no workspace specified');
+          }
+          break;
+          
+        case 'cleanup':
+          // For orphaned processes
+          if (process.category === 'orphaned') {
+            const cleanupResult = await multiTechService.cleanupOrphaned([`${process.pid}`]);
+            
+            if (cleanupResult.success) {
+              toast.success(`Orphaned process ${process.pid} cleaned up`);
+              dispatch(discoverAllProcesses());
+            } else {
+              toast.error('Failed to cleanup orphaned process');
+            }
+          }
+          break;
+          
+        default:
+          toast.error(`Unknown action: ${action}`);
+          console.warn('Unknown process action:', action, process);
+      }
+      
+    } catch (error: any) {
+      console.error('Process action error:', error);
+      toast.error(`Action failed: ${error.message || 'Unknown error'}`);
+    }
   }, [dispatch]);
   
   const handleBulkAction = useCallback(async (operation: BulkOperationType, processIds: string[], options?: any) => {
@@ -631,6 +724,11 @@ export const MultiTechDashboard: React.FC = () => {
             <span>Loading processes...</span>
           </div>
         ) : (
+          <>
+            {console.log('🚨 MultiTechDashboard RENDER - loading:', loading)}
+            {console.log('🚨 MultiTechDashboard RENDER - currentProcesses:', currentProcesses)}
+            {console.log('🚨 MultiTechDashboard RENDER - currentProcesses.length:', currentProcesses?.length || 0)}
+            {console.log('🚨 MultiTechDashboard RENDER - ui.activeTab:', ui.activeTab)}
           <ProcessTable
             techStack={ui.activeTab}
             processes={currentProcesses}
@@ -644,6 +742,7 @@ export const MultiTechDashboard: React.FC = () => {
             filter={ui.filter}
             enableVirtualization={currentProcesses.length > 20}
           />
+          </>
         )}
       </div>
 
